@@ -490,26 +490,22 @@ public class MonthWeekEventsView extends SimpleWeekView {
     @Override
     protected void drawDaySeparators(Canvas canvas) {
         final int coordinatesPerLine = 4;
-        // There are mNumDays - 1 vertical lines and 1 horizontal, so the total is mNumDays
-        float[] lines = new float[mNumDays * coordinatesPerLine];
+        // Draw only horizontal lines (top and bottom) to separate weeks
+        float[] lines = new float[2 * coordinatesPerLine];
         int i = 0;
 
-        // Horizontal line
+        // Top horizontal line
         lines[i++] = 0;
         lines[i++] = 0;
         lines[i++] = mWidth;
         lines[i++] = 0;
-        int y0 = 0;
-        int y1 = mHeight;
 
-        // 6 vertical lines
-        while (i < lines.length) {
-            int x = computeDayLeftPosition(i / coordinatesPerLine);
-            lines[i++] = x;
-            lines[i++] = y0;
-            lines[i++] = x;
-            lines[i++] = y1;
-        }
+        // Bottom horizontal line
+        lines[i++] = 0;
+        lines[i++] = mHeight;
+        lines[i++] = mWidth;
+        lines[i++] = mHeight;
+
         p.setColor(mDaySeparatorInnerColor);
         p.setStrokeWidth(mDaySeparatorInnerWidth);
         canvas.drawLines(lines, 0, lines.length, p);
