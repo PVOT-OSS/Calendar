@@ -32,6 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
+        android:textAlignment="center"
         style="@style/TextAppearance.MonthView_MiniDayLabel" />
 
     <TextView android:id="@+id/d1_label"
@@ -39,6 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
+        android:textAlignment="center"
         style="@style/TextAppearance.MonthView_MiniDayLabel" />
 
     <TextView android:id="@+id/d2_label"
@@ -46,6 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
+        android:textAlignment="center"
         style="@style/TextAppearance.MonthView_MiniDayLabel" />
 
     <TextView android:id="@+id/d3_label"
@@ -53,6 +56,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
+        android:textAlignment="center"
         style="@style/TextAppearance.MonthView_MiniDayLabel" />
 
     <TextView android:id="@+id/d4_label"
@@ -60,6 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
+        android:textAlignment="center"
         style="@style/TextAppearance.MonthView_MiniDayLabel" />
 
     <TextView android:id="@+id/d5_label"
@@ -67,6 +72,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
+        android:textAlignment="center"
         style="@style/TextAppearance.MonthView_MiniDayLabel" />
 
     <TextView android:id="@+id/d6_label"
@@ -74,5 +80,6 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
+        android:textAlignment="center"
         style="@style/TextAppearance.MonthView_MiniDayLabel" />
 </LinearLayout>

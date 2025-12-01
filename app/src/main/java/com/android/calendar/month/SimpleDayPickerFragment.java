@@ -319,6 +319,9 @@ public class SimpleDayPickerFragment extends ListFragment implements OnScrollLis
                 int position = (offset + i) % 7;
                 label.setText(mDayLabels[position]);
                 label.setVisibility(View.VISIBLE);
+                label.setGravity(android.view.Gravity.CENTER);
+                label.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                label.setPadding(0, 0, 0, 0);
                 if (position == Time.SATURDAY) {
                     label.setTextColor(mSaturdayColor);
                 } else if (position == Time.SUNDAY) {

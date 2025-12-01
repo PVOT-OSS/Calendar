@@ -71,6 +71,7 @@
         <item name="android:textSize">12sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/month_other_month_day_number</item>
+        <item name="android:textAlignment">center</item>
     </style>
 
     <style name="TextAppearance.MonthView_DayLabel">
