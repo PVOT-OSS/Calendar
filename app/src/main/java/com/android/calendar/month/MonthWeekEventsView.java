@@ -88,7 +88,7 @@ public class MonthWeekEventsView extends SimpleWeekView {
     private static int mEventTextColor = Color.WHITE;
     private static int mDefaultEdgeSpacing = 0;
     private static int mSidePaddingMonthNumber = 4;
-    private static int mTopPaddingMonthNumber = 9;
+    private static int mTopPaddingMonthNumber = 4;
     private static int mTopPaddingWeekNumber = 4;
     private static int mSidePaddingWeekNumber = 12;
     private static int mDaySeparatorInnerWidth = 1;
@@ -630,8 +630,9 @@ public class MonthWeekEventsView extends SimpleWeekView {
                 isFocusMonth = mFocusDay[i];
                 mMonthNumPaint.setColor(isFocusMonth ? mMonthNumColor : mMonthNumOtherColor);
             }
+            int dayPosition = mShowWeekNum ? (i - 1) : i;
             int dayWidth = mWidth / mNumDays;
-            x = computeDayLeftPosition(i - offset) + (dayWidth / 2);
+            x = computeDayLeftPosition(dayPosition) + (dayWidth / 2);
             canvas.drawText(mDayNumbers[i], x, y, mMonthNumPaint);
             if (isBold) {
                 mMonthNumPaint.setFakeBoldText(isBold = false);
