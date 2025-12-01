@@ -435,7 +435,8 @@ public class SimpleWeekView extends View {
      * @param canvas The canvas to draw on
      */
     protected void drawWeekNums(Canvas canvas) {
-        int y = ((mHeight + MINI_DAY_NUMBER_TEXT_SIZE) / 2) - DAY_SEPARATOR_WIDTH;
+        int topPadding = (int) (6 * mScale);
+        int y = ((mHeight + MINI_DAY_NUMBER_TEXT_SIZE) / 2) - DAY_SEPARATOR_WIDTH + topPadding;
         int nDays = mNumCells;
 
         int i = 0;

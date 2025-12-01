@@ -88,7 +88,7 @@ public class MonthWeekEventsView extends SimpleWeekView {
     private static int mEventTextColor = Color.WHITE;
     private static int mDefaultEdgeSpacing = 0;
     private static int mSidePaddingMonthNumber = 4;
-    private static int mTopPaddingMonthNumber = 3;
+    private static int mTopPaddingMonthNumber = 9;
     private static int mTopPaddingWeekNumber = 4;
     private static int mSidePaddingWeekNumber = 12;
     private static int mDaySeparatorInnerWidth = 1;
@@ -312,7 +312,7 @@ public class MonthWeekEventsView extends SimpleWeekView {
         mMonthNumPaint.setTextSize(mTextSizeMonthNumber);
         mMonthNumPaint.setColor(mMonthNumColor);
         mMonthNumPaint.setStyle(Style.FILL);
-        mMonthNumPaint.setTextAlign(Align.RIGHT);
+        mMonthNumPaint.setTextAlign(Align.CENTER);
         mMonthNumPaint.setTypeface(Typeface.DEFAULT);
 
         mMonthNumAscentHeight = (int) (-mMonthNumPaint.ascent() + 0.5f);
@@ -634,7 +634,8 @@ public class MonthWeekEventsView extends SimpleWeekView {
                 isFocusMonth = mFocusDay[i];
                 mMonthNumPaint.setColor(isFocusMonth ? mMonthNumColor : mMonthNumOtherColor);
             }
-            x = computeDayLeftPosition(i - offset) - (mSidePaddingMonthNumber);
+            int dayWidth = mWidth / mNumDays;
+            x = computeDayLeftPosition(i - offset) + (dayWidth / 2);
             canvas.drawText(mDayNumbers[i], x, y, mMonthNumPaint);
             if (isBold) {
                 mMonthNumPaint.setFakeBoldText(isBold = false);
