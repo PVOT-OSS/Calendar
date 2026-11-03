@@ -16,7 +16,17 @@
 
 package org.prauga.calendar;
 
-import android.test.AndroidTestCase;
+import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.shadows.ShadowSystem;
+import org.robolectric.shadows.ShadowSystemClock;
+
+import java.time.Duration;
+
 import android.test.suitebuilder.annotation.MediumTest;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -28,7 +38,12 @@ import java.util.Calendar;
 /**
  * Unit tests for {@link android.text.format.DateUtils#formatDateRange}.
  */
-public class FormatDateRangeTest extends AndroidTestCase {
+@RunWith(RobolectricTestRunner.class)
+public class FormatDateRangeTest extends TestCase {
+
+    private android.content.Context getContext() {
+        return RuntimeEnvironment.getApplication();
+    }
 
     static private class DateTest {
         public Time date1;
@@ -174,25 +189,34 @@ public class FormatDateRangeTest extends AndroidTestCase {
     };
 
     @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
+        ShadowSystemClock.advanceBy(Duration.ofMillis(
+                System.currentTimeMillis() - ShadowSystem.currentTimeMillis()));
     }
 
     @MediumTest
+    @Test
     public void testAll() throws Exception {
         int len = tests.length;
+        StringBuilder failures = new StringBuilder();
         for (int index = 0; index < len; index++) {
             DateTest dateTest = tests[index];
             long startMillis = dateTest.date1.toMillis();
             long endMillis = dateTest.date2.toMillis();
             int flags = dateTest.flags;
-            String output = DateUtils.formatDateRange(mContext, startMillis, endMillis, flags);
+            String output = DateUtils.formatDateRange(getContext(), startMillis, endMillis, flags)
+                    .replaceAll("[\\u00a0\\u2009\\u202f]", " ");
             if (!dateTest.expectedOutput.equals(output)) {
                 Log.i("FormatDateRangeTest", "index " + index
                         + " expected: " + dateTest.expectedOutput
                         + " actual: " + output);
             }
-            assertEquals(dateTest.expectedOutput, output);
+            if (!dateTest.expectedOutput.equals(output)) {
+                failures.append("\n#").append(index).append(" expected <")
+                        .append(dateTest.expectedOutput).append("> but was <").append(output).append(">");
+            }
         }
+        assertEquals("", failures.toString());
     }
 }

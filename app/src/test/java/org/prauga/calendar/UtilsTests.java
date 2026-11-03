@@ -19,17 +19,20 @@ package org.prauga.calendar;
 import org.prauga.calendar.CalendarUtils.TimeZoneUtils;
 import org.prauga.calendar.calendarcommon2.Time;
 
-import android.content.res.Configuration;
 import android.database.MatrixCursor;
 import android.provider.CalendarContract.CalendarCache;
-import android.test.mock.MockResources;
 import android.test.suitebuilder.annotation.SmallTest;
 import android.test.suitebuilder.annotation.Smoke;
-import android.util.DisplayMetrics;
 import java.util.HashMap;
 import java.util.Locale;
 
 import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import org.prauga.calendar.R;
 
@@ -40,6 +43,7 @@ import org.prauga.calendar.R;
  * "adb shell am instrument -w -e class org.prauga.calendar.UtilsTests
  *          org.prauga.calendar.tests/android.test.InstrumentationTestRunner"
  */
+@RunWith(RobolectricTestRunner.class)
 public class UtilsTests extends TestCase {
     HashMap<String, Boolean> mIsDuplicateName;
     HashMap<String, Boolean> mIsDuplicateNameExpected;
@@ -78,49 +82,6 @@ public class UtilsTests extends TestCase {
     private static final long NOW_TIME = createTimeInMillis(5, 5, 5, NOW_DAY, NOW_MONTH, NOW_YEAR);
     private static final String DEFAULT_TIMEZONE = Utils.getCurrentTimezone();
 
-    /**
-     * Mock resources.  Add translation strings for test here.
-     */
-    private static class ResourcesForTest extends MockResources {
-        @Override
-        public String getString(int id) {
-            if (id == R.string.today) {
-                return "Today";
-            }
-            if (id == R.string.tomorrow) {
-                return "Tomorrow";
-            }
-            throw new IllegalArgumentException("unexpected resource ID: " + id);
-        }
-
-        @Override
-        public String getString(int id, Object... formatArgs) {
-            if (id == R.string.today_at_time_fmt) {
-                return String.format("Today at %s", formatArgs);
-            }
-            if (id == R.string.tomorrow_at_time_fmt) {
-                return String.format("Tomorrow at %s", formatArgs);
-            }
-            if (id == R.string.date_time_fmt) {
-                return String.format("%s, %s", formatArgs);
-            }
-            throw new IllegalArgumentException("unexpected resource ID: " + id);
-        }
-
-        @Override
-        public Configuration getConfiguration() {
-            Configuration config = new Configuration();
-            config.locale = Locale.getDefault();
-            return config;
-        }
-
-        @Override
-        public DisplayMetrics getDisplayMetrics(){
-            DisplayMetrics metrics = new DisplayMetrics();
-            metrics.density = 2.0f;
-            return metrics;
-        }
-    }
 
     private static long createTimeInMillis(int second, int minute, int hour, int monthDay,
             int month, int year) {
@@ -136,11 +97,17 @@ public class UtilsTests extends TestCase {
         return t.toMillis();
     }
 
+    public static void assertEquals(String expected, String actual) {
+        TestCase.assertEquals(expected,
+                actual == null ? null : actual.replaceAll("[\\u00a0\\u2009\\u202f]", " "));
+    }
+
     private void setTimezone(String tz) {
         timezoneUtils.setTimeZone(dbUtils.getContext(), tz);
     }
 
     @Override
+    @Before
     public void setUp() {
         mIsDuplicateName = new HashMap<String, Boolean> ();
         mDuplicateNameCursor = new MatrixCursor(DUPLICATE_NAME_COLUMNS);
@@ -156,15 +123,15 @@ public class UtilsTests extends TestCase {
         mIsDuplicateNameExpected.put("John Jameson", true);
 
         // Set up fake db.
-        dbUtils = new DbTestUtils(new ResourcesForTest());
-        dbUtils.getContentResolver().addProvider("settings", dbUtils.getContentProvider());
-        dbUtils.getContentResolver().addProvider(CalendarCache.URI.getAuthority(),
-                dbUtils.getContentProvider());
+        dbUtils = new DbTestUtils(RuntimeEnvironment.getApplication().getResources());
+        dbUtils.addProvider("settings");
+        dbUtils.addProvider(CalendarCache.URI.getAuthority());
 
         setTimezone(DEFAULT_TIMEZONE);
     }
 
     @Override
+    @After
     public void tearDown() {
         mDuplicateNameCursor.close();
 
@@ -175,6 +142,7 @@ public class UtilsTests extends TestCase {
 
     @Smoke
     @SmallTest
+    @Test
     public void testGetWeeksSinceEpochFromJulianDay() {
         for (int i = 0; i < JULIAN_DAYS.length; i++) {
             assertEquals(EXPECTED_WEEK_MONDAY_START[i],
@@ -188,6 +156,7 @@ public class UtilsTests extends TestCase {
 
     @Smoke
     @SmallTest
+    @Test
     public void testGetJulianMondayFromWeeksSinceEpoch() {
         for (int i = 0; i < WEEKS_FOR_JULIAN_MONDAYS.length; i++) {
             assertEquals(EXPECTED_JULIAN_MONDAYS[i],
@@ -209,6 +178,7 @@ public class UtilsTests extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testGetDisplayedDatetime_differentYear() {
         // 4/12/2000 5pm - 4/12/2000 6pm
         long start = createTimeInMillis(0, 0, 17, 12, 3, 2000);
@@ -226,6 +196,7 @@ public class UtilsTests extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testGetDisplayedDatetime_sameYear() {
         // 4/12/2012 5pm - 4/12/2012 6pm
         long start = createTimeInMillis(0, 0, 17, 12, 3, 2012);
@@ -236,6 +207,7 @@ public class UtilsTests extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testGetDisplayedDatetime_today() {
         // 4/10/2012 5pm - 4/10/2012 6pm
         long start = createTimeInMillis(0, 0, 17, NOW_DAY, NOW_MONTH, NOW_YEAR);
@@ -246,6 +218,7 @@ public class UtilsTests extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testGetDisplayedDatetime_todayMidnight() {
         // 4/10/2012 5pm - 4/11/2012 12am
         long start = createTimeInMillis(0, 0, 17, NOW_DAY, NOW_MONTH, NOW_YEAR);
@@ -256,6 +229,7 @@ public class UtilsTests extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testGetDisplayedDatetime_tomorrow() {
         // 4/11/2012 12:01AM - 4/11/2012 11:59pm
         long start = createTimeInMillis(0, 1, 0, NOW_DAY + 1, NOW_MONTH, NOW_YEAR);
@@ -266,6 +240,7 @@ public class UtilsTests extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testGetDisplayedDatetime_yesterday() {
         // 4/9/2012 5pm - 4/9/2012 6pm
         long start = createTimeInMillis(0, 0, 17, 9, 3, 2012);
@@ -276,6 +251,7 @@ public class UtilsTests extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testGetDisplayedDatetime_multiDay() {
         // 4/10/2012 12:01AM - 4/11/2012 12:01AM
         long start = createTimeInMillis(0, 1, 0, NOW_DAY, NOW_MONTH, NOW_YEAR);
@@ -286,6 +262,7 @@ public class UtilsTests extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testGetDisplayedDatetime_allDay() {
         // 4/2/2012 12:00AM - 4/3/2012 12:00AM
         long start = createTimeInMillis(0, 0, 0, 2, 3, NOW_YEAR, Time.TIMEZONE_UTC);
@@ -296,6 +273,7 @@ public class UtilsTests extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testGetDisplayedDatetime_allDayToday() {
         // 4/10/2012 12:00AM - 4/11/2012 12:00AM
         long start = createTimeInMillis(0, 0, 0, NOW_DAY, NOW_MONTH, NOW_YEAR, Time.TIMEZONE_UTC);
@@ -306,6 +284,7 @@ public class UtilsTests extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testGetDisplayedDatetime_allDayMultiday() {
         // 4/10/2012 12:00AM - 4/13/2012 12:00AM
         long start = createTimeInMillis(0, 0, 0, NOW_DAY, NOW_MONTH, NOW_YEAR, Time.TIMEZONE_UTC);
@@ -316,6 +295,7 @@ public class UtilsTests extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testGetDisplayedDatetime_differentTimezone() {
         String localTz = "America/New_York";
         String eventTz = "America/Los_Angeles";
@@ -330,6 +310,7 @@ public class UtilsTests extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testGetDisplayedDatetime_allDayDiffTimezone() {
         String localTz = "America/New_York";
         setTimezone(localTz);
@@ -343,6 +324,7 @@ public class UtilsTests extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testGetDisplayedDatetime_allDayTomorrowDiffTimezone() {
         String localTz = "America/New_York";
         setTimezone(localTz);
@@ -360,6 +342,7 @@ public class UtilsTests extends TestCase {
     // TODO: add tests for army time.
 
     @SmallTest
+    @Test
     public void testGetDisplayedTimezone_sameTimezone() {
         String localTz = "America/New_York";
         setTimezone(localTz);
@@ -370,6 +353,7 @@ public class UtilsTests extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testGetDisplayedTimezone_differentTimezone() {
         String localTz = "America/New_York";
         String eventTz = "America/Los_Angeles";
@@ -381,6 +365,7 @@ public class UtilsTests extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testGetDisplayedTimezone_differentTimezoneDst() {
         String localTz = "America/New_York";
         String eventTz = "America/Los_Angeles";

@@ -17,11 +17,14 @@
 package org.prauga.calendar.calendarcommon2;
 
 import androidx.test.filters.SmallTest;
-import androidx.test.filters.Suppress;
+import org.junit.Ignore;
 
 import org.prauga.calendar.calendarcommon2.EventRecurrence.InvalidFormatException;
 
 import junit.framework.TestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 import java.util.Arrays;
 
@@ -31,9 +34,11 @@ import java.util.Arrays;
  * adb shell am instrument -w -e class org.prauga.calendar.calendarcommon2.EventRecurrenceTest \
  *   org.prauga.calendar.calendarcommon2.tests/android.test.InstrumentationTestRunner
  */
+@RunWith(RobolectricTestRunner.class)
 public class EventRecurrenceTest extends TestCase {
 
     @SmallTest
+    @Test
     public void test0() throws Exception {
         verifyRecurType("FREQ=SECONDLY",
                 /* int freq */         EventRecurrence.SECONDLY,
@@ -55,6 +60,7 @@ public class EventRecurrenceTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void test1() throws Exception {
         verifyRecurType("FREQ=MINUTELY",
                 /* int freq */         EventRecurrence.MINUTELY,
@@ -76,6 +82,7 @@ public class EventRecurrenceTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void test2() throws Exception {
         verifyRecurType("FREQ=HOURLY",
                 /* int freq */         EventRecurrence.HOURLY,
@@ -97,6 +104,7 @@ public class EventRecurrenceTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void test3() throws Exception {
         verifyRecurType("FREQ=DAILY",
                 /* int freq */         EventRecurrence.DAILY,
@@ -118,6 +126,7 @@ public class EventRecurrenceTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void test4() throws Exception {
         verifyRecurType("FREQ=WEEKLY",
                 /* int freq */         EventRecurrence.WEEKLY,
@@ -139,6 +148,7 @@ public class EventRecurrenceTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void test5() throws Exception {
         verifyRecurType("FREQ=MONTHLY",
                 /* int freq */         EventRecurrence.MONTHLY,
@@ -160,6 +170,7 @@ public class EventRecurrenceTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void test6() throws Exception {
         verifyRecurType("FREQ=YEARLY",
                 /* int freq */         EventRecurrence.YEARLY,
@@ -181,6 +192,7 @@ public class EventRecurrenceTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void test7() throws Exception {
         // with an until
         verifyRecurType("FREQ=DAILY;UNTIL=112233T223344Z",
@@ -203,6 +215,7 @@ public class EventRecurrenceTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void test8() throws Exception {
         // with a count
         verifyRecurType("FREQ=DAILY;COUNT=334",
@@ -225,6 +238,7 @@ public class EventRecurrenceTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void test9() throws Exception {
         // with a count
         verifyRecurType("FREQ=DAILY;INTERVAL=5000",
@@ -247,6 +261,7 @@ public class EventRecurrenceTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void test10() throws Exception {
         // verifyRecurType all of the BY* ones with one element
         verifyRecurType("FREQ=DAILY"
@@ -278,6 +293,7 @@ public class EventRecurrenceTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void test11() throws Exception {
         // verifyRecurType all of the BY* ones with one element
         verifyRecurType("FREQ=DAILY"
@@ -320,6 +336,7 @@ public class EventRecurrenceTest extends TestCase {
 
     // this is a negative verifyRecurType case to verifyRecurType the range of the numbers accepted
     @SmallTest
+    @Test
     public void test12() throws Exception {
         Check[] checks = new Check[]{
                 new Check("BYSECOND", -100, -1, 60, 100),
@@ -349,6 +366,7 @@ public class EventRecurrenceTest extends TestCase {
 
     // verifyRecurType BYDAY
     @SmallTest
+    @Test
     public void test13() throws Exception {
         verifyRecurType("FREQ=DAILY;BYDAY=1SU,-2MO,+33TU,WE,TH,FR,SA",
                 /* int freq */         EventRecurrence.DAILY,
@@ -377,8 +395,9 @@ public class EventRecurrenceTest extends TestCase {
         );
     }
 
-    @Suppress
+    @Ignore
     // Repro bug #2331761 - this should fail because of the last comma into BYDAY
+    @Test
     public void test14() throws Exception {
         verifyRecurType("FREQ=WEEKLY;WKST=MO;UNTIL=20100129T130000Z;INTERVAL=1;BYDAY=MO,TU,WE,",
                 /* int freq */         EventRecurrence.WEEKLY,
@@ -404,6 +423,7 @@ public class EventRecurrenceTest extends TestCase {
     }
 
     // This test should pass
+    @Test
     public void test15() throws Exception {
         verifyRecurType("FREQ=WEEKLY;WKST=MO;UNTIL=20100129T130000Z;INTERVAL=1;"
                 + "BYDAY=MO,TU,WE,TH,FR,SA,SU",
@@ -434,6 +454,7 @@ public class EventRecurrenceTest extends TestCase {
     }
 
     // Sample coming from RFC2445
+    @Test
     public void test16() throws Exception {
         verifyRecurType("FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1",
                 /* int freq */         EventRecurrence.MONTHLY,
@@ -461,6 +482,7 @@ public class EventRecurrenceTest extends TestCase {
     }
 
     // Sample coming from RFC2445
+    @Test
     public void test17() throws Exception {
         verifyRecurType("FREQ=DAILY;COUNT=10;INTERVAL=2",
                 /* int freq */         EventRecurrence.DAILY,
@@ -482,6 +504,7 @@ public class EventRecurrenceTest extends TestCase {
     }
 
     // Sample coming from RFC2445
+    @Test
     public void test18() throws Exception {
         verifyRecurType("FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10",
                 /* int freq */         EventRecurrence.YEARLY,
@@ -505,6 +528,7 @@ public class EventRecurrenceTest extends TestCase {
     }
 
     // Sample coming from bug #1640517
+    @Test
     public void test19() throws Exception {
         verifyRecurType("FREQ=YEARLY;BYMONTH=3;BYDAY=TH",
                 /* int freq */         EventRecurrence.YEARLY,
@@ -528,6 +552,7 @@ public class EventRecurrenceTest extends TestCase {
     }
 
     // INTERVAL = 0 -> Interval = 1 bug #5676414
+    @Test
     public void test20() throws Exception {
         verifyRecurType("FREQ=YEARLY;BYMONTHDAY=18;BYMONTH=10;INTERVAL=0;",
                 /* int freq */         EventRecurrence.YEARLY,
@@ -549,6 +574,7 @@ public class EventRecurrenceTest extends TestCase {
     }
 
     // Working case: INTERVAL=1 -> Interval = 1 bug #5676414
+    @Test
     public void test21() throws Exception {
         verifyRecurType("FREQ=WEEKLY;WKST=SU;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR",
                 /* int freq */         EventRecurrence.WEEKLY,
@@ -576,6 +602,7 @@ public class EventRecurrenceTest extends TestCase {
     }
 
     // Working case: INTERVAL=2 -> Interval = 2 bug #5676414
+    @Test
     public void test22() throws Exception {
         verifyRecurType("FREQ=WEEKLY;WKST=SU;INTERVAL=2;BYDAY=MO,TU,WE,TH,FR",
                 /* int freq */         EventRecurrence.WEEKLY,
@@ -603,6 +630,7 @@ public class EventRecurrenceTest extends TestCase {
     }
 
     // COUNT < 0 -> Count = 1 bug #5676414
+    @Test
     public void test23() throws Exception {
         verifyRecurType("FREQ=WEEKLY;COUNT=-20;BYDAY=MO,TU,WE,TH,FR;",
                 /* int freq */         EventRecurrence.WEEKLY,
@@ -630,6 +658,7 @@ public class EventRecurrenceTest extends TestCase {
     }
 
     // Working case: COUNT=2 -> Count=2 bug #5676414
+    @Test
     public void test24() throws Exception {
         verifyRecurType("FREQ=WEEKLY;COUNT=2;BYDAY=MO,TU,WE,TH,FR;",
                 /* int freq */         EventRecurrence.WEEKLY,
@@ -867,6 +896,7 @@ public class EventRecurrenceTest extends TestCase {
      * Simple test of good/bad rules.
      */
     @SmallTest
+    @Test
     public void testBasicParse() {
         for (String rule : GOOD_RRULES) {
             EventRecurrence recur = new EventRecurrence();

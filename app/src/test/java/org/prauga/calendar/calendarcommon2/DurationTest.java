@@ -20,7 +20,11 @@ package org.prauga.calendar.calendarcommon2;
 import androidx.test.filters.SmallTest;
 
 import junit.framework.TestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
+@RunWith(RobolectricTestRunner.class)
 public class DurationTest extends TestCase {
 
     private void verifyDuration(String str,
@@ -39,6 +43,7 @@ public class DurationTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testParse() throws Exception {
         verifyDuration("P7W", 1, 7, 0, 0, 0, 0);
         verifyDuration("PT7W", 1, 7, 0, 0, 0, 0);
@@ -56,6 +61,7 @@ public class DurationTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testParseInvalidStrings() throws Exception {
         try {
             verifyDuration(" -P15DT5H0M20S", 0, 0, 0, 0, 0, 0);

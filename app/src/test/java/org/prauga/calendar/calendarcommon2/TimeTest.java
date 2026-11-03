@@ -21,15 +21,20 @@ import androidx.test.filters.MediumTest;
 import androidx.test.filters.SmallTest;
 
 import junit.framework.TestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 /**
  * Tests for org.prauga.calendar.calendarcommon2.Time.
  *
  * Some of these tests are borrowed from android.text.format.TimeTest.
  */
+@RunWith(RobolectricTestRunner.class)
 public class TimeTest extends TestCase {
 
     @SmallTest
+    @Test
     public void testNullTimezone() {
         try {
             Time t = new Time(null);
@@ -40,12 +45,14 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testTimezone() {
         Time t = new Time(Time.TIMEZONE_UTC);
         assertEquals(Time.TIMEZONE_UTC, t.getTimezone());
     }
 
     @SmallTest
+    @Test
     public void testSwitchTimezone() {
         Time t = new Time(Time.TIMEZONE_UTC);
         String newTimezone = "America/Los_Angeles";
@@ -54,6 +61,7 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testGetActualMaximum() {
         Time t = new Time(Time.TIMEZONE_UTC);
         t.set(1, 0, 2020);
@@ -69,6 +77,7 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testAdd() {
         Time t = new Time(Time.TIMEZONE_UTC);
         t.set(0, 0, 0, 1, 0, 2020);
@@ -87,6 +96,7 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testClear() {
         Time t = new Time(Time.TIMEZONE_UTC);
         t.clear(Time.TIMEZONE_UTC);
@@ -105,6 +115,7 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testCompare() {
         Time a = new Time(Time.TIMEZONE_UTC);
         Time b = new Time("America/Los_Angeles");
@@ -118,6 +129,7 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testFormat2445() {
         Time t = new Time();
         assertEquals("19700101T000000", t.format2445());
@@ -128,6 +140,7 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testFormat3339() {
         Time t = new Time(Time.TIMEZONE_UTC);
         assertEquals("1970-01-01", t.format3339(true));
@@ -136,6 +149,7 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testToMillis() {
         Time t = new Time(Time.TIMEZONE_UTC);
         t.set(1, 0, 0, 1, 0, 1970);
@@ -153,6 +167,7 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testToMillis_overflow() {
         Time t = new Time(Time.TIMEZONE_UTC);
         t.set(32, 0, 2020);
@@ -162,6 +177,7 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testParse() {
         Time t = new Time(Time.TIMEZONE_UTC);
         t.parse("20201010T160000Z");
@@ -196,6 +212,7 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testParse3339() {
         Time t = new Time(Time.TIMEZONE_UTC);
 
@@ -278,6 +295,7 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testSet_millis() {
         Time t = new Time(Time.TIMEZONE_UTC);
 
@@ -303,6 +321,7 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testSet_dayMonthYear() {
         Time t = new Time(Time.TIMEZONE_UTC);
         t.set(1, 2, 2021);
@@ -312,6 +331,7 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testSet_secondMinuteHour() {
         Time t = new Time(Time.TIMEZONE_UTC);
         t.set(1, 2, 3, 4, 5, 2021);
@@ -324,6 +344,7 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testSet_overflow() {
         // Jan 32nd --> Feb 1st
         Time t = new Time(Time.TIMEZONE_UTC);
@@ -343,6 +364,7 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testSet_other() {
         Time t = new Time(Time.TIMEZONE_UTC);
         t.set(1, 2, 3, 4, 5, 2021);
@@ -358,6 +380,7 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testSetToNow() {
         long now = System.currentTimeMillis();
         Time t = new Time(Time.TIMEZONE_UTC);
@@ -368,6 +391,7 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testGetWeekNumber() {
         Time t = new Time(Time.TIMEZONE_UTC);
         t.set(1000L);
@@ -421,6 +445,7 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testNormalize() {
         Time t = new Time(Time.TIMEZONE_UTC);
         t.parse("20060432T010203");
@@ -505,6 +530,7 @@ public class TimeTest extends TestCase {
     };
 
     @MediumTest
+    @Test
     public void testNormalize_dst() {
         Time local = new Time("America/Los_Angeles");
 
@@ -562,6 +588,7 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testNormalize_overflow() {
         Time t = new Time(Time.TIMEZONE_UTC);
         t.set(32, 0, 2020);
@@ -571,6 +598,7 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testDstBehavior_addDays_ignoreDst() {
         Time time = new Time("America/Los_Angeles");
         time.set(4, 10, 2007);  // set to Nov 4, 2007, 12am
@@ -586,6 +614,7 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testDstBehavior_addDays_applyDst() {
         if (!Time.APPLY_DST_CHANGE_LOGIC) {
             return;
@@ -604,6 +633,7 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testDstBehavior_addHours_ignoreDst() {
         // Note: by default, Calendar applies DST logic if adding hours or minutes but not if adding
         // days, hence in this test, only if the APPLY_DST_CHANGE_LOGIC flag is false, then the time
@@ -624,6 +654,7 @@ public class TimeTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testDstBehavior_addHours_applyDst() {
         if (!Time.APPLY_DST_CHANGE_LOGIC) {
             return;
@@ -705,6 +736,7 @@ public class TimeTest extends TestCase {
     };
 
     @MediumTest
+    @Test
     public void testGetJulianDay() {
         Time time = new Time(Time.TIMEZONE_UTC);
 
@@ -731,6 +763,7 @@ public class TimeTest extends TestCase {
     }
 
     @MediumTest
+    @Test
     public void testSetJulianDay() {
         Time time = new Time(Time.TIMEZONE_UTC);
 

@@ -16,7 +16,13 @@
 
 package org.prauga.calendar;
 
-import android.test.AndroidTestCase;
+import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+
 import android.test.suitebuilder.annotation.SmallTest;
 import android.test.suitebuilder.annotation.Smoke;
 import android.text.format.DateUtils;
@@ -27,7 +33,12 @@ import org.prauga.calendar.calendarcommon2.Time;
 /**
  * Unit tests for {@link android.text.format.Time#getWeekNumber}.
  */
-public class WeekNumberTest extends AndroidTestCase {
+@RunWith(RobolectricTestRunner.class)
+public class WeekNumberTest extends TestCase {
+
+    private android.content.Context getContext() {
+        return RuntimeEnvironment.getApplication();
+    }
 
     static private class DateAndWeekNumber {
         public Time date;
@@ -196,12 +207,13 @@ public class WeekNumberTest extends AndroidTestCase {
     };
 
     @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
     }
 
     @Smoke
     @SmallTest
+    @Test
     public void testAll() throws Exception {
         int len = tests.length;
         for (int index = 0; index < len; index++) {
@@ -210,7 +222,7 @@ public class WeekNumberTest extends AndroidTestCase {
             if (weekNumber != test.expectedWeekNumber) {
                 long millis = test.date.toMillis();
                 int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NUMERIC_DATE;
-                String output = DateUtils.formatDateTime(mContext, millis, flags);
+                String output = DateUtils.formatDateTime(getContext(), millis, flags);
                 Log.i("WeekNumberTest", "index " + index
                         + " date: " + output
                         + " expected: " + test.expectedWeekNumber
@@ -222,7 +234,7 @@ public class WeekNumberTest extends AndroidTestCase {
             if (weekNumber != test.expectedWeekNumber) {
                 long millis = test.date.toMillis();
                 int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NUMERIC_DATE;
-                String output = DateUtils.formatDateTime(mContext, millis, flags);
+                String output = DateUtils.formatDateTime(getContext(), millis, flags);
                 Log.i("WeekNumberTest", "(all-day) index " + index
                         + " date: " + output
                         + " expected: " + test.expectedWeekNumber

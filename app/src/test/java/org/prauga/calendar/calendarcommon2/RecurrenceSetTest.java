@@ -24,6 +24,9 @@ import android.util.Log;
 import androidx.test.filters.SmallTest;
 
 import junit.framework.TestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,10 +34,12 @@ import java.util.List;
 /**
  * Test some pim.RecurrenceSet functionality.
  */
+@RunWith(RobolectricTestRunner.class)
 public class RecurrenceSetTest extends TestCase {
 
     // Test a recurrence
     @SmallTest
+    @Test
     public void testRecurrenceSet0() throws Exception {
         String recurrence = "DTSTART;TZID=America/New_York:20080221T070000\n"
                 + "DTEND;TZID=America/New_York:20080221T190000\n"
@@ -50,6 +55,7 @@ public class RecurrenceSetTest extends TestCase {
 
     // Test 1 day all-day event
     @SmallTest
+    @Test
     public void testRecurrenceSet1() throws Exception {
         String recurrence = "DTSTART;VALUE=DATE:20090821\nDTEND;VALUE=DATE:20090822\n"
                 + "RRULE:FREQ=YEARLY;WKST=SU";
@@ -61,6 +67,7 @@ public class RecurrenceSetTest extends TestCase {
 
     // Test 2 day all-day event
     @SmallTest
+    @Test
     public void testRecurrenceSet2() throws Exception {
         String recurrence = "DTSTART;VALUE=DATE:20090821\nDTEND;VALUE=DATE:20090823\n"
                 + "RRULE:FREQ=YEARLY;WKST=SU";
@@ -72,6 +79,7 @@ public class RecurrenceSetTest extends TestCase {
 
     // Test multi-rule RRULE.
     @SmallTest
+    @Test
     public void testRecurrenceSet3() throws Exception {
         String recurrence = "DTSTART;VALUE=DATE:20090821\n"
                 + "RRULE:FREQ=YEARLY;WKST=SU\n"
@@ -88,6 +96,7 @@ public class RecurrenceSetTest extends TestCase {
 
     // Test RDATE with VALUE=DATE.
     @SmallTest
+    @Test
     public void testRecurrenceSet4() throws Exception {
         String recurrence = "DTSTART;TZID=America/Los_Angeles:20090821T010203\n"
                 + "RDATE;TZID=America/Los_Angeles;VALUE=DATE:20110601,20110602,20110603\n"
@@ -103,6 +112,7 @@ public class RecurrenceSetTest extends TestCase {
 
     // Check generation of duration from events in different time zones.
     @SmallTest
+    @Test
     public void testRecurrenceSet5() throws Exception {
         String recurrence = "DTSTART;TZID=America/Los_Angeles:20090821T070000\n"
                 + "DTEND;TZID=America/New_York:20090821T110000\n"
@@ -127,6 +137,7 @@ public class RecurrenceSetTest extends TestCase {
 
     // Test multi-rule EXRULE.
     @SmallTest
+    @Test
     public void testRecurrenceSet6() throws Exception {
         final String recurrence = "DTSTART;VALUE=DATE:20090821\n"
                 + "RRULE:FREQ=YEARLY;WKST=SU\n"
@@ -147,6 +158,7 @@ public class RecurrenceSetTest extends TestCase {
 
     // Test multi-rule RDATE and EXDATE.
     @SmallTest
+    @Test
     public void testRecurrentSet7() throws Exception {
         final RecurrenceSet rs = new RecurrenceSet(
                 "FREQ=YEARLY;WKST=SU",
@@ -162,6 +174,7 @@ public class RecurrenceSetTest extends TestCase {
 
     // Test a failure to parse the recurrence data
     @SmallTest
+    @Test
     public void testRecurrenceSetBadDstart() throws Exception {
         String recurrence = "DTSTART;TZID=GMT+05:30:20080221T070000\n"
                 + "DTEND;TZID=GMT+05:30:20080221T190000\n"
@@ -172,6 +185,7 @@ public class RecurrenceSetTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testRecurrenceSetBadRrule() throws Exception {
         String recurrence = "DTSTART;TZID=America/New_York:20080221T070000\n"
                 + "DTEND;TZID=GMT+05:30:20080221T190000\n"

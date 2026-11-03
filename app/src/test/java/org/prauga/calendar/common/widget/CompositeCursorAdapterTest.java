@@ -15,10 +15,15 @@
  */
 package org.prauga.calendar.common.widget;
 
+import junit.framework.TestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.test.AndroidTestCase;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -34,7 +39,12 @@ import androidx.test.filters.SmallTest;
  * </pre>
  */
 @SmallTest
-public class CompositeCursorAdapterTest extends AndroidTestCase {
+@RunWith(RobolectricTestRunner.class)
+public class CompositeCursorAdapterTest extends TestCase {
+
+    private android.content.Context getContext() {
+        return RuntimeEnvironment.getApplication();
+    }
 
     public class TestCompositeCursorAdapter extends CompositeCursorAdapter {
 
@@ -78,6 +88,8 @@ public class CompositeCursorAdapterTest extends AndroidTestCase {
         }
     }
 
+    @Test
+
     public void testGetCountNoEmptySections() {
         TestCompositeCursorAdapter adapter = new TestCompositeCursorAdapter();
         adapter.addPartition(false, false);
@@ -88,6 +100,8 @@ public class CompositeCursorAdapterTest extends AndroidTestCase {
 
         assertEquals(5, adapter.getCount());
     }
+
+    @Test
 
     public void testGetViewNoEmptySections() {
         TestCompositeCursorAdapter adapter = new TestCompositeCursorAdapter();
@@ -104,6 +118,8 @@ public class CompositeCursorAdapterTest extends AndroidTestCase {
         assertEquals("0a[0] 1b[0] 1b[1]", adapter.toString());
     }
 
+    @Test
+
     public void testGetCountWithHeadersAndNoEmptySections() {
         TestCompositeCursorAdapter adapter = new TestCompositeCursorAdapter();
         adapter.addPartition(false, true);
@@ -114,6 +130,8 @@ public class CompositeCursorAdapterTest extends AndroidTestCase {
 
         assertEquals(7, adapter.getCount());
     }
+
+    @Test
 
     public void testGetViewWithHeadersNoEmptySections() {
         TestCompositeCursorAdapter adapter = new TestCompositeCursorAdapter();
@@ -130,6 +148,8 @@ public class CompositeCursorAdapterTest extends AndroidTestCase {
         assertEquals("0a[H] 0a[0] 1b[H] 1b[0] 1b[1]", adapter.toString());
     }
 
+    @Test
+
     public void testGetCountWithHiddenEmptySection() {
         TestCompositeCursorAdapter adapter = new TestCompositeCursorAdapter();
         adapter.addPartition(false, true);
@@ -139,6 +159,8 @@ public class CompositeCursorAdapterTest extends AndroidTestCase {
 
         assertEquals(3, adapter.getCount());
     }
+
+    @Test
 
     public void testGetPartitionForPosition() {
         TestCompositeCursorAdapter adapter = new TestCompositeCursorAdapter();
@@ -154,6 +176,8 @@ public class CompositeCursorAdapterTest extends AndroidTestCase {
         assertEquals(1, adapter.getPartitionForPosition(3));
     }
 
+    @Test
+
     public void testGetOffsetForPosition() {
         TestCompositeCursorAdapter adapter = new TestCompositeCursorAdapter();
         adapter.addPartition(true, false);
@@ -168,6 +192,8 @@ public class CompositeCursorAdapterTest extends AndroidTestCase {
         assertEquals(1, adapter.getOffsetInPartition(3));
     }
 
+    @Test
+
     public void testGetPositionForPartition() {
         TestCompositeCursorAdapter adapter = new TestCompositeCursorAdapter();
         adapter.addPartition(true, true);
@@ -179,6 +205,8 @@ public class CompositeCursorAdapterTest extends AndroidTestCase {
         assertEquals(0, adapter.getPositionForPartition(0));
         assertEquals(2, adapter.getPositionForPartition(1));
     }
+
+    @Test
 
     public void testGetViewWithHiddenEmptySections() {
         TestCompositeCursorAdapter adapter = new TestCompositeCursorAdapter();
@@ -194,6 +222,8 @@ public class CompositeCursorAdapterTest extends AndroidTestCase {
         assertEquals("1b[0] 1b[1]", adapter.toString());
     }
 
+    @Test
+
     public void testGetCountWithShownEmptySection() {
         TestCompositeCursorAdapter adapter = new TestCompositeCursorAdapter();
         adapter.addPartition(true, true);
@@ -203,6 +233,8 @@ public class CompositeCursorAdapterTest extends AndroidTestCase {
 
         assertEquals(4, adapter.getCount());
     }
+
+    @Test
 
     public void testGetViewWithShownEmptySections() {
         TestCompositeCursorAdapter adapter = new TestCompositeCursorAdapter();
@@ -218,6 +250,8 @@ public class CompositeCursorAdapterTest extends AndroidTestCase {
         assertEquals("0[H] 1b[H] 1b[0] 1b[1]", adapter.toString());
     }
 
+    @Test
+
     public void testAreAllItemsEnabledFalse() {
         TestCompositeCursorAdapter adapter = new TestCompositeCursorAdapter();
         adapter.addPartition(true, false);
@@ -226,6 +260,8 @@ public class CompositeCursorAdapterTest extends AndroidTestCase {
         assertFalse(adapter.areAllItemsEnabled());
     }
 
+    @Test
+
     public void testAreAllItemsEnabledTrue() {
         TestCompositeCursorAdapter adapter = new TestCompositeCursorAdapter();
         adapter.addPartition(true, false);
@@ -233,6 +269,8 @@ public class CompositeCursorAdapterTest extends AndroidTestCase {
 
         assertTrue(adapter.areAllItemsEnabled());
     }
+
+    @Test
 
     public void testIsEnabled() {
         TestCompositeCursorAdapter adapter = new TestCompositeCursorAdapter();

@@ -19,10 +19,14 @@ package org.prauga.calendar.common;
 import androidx.test.filters.SmallTest;
 
 import junit.framework.TestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@RunWith(RobolectricTestRunner.class)
 public class Rfc822ValidatorTest extends TestCase {
     static final String[] VALID_EMAILS = new String[] {
             "a@example.org", "b@exemple.fr", "c@d.e-f",
@@ -78,6 +82,7 @@ public class Rfc822ValidatorTest extends TestCase {
     };
 
     @SmallTest
+    @Test
     public void testEmailValidator() {
         Rfc822Validator validator = new Rfc822Validator("gmail.com");
 
@@ -101,6 +106,7 @@ public class Rfc822ValidatorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testEmailValidatorNullDomain() {
         Rfc822Validator validator = new Rfc822Validator(null);
 
@@ -116,6 +122,7 @@ public class Rfc822ValidatorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testEmailValidatorRemoveInvalid() {
         Rfc822Validator validator = new Rfc822Validator("google.com");
         validator.setRemoveInvalid(true);

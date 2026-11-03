@@ -17,6 +17,14 @@
 
 package org.prauga.calendar.widget;
 
+import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+
 import org.prauga.calendar.widget.CalendarAppWidgetModel.EventInfo;
 import org.prauga.calendar.widget.CalendarAppWidgetService.CalendarFactory;
 import org.prauga.calendar.Utils;
@@ -24,7 +32,6 @@ import org.prauga.calendar.calendarcommon2.Time;
 
 import android.content.Context;
 import android.database.MatrixCursor;
-import android.test.AndroidTestCase;
 import android.test.suitebuilder.annotation.SmallTest;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -36,7 +43,12 @@ import java.util.TimeZone;
 //   com.google.android.calendar.tests/android.test.InstrumentationTestRunner
 
 
-public class CalendarAppWidgetServiceTest extends AndroidTestCase {
+@RunWith(RobolectricTestRunner.class)
+public class CalendarAppWidgetServiceTest extends TestCase {
+
+    private android.content.Context getContext() {
+        return RuntimeEnvironment.getApplication();
+    }
     private static final String TAG = "CalendarAppWidgetService";
 
     private static final String DEFAULT_TIMEZONE = "America/Los_Angeles";
@@ -72,8 +84,8 @@ public class CalendarAppWidgetServiceTest extends AndroidTestCase {
 //    }
 
     @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         // we want to run these tests in a predictable timezone
         TimeZone.setDefault(TimeZone.getTimeZone(DEFAULT_TIMEZONE));
 
@@ -88,13 +100,14 @@ public class CalendarAppWidgetServiceTest extends AndroidTestCase {
     }
 
     @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
         // this restores the previous default timezone
         TimeZone.setDefault(null);
     }
 
     @SmallTest
+    @Test
     public void testGetAppWidgetModel_1Event() throws Exception {
         CalendarAppWidgetModel expected = new CalendarAppWidgetModel(getContext(),
                 Utils.getCurrentTimezone());
@@ -124,6 +137,7 @@ public class CalendarAppWidgetServiceTest extends AndroidTestCase {
     }
 
     @SmallTest
+    @Test
     public void testGetAppWidgetModel_AllDayEventLater() throws Exception {
         Context context = getContext();
         CalendarAppWidgetModel expected = new CalendarAppWidgetModel(getContext(),
@@ -159,10 +173,14 @@ public class CalendarAppWidgetServiceTest extends AndroidTestCase {
         eventInfo.visibWhen = View.VISIBLE;
         eventInfo.visibWhere = View.VISIBLE;
         eventInfo.visibTitle = View.VISIBLE;
-        eventInfo.when = DateUtils.formatDateTime(context, end,
+        String tz = Utils.getCurrentTimezone();
+        eventInfo.when = Utils.formatDateRange(context,
+                Utils.convertAlldayUtcToLocal(null, start, tz),
+                Utils.convertAlldayUtcToLocal(null, end, tz),
                 DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
         eventInfo.where = location + i;
         eventInfo.title = title + i;
+        expected.mEventInfos.add(eventInfo);
         cursor.addRow(getRow(1, start, end, title + i, location + i, 0));
 
         // Test

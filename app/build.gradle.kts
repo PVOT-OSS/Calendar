@@ -109,6 +109,16 @@ android {
 	useLibrary("android.test.base")
 	useLibrary("android.test.mock")
 
+	testOptions {
+		unitTests {
+			isIncludeAndroidResources = true
+			all {
+				it.jvmArgs("--add-opens=java.base/jdk.internal.access=ALL-UNNAMED")
+				it.systemProperty("user.timezone", "America/Los_Angeles")
+			}
+		}
+	}
+
 	androidResources {
 		generateLocaleConfig = true
 	}
@@ -127,6 +137,7 @@ dependencies {
     implementation(libs.androidx.concurrent.futures)
     testImplementation(libs.junit)
 	testImplementation(libs.androidx.test.runner)
+	testImplementation(libs.robolectric)
 
 	coreLibraryDesugaring(libs.android.tools.desugar)
 

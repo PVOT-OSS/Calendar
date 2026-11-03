@@ -25,9 +25,13 @@ import androidx.test.filters.MediumTest;
 import androidx.test.filters.SmallTest;
 
 import junit.framework.TestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 import java.util.TreeSet;
 
+@RunWith(RobolectricTestRunner.class)
 public class RecurrenceProcessorTest extends TestCase {
     private static final String TAG = "RecurrenceProcessorTest";
     private static final boolean SPEW = true;
@@ -169,6 +173,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testMonthly0() throws Exception {
         verifyRecurrence("20060205T100000", "FREQ=MONTHLY;COUNT=3",
                 null /* rdate */, null /* exrule */, null /* exdate */,
@@ -181,6 +186,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testMonthly1() throws Exception {
         verifyRecurrence("20060205T100000", "FREQ=MONTHLY;INTERVAL=2;COUNT=3",
                 null /* rdate */, null /* exrule */, null /* exdate */,
@@ -193,6 +199,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testMonthly2() throws Exception {
         // this tests wrapping the year when the interval isn't divisible
         // by 12
@@ -209,6 +216,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testMonthly3() throws Exception {
         // with a simple BYDAY, spanning two months
         verifyRecurrence("20060104T123456",
@@ -229,6 +237,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testMonthly4() throws Exception {
         // with a BYDAY with +1 / etc., spanning two months and
         // one day which isn't in the result
@@ -252,6 +261,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testMonthly5() throws Exception {
         // with a BYDAY with -1 / etc.
         verifyRecurrence("20060201T123456",
@@ -269,6 +279,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testMonthly6() throws Exception {
         // With positive BYMONTHDAYs
         verifyRecurrence("20060201T123456",
@@ -285,6 +296,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testMonthly7() throws Exception {
         // With negative BYMONTHDAYs
         verifyRecurrence("20060201T123456",
@@ -301,6 +313,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testMonthly8() throws Exception {
         verifyRecurrence("20060205T100000", "FREQ=MONTHLY;COUNT=3",
                 "America/Los_Angeles;20060207T140000,20060307T160000,20060407T180000",
@@ -317,6 +330,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testMonthly9() throws Exception {
         verifyRecurrence("20060205T100000", null /* rrule */,
                 "America/Los_Angeles;20060207T140000,20060307T160000,20060407T180000",
@@ -330,6 +344,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testMonthly10() throws Exception {
         verifyRecurrence("20060205T100000", "FREQ=MONTHLY;COUNT=3\nFREQ=WEEKLY;COUNT=2",
                 "America/Los_Angeles;20060207T140000,20060307T160000,20060407T180000",
@@ -347,6 +362,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testMonthly11() throws Exception {
         verifyRecurrence("20060205T100000", "FREQ=MONTHLY;COUNT=3\nFREQ=WEEKLY;COUNT=2",
                 null /* rdate */,
@@ -359,6 +375,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testMonthly12() throws Exception {
         verifyRecurrence("20060205T100000", "FREQ=MONTHLY;COUNT=3\nFREQ=WEEKLY;COUNT=2",
                 null /* rdate */, null /* exrule */,
@@ -371,6 +388,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testMonthly13() throws Exception {
         verifyRecurrence("20060101T100000", "FREQ=MONTHLY;BYDAY=FR;BYMONTHDAY=13;COUNT=10",
                 null /* rdate */, null /* exrule */, null /* exdate */,
@@ -390,6 +408,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testMonthly14() throws Exception {
         verifyRecurrence("20110103T100000", "FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=1,-1",
                 null /* rdate */, null /* exrule */, null /* exdate */,
@@ -405,6 +424,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testMonthly15() throws Exception {
         verifyRecurrence("20110703T100000", "FREQ=MONTHLY;BYDAY=SA,SU;BYSETPOS=2,-2",
                 null /* rdate */, null /* exrule */, null /* exdate */,
@@ -420,6 +440,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testWeekly0() throws Exception {
         verifyRecurrence("20060215T100000", "FREQ=WEEKLY;COUNT=3",
                 null /* rdate */, null /* exrule */, null /* exdate */,
@@ -432,6 +453,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testWeekly1() throws Exception {
         verifyRecurrence("20060215T100000", "FREQ=WEEKLY;UNTIL=20060301T100000Z",
                 null /* rdate */, null /* exrule */, null /* exdate */,
@@ -443,6 +465,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testWeekly2() throws Exception {
         verifyRecurrence("20060215T100000", "FREQ=WEEKLY;UNTIL=20060301T100001Z",
                 null /* rdate */, null /* exrule */, null /* exdate */,
@@ -454,6 +477,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testWeekly3() throws Exception {
         verifyRecurrence("20060215T100000", "FREQ=WEEKLY;UNTIL=20060301T090000Z",
                 null /* rdate */, null /* exrule */, null /* exdate */,
@@ -465,6 +489,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testWeekly4() throws Exception {
         verifyRecurrence("20060215T100000", "FREQ=WEEKLY;UNTIL=20060311T100001Z;BYDAY=TU",
                 null /* rdate */, null /* exrule */, null /* exdate */,
@@ -479,6 +504,7 @@ public class RecurrenceProcessorTest extends TestCase {
 
     // until without "Z"
     @SmallTest
+    @Test
     public void testWeekly4a() throws Exception {
         verifyRecurrence("20060215T100000", "FREQ=WEEKLY;UNTIL=20060311T100001;BYDAY=TU",
                 null /* rdate */, null /* exrule */, null /* exdate */,
@@ -492,6 +518,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testWeekly5() throws Exception {
         verifyRecurrence("20060215T100000", "FREQ=WEEKLY;UNTIL=20060311T100001Z;BYDAY=TH",
                 null /* rdate */, null /* exrule */, null /* exdate */,
@@ -506,6 +533,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testWeekly6() throws Exception {
         verifyRecurrence("20060215T100000", "FREQ=WEEKLY;UNTIL=20060309T100001Z;BYDAY=WE,TH",
                 null /* rdate */, null /* exrule */, null /* exdate */,
@@ -522,6 +550,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testWeekly7() throws Exception {
         verifyRecurrence("20060215T100000", "FREQ=WEEKLY;UNTIL=20060220T100001Z;BYDAY=SU",
                 null /* rdate */, null /* exrule */, null /* exdate */,
@@ -533,6 +562,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testWeekly8() throws Exception {
         verifyRecurrence("20060215T100000", "FREQ=WEEKLY;COUNT=4;WKST=SU;BYDAY=TU,TH",
                 null /* rdate */, null /* exrule */, null /* exdate */,
@@ -546,6 +576,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testWeekly9() throws Exception {
         verifyRecurrence("19970805T100000",
                 "FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU",   // uses default WKST=MO
@@ -560,6 +591,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testWeekly10() throws Exception {
         verifyRecurrence("19970805T100000",
                 "FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=SU",
@@ -575,6 +607,7 @@ public class RecurrenceProcessorTest extends TestCase {
 
     // BUG 1658567: UNTIL=date
     @SmallTest
+    @Test
     public void testWeekly11() throws Exception {
         verifyRecurrence("20060215T100000", "FREQ=WEEKLY;UNTIL=20060220;BYDAY=SU",
                 null /* rdate */, null /* exrule */, null /* exdate */,
@@ -586,6 +619,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testWeekly12() throws Exception {
         try {
             verifyRecurrence("20060215T100000", "FREQ=WEEKLY;UNTIL=junk;BYDAY=SU",
@@ -607,6 +641,7 @@ public class RecurrenceProcessorTest extends TestCase {
      * @throws Exception
      */
     @SmallTest
+    @Test
     public void testWeekly13() throws Exception {
         verifyRecurrence("20101117T150000",
                 "FREQ=WEEKLY;BYDAY=WE",
@@ -616,6 +651,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testWeekly14() throws Exception {
         verifyRecurrence("19970805T100000",
                 "FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=TH",
@@ -630,6 +666,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testDaily0() throws Exception {
         verifyRecurrence("20060215T100000", "FREQ=DAILY;COUNT=3",
                 null /* rdate */, null /* exrule */, null /* exdate */,
@@ -642,6 +679,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testDaily1() throws Exception {
         verifyRecurrence("20060215T100000", "FREQ=DAILY;UNTIL=20060302T100001Z",
                 null /* rdate */, null /* exrule */, null /* exdate */,
@@ -666,6 +704,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testDaily2() throws Exception {
         verifyRecurrence("20060215T100000", "FREQ=DAILY;UNTIL=20060220T100001Z;BYDAY=SU",
                 null /* rdate */, null /* exrule */, null /* exdate */,
@@ -677,6 +716,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testDaily3() throws Exception {
         verifyRecurrence("20060219T100000",
                 "FREQ=DAILY;UNTIL=20060225T180304Z;BYDAY=SU,MO,SA;BYHOUR=5,10,22;BYMINUTE=3,59;BYSECOND=2,5",
@@ -713,6 +753,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @MediumTest
+    @Test
     public void testFromGoogleCalendar0() throws Exception {
         // Tuesday, Thursday (10/2)
         verifyRecurrence("20061002T050000",
@@ -838,6 +879,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @MediumTest
+    @Test
     public void testFromGoogleCalendar1() throws Exception {
         // Mon Wed Fri
         verifyRecurrence("20061002T030000",
@@ -1016,6 +1058,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testFromGoogleCalendar2() throws Exception {
         // Monthly on day 2
         verifyRecurrence("20061002T070000",
@@ -1054,6 +1097,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @MediumTest
+    @Test
     public void testFromGoogleCalendar3() throws Exception {
         // Every Weekday
         verifyRecurrence("20061002T100000",
@@ -1163,6 +1207,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testFromGoogleCalendar4() throws Exception {
         // Every 5 months on day 2
         verifyRecurrence("20061003T100000",
@@ -1180,6 +1225,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @MediumTest
+    @Test
     public void testFromGoogleCalendar5() throws Exception {
         // Tuesday, Thursday (10/3)
         verifyRecurrence("20061003T040000",
@@ -1426,6 +1472,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @MediumTest
+    @Test
     public void testFromGoogleCalendar6() throws Exception {
         // Weekly on all days
         verifyRecurrence("20061003T060000",
@@ -1802,6 +1849,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @MediumTest
+    @Test
     public void testFromGoogleCalendar7() throws Exception {
         // Every 3 days
         verifyRecurrence("20061003T080000",
@@ -2087,6 +2135,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testFromGoogleCalendar8() throws Exception {
         // Annually on October 4
         verifyRecurrence("20061004T130000",
@@ -2101,6 +2150,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @MediumTest
+    @Test
     public void testFromGoogleCalendar9() throws Exception {
         // Monthly on the last Monday
         verifyRecurrence("20061030T170000",
@@ -2139,6 +2189,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testFromGoogleCalendar10() throws Exception {
         // Every 7 weeks on Tuesday, Wednesday
         verifyRecurrence("20061004T090000",
@@ -2155,6 +2206,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testFromGoogleCalendar11() throws Exception {
         // Monthly on day 31
         verifyRecurrence("20061031T160000",
@@ -2183,6 +2235,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testFromGoogleCalendar12() throws Exception {
         // Every 2 months on the first Tuesday
         verifyRecurrence("20061004T110000",
@@ -2209,6 +2262,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testYearly0() throws Exception {
         verifyRecurrence("20080101T100000",
                 "FREQ=YEARLY;UNTIL=20090131T090000Z;BYMONTH=1;BYDAY=SU,MO",
@@ -2350,6 +2404,7 @@ public class RecurrenceProcessorTest extends TestCase {
      *
      * @throws Exception
      */
+    @Test
     public void testCount1() throws Exception {
         verifyRecurrence("20100324T153000",
                 "FREQ=WEEKLY;INTERVAL=1;COUNT=10;BYDAY=WE",
@@ -2374,6 +2429,7 @@ public class RecurrenceProcessorTest extends TestCase {
      * Time range covers the first part of the repetition.
      * @throws Exception
      */
+    @Test
     public void testCount2() throws Exception {
         verifyRecurrence("20100324T153000",
                 "FREQ=WEEKLY;INTERVAL=1;COUNT=10;BYDAY=WE",
@@ -2392,6 +2448,7 @@ public class RecurrenceProcessorTest extends TestCase {
      * Time range is beyond the repetition.
      * @throws Exception
      */
+    @Test
     public void testCount3() throws Exception {
         verifyRecurrence("20100324T153000",
                 "FREQ=WEEKLY;INTERVAL=1;COUNT=10;BYDAY=WE",
@@ -2406,6 +2463,7 @@ public class RecurrenceProcessorTest extends TestCase {
      * Time range is before the repetition
      * @throws Exception
      */
+    @Test
     public void testCount4() throws Exception {
         verifyRecurrence("20100324T153000",
                 "FREQ=WEEKLY;INTERVAL=1;COUNT=10;BYDAY=WE",
@@ -2533,6 +2591,7 @@ public class RecurrenceProcessorTest extends TestCase {
     }
 
     @SmallTest
+    @Test
     public void testYearDay() {
         assertEquals(181, RecurrenceProcessor.yearDay(2019, 6, 1));
 
