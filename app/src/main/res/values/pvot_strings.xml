@@ -36,6 +36,11 @@
     <string name="move_undo">Undo</string>
     <string name="move_failed">Couldn\'t change the event</string>
 
+    <string name="quick_create_title_hint">Add title</string>
+    <string name="quick_create_all_day">All day</string>
+    <string name="quick_create_more">More options</string>
+    <string name="quick_create_saved">Event saved</string>
+
     <string name="shortcut_today">Today</string>
 
     <string name="join_meeting">Join meeting</string>

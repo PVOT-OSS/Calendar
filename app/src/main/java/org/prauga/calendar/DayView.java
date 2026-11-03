@@ -3994,9 +3994,15 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
                 extraLong = CalendarController.EXTRA_CREATE_ALL_DAY;
             }
             mSelectionMode = SELECTION_SELECTED;
-            mController.sendEventRelatedEventWithExtra(this, EventType.CREATE_EVENT, -1,
-                    getSelectedTimeInMillis(), 0, (int) ev.getRawX(), (int) ev.getRawY(),
-                    extraLong, -1);
+            if (mContext instanceof androidx.fragment.app.FragmentActivity) {
+                org.prauga.calendar.event.QuickCreateSheet.show(
+                        ((androidx.fragment.app.FragmentActivity) mContext).getSupportFragmentManager(),
+                        mContext, getSelectedTimeInMillis(), mSelectionAllday);
+            } else {
+                mController.sendEventRelatedEventWithExtra(this, EventType.CREATE_EVENT, -1,
+                        getSelectedTimeInMillis(), 0, (int) ev.getRawX(), (int) ev.getRawY(),
+                        extraLong, -1);
+            }
         } else if (mSelectedEvent != null) {
             // If the tap is on an event, launch the "View event" view
             if (mIsAccessibilityEnabled) {

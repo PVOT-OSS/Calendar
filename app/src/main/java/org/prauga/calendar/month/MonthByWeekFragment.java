@@ -149,8 +149,8 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
             final FragmentManager manager = getParentFragmentManager();
             if (manager != null) {
                 Time day = (Time) msg.obj;
-                mEventDialog = new CreateEventDialogFragment(day);
-                mEventDialog.show(manager, TAG_EVENT_DIALOG);
+                org.prauga.calendar.event.QuickCreateSheet.show(manager, requireContext(),
+                        day.toMillis(), true);
             }
         }
     };
