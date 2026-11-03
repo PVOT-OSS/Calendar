@@ -242,7 +242,10 @@ public class AlertReceiver extends BroadcastReceiver {
         }
 
         PendingIntent mapIntent = null, callIntent = null, snoozeIntent = null, emailIntent = null;
+        PendingIntent joinIntent = null;
         if (addActionButtons) {
+            joinIntent = createJoinIntent(context, eventId, notificationId);
+
             // Send map, call, and email intent back to ourself first for a couple reasons:
             // 1) Workaround issue where clicking action button in notification does
             //    not automatically close the notification shade.
@@ -277,6 +280,11 @@ public class AlertReceiver extends BroadcastReceiver {
         // not be shown, and with no recipients, snooze will not be shown.
         // TODO: Get icons, get strings. Maybe show preview of actual location/number?
         int numActions = 0;
+        if (joinIntent != null) {
+            notificationBuilder.addAction(R.drawable.ic_videocam,
+                    resources.getString(R.string.join_meeting), joinIntent);
+            numActions++;
+        }
         if (mapIntent != null && numActions < MAX_NOTIF_ACTIONS) {
             notificationBuilder.addAction(R.drawable.ic_map,
                     resources.getString(R.string.map_label), mapIntent);
@@ -298,6 +306,44 @@ public class AlertReceiver extends BroadcastReceiver {
             numActions++;
         }
         return notificationBuilder.build();
+    }
+
+    private static PendingIntent createJoinIntent(Context context, long eventId,
+            int notificationId) {
+        String url = null, location = null, description = null;
+        Uri eventUri = ContentUris.withAppendedId(Events.CONTENT_URI, eventId);
+        try (Cursor c = context.getContentResolver().query(eventUri,
+                new String[] { Events.EVENT_LOCATION, Events.DESCRIPTION }, null, null, null)) {
+            if (c != null && c.moveToFirst()) {
+                location = c.getString(0);
+                description = c.getString(1);
+            }
+        } catch (SecurityException e) {
+            return null;
+        }
+        try (Cursor c = context.getContentResolver().query(
+                android.provider.CalendarContract.ExtendedProperties.CONTENT_URI,
+                new String[] { android.provider.CalendarContract.ExtendedProperties.VALUE },
+                android.provider.CalendarContract.ExtendedProperties.EVENT_ID + "=? AND ("
+                        + android.provider.CalendarContract.ExtendedProperties.NAME + "=? OR "
+                        + android.provider.CalendarContract.ExtendedProperties.NAME + "=?)",
+                new String[] { Long.toString(eventId),
+                        org.prauga.calendar.event.ExtendedProperty.URL_NAME,
+                        org.prauga.calendar.event.ExtendedProperty.URL_NAME_PRIV }, null)) {
+            if (c != null && c.moveToFirst()) {
+                url = c.getString(0);
+            }
+        } catch (SecurityException e) {
+        }
+        org.prauga.calendar.MeetingLinks.Link link =
+                org.prauga.calendar.MeetingLinks.INSTANCE.find(url, location, description);
+        if (link == null) {
+            return null;
+        }
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link.getUrl()));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        return PendingIntent.getActivity(context, notificationId, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
     /**
