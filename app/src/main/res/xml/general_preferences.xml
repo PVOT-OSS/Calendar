@@ -89,6 +89,12 @@
             app:defaultValue="@string/preferences_home_tz_default"
             app:title="@string/preferences_home_tz_title" />
         <Preference
+            app:key="preferences_extra_calendars"
+            app:fragment="org.prauga.calendar.settings.ExtraCalendarsPreferences"
+            app:title="@string/extra_calendars_title"
+            app:summary="@string/extra_calendars_summary" />
+
+        <Preference
             app:key="preferences_clear_search_history"
             app:title="@string/preferences_clear_search_history_title"
             app:summary="@string/preferences_clear_search_history_summary" />

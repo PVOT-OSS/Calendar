@@ -41,6 +41,14 @@
     <string name="quick_create_more">More options</string>
     <string name="quick_create_saved">Event saved</string>
 
+    <string name="extra_calendars_title">Extra calendars</string>
+    <string name="extra_calendars_summary">Birthdays from contacts, holidays</string>
+    <string name="birthdays_pref_title">Birthdays</string>
+    <string name="birthdays_pref_summary">Show birthdays and anniversaries saved in your contacts</string>
+    <string name="birthdays_calendar_name">Birthdays</string>
+    <string name="birthdays_title_birthday">%s\'s birthday</string>
+    <string name="birthdays_title_anniversary">%s\'s anniversary</string>
+
     <string name="shortcut_today">Today</string>
 
     <string name="join_meeting">Join meeting</string>
