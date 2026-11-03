@@ -506,6 +506,7 @@ public class AllInOneActivity extends AbstractCalendarActivity implements EventH
             int titleResource = switch (viewType) {
                 case ViewType.AGENDA -> R.string.agenda_view;
                 case ViewType.DAY -> R.string.day_view;
+                case ViewType.THREE_DAY -> R.string.three_day_view;
                 case ViewType.MONTH -> R.string.month_view;
                 default -> R.string.week_view;
             };
@@ -1010,6 +1011,10 @@ public class AllInOneActivity extends AbstractCalendarActivity implements EventH
             if (mCurrentView != ViewType.DAY) {
                 switchToView(ViewType.DAY);
             }
+        } else if (itemId == R.id.three_day_menu_item) {
+            if (mCurrentView != ViewType.THREE_DAY) {
+                switchToView(ViewType.THREE_DAY);
+            }
         } else if (itemId == R.id.week_menu_item) {
             if (mCurrentView != ViewType.WEEK) {
                 switchToView(ViewType.WEEK);
@@ -1115,6 +1120,13 @@ public class AllInOneActivity extends AbstractCalendarActivity implements EventH
                 frag = new DayFragment(timeMillis, 1);
                 if (mIsTabletConfig) {
                     mToolbar.setTitle(R.string.day_view);
+                }
+                break;
+            case ViewType.THREE_DAY:
+                mNavigationView.getMenu().findItem(R.id.three_day_menu_item).setChecked(true);
+                frag = new DayFragment(timeMillis, 3);
+                if (mIsTabletConfig) {
+                    mToolbar.setTitle(R.string.three_day_view);
                 }
                 break;
             case ViewType.MONTH:

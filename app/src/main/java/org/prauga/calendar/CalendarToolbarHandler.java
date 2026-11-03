@@ -86,6 +86,7 @@ public class CalendarToolbarHandler {
                 mToolbar.setTitle(buildFullDate());
                 break;
             case CalendarController.ViewType.WEEK:
+            case CalendarController.ViewType.THREE_DAY:
                 if (Utils.getShowWeekNumber(mContext)) {
                     mToolbar.setSubtitle(buildWeekNum());
                 } else {

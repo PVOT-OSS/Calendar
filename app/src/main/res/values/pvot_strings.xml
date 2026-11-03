@@ -5,6 +5,8 @@
 -->
 <!-- Strings added by PVOT-OSS. English only for now. -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="three_day_view">3 days</string>
+
     <string name="import_title">Import events</string>
     <string name="import_target_calendar">Add to calendar</string>
     <plurals name="import_summary">

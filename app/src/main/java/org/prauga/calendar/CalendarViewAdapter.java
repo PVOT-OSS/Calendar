@@ -218,6 +218,7 @@ public class CalendarViewAdapter extends BaseAdapter {
                     date.setText(buildFullDate());
                     break;
                 case ViewType.WEEK:
+                case ViewType.THREE_DAY:
                     lunarInfo.setVisibility(View.GONE);
                     if (Utils.getShowWeekNumber(mContext)) {
                         weekDay.setVisibility(View.VISIBLE);
@@ -259,6 +260,7 @@ public class CalendarViewAdapter extends BaseAdapter {
                     title.setText(mButtonNames [DAY_BUTTON_INDEX]);
                     break;
                 case ViewType.WEEK:
+                case ViewType.THREE_DAY:
                     title.setText(mButtonNames [WEEK_BUTTON_INDEX]);
                     break;
                 case ViewType.MONTH:
