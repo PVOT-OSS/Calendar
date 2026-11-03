@@ -575,6 +575,14 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
     private boolean mComputeSelectedEvents;
     private boolean mUpdateToast;
     private Event mSelectedEvent;
+
+    private static final int DRAG_SNAP_MINUTES = 15;
+    private Event mDragEvent;
+    private boolean mDragResize;
+    private int mDragGrabMinutes;
+    private int mDragDayIndex;
+    private int mDragStartMinute;
+    private int mDragEndMinute;
     private Event mPrevSelectedEvent;
     private final Rect mPrevBox = new Rect();
     protected final Resources mResources;
@@ -2471,6 +2479,7 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
         p.setAlpha(alpha);
 
         drawSelectedRect(r, canvas, p);
+        drawDrag(canvas, p);
     }
 
     private void drawSelectedRect(Rect r, Canvas canvas, Paint p) {
@@ -4050,9 +4059,133 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
             return;
         }
 
+        if (!mSelectionAllday && mSelectedEvent != null && startDrag(mSelectedEvent, y)) {
+            return;
+        }
+
         mSelectionMode = SELECTION_LONGPRESS;
         invalidate();
         performLongClick();
+    }
+
+    private int touchYToMinutes(float y) {
+        float contentY = y + mViewStartY - mFirstCell;
+        return (int) ((contentY - HOUR_GAP) * 60 / (mCellHeight + HOUR_GAP));
+    }
+
+    private float minutesToContentY(int minutes) {
+        return HOUR_GAP + minutes * (mCellHeight / 60f) + (minutes / 60) * HOUR_GAP;
+    }
+
+    private static int snapMinutes(int minutes) {
+        return Math.round(minutes / (float) DRAG_SNAP_MINUTES) * DRAG_SNAP_MINUTES;
+    }
+
+    private boolean startDrag(Event event, int y) {
+        if (event.drawAsAllday() || event.startDay != event.endDay || event.endTime <= event.startTime) {
+            return false;
+        }
+        org.prauga.calendar.event.EventMover.Info info =
+                new org.prauga.calendar.event.EventMover(mContext.getContentResolver()).info(event.id);
+        if (info == null || !info.getCanModify()) {
+            return false;
+        }
+        float contentY = y + mViewStartY - mFirstCell;
+        float resizeZone = Math.max(16 * mScale, (event.bottom - event.top) / 4);
+        mDragEvent = event;
+        mDragResize = contentY > event.bottom - resizeZone;
+        mDragGrabMinutes = touchYToMinutes(y) - event.startTime;
+        mDragDayIndex = event.startDay - mFirstJulianDay;
+        mDragStartMinute = event.startTime;
+        mDragEndMinute = event.endTime;
+        performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS);
+        if (getParent() != null) {
+            getParent().requestDisallowInterceptTouchEvent(true);
+        }
+        invalidate();
+        return true;
+    }
+
+    private void updateDrag(MotionEvent ev) {
+        int touch = touchYToMinutes(ev.getY());
+        int duration = mDragEvent.endTime - mDragEvent.startTime;
+        if (mDragResize) {
+            mDragEndMinute = Math.min(MINUTES_PER_DAY,
+                    Math.max(mDragStartMinute + DRAG_SNAP_MINUTES, snapMinutes(touch)));
+        } else {
+            int start = snapMinutes(touch - mDragGrabMinutes);
+            mDragStartMinute = Math.max(0, Math.min(MINUTES_PER_DAY - duration, start));
+            mDragEndMinute = mDragStartMinute + duration;
+            int x = Math.max(mHoursWidth, (int) ev.getX());
+            mDragDayIndex = Math.max(0, Math.min(mNumDays - 1, (x - mHoursWidth) / (mCellWidth + DAY_GAP)));
+        }
+        float edge = 48 * mScale;
+        int step = (int) (8 * mScale);
+        if (ev.getY() < mFirstCell + edge && mViewStartY > 0) {
+            mViewStartY = Math.max(0, mViewStartY - step);
+        } else if (ev.getY() > mViewHeight - edge && mViewStartY < mMaxViewStartY) {
+            mViewStartY = Math.min(mMaxViewStartY, mViewStartY + step);
+        }
+        invalidate();
+    }
+
+    private long dragMillis(int minute) {
+        Time t = new Time(Utils.getTimeZone(mContext, mTZUpdater));
+        t.setJulianDay(mFirstJulianDay + mDragDayIndex);
+        t.setHour(0);
+        t.setMinute(minute);
+        return t.normalize();
+    }
+
+    private void finishDrag(boolean commit) {
+        Event event = mDragEvent;
+        mDragEvent = null;
+        invalidate();
+        if (!commit || event == null) {
+            return;
+        }
+        long newBegin = dragMillis(mDragStartMinute);
+        long newEnd = dragMillis(mDragEndMinute);
+        if (newBegin == event.startMillis && newEnd == event.endMillis) {
+            return;
+        }
+        org.prauga.calendar.event.EventMoveUi.INSTANCE.move(this, event.id, event.startMillis,
+                event.endMillis, newBegin, newEnd, event.isRepeating);
+    }
+
+    private void drawDrag(Canvas canvas, Paint p) {
+        if (mDragEvent == null) {
+            return;
+        }
+        float left = computeDayLeftPosition(mDragDayIndex) + 1;
+        float right = computeDayLeftPosition(mDragDayIndex + 1) - 1;
+        float top = minutesToContentY(mDragStartMinute);
+        float bottom = minutesToContentY(mDragEndMinute);
+        float radius = 6 * mScale;
+        Style style = p.getStyle();
+        int color = p.getColor();
+        p.setAntiAlias(true);
+        p.setStyle(Style.FILL);
+        p.setColor(mDragEvent.color);
+        p.setAlpha(210);
+        canvas.drawRoundRect(left, top, right, bottom, radius, radius, p);
+        p.setStyle(Style.STROKE);
+        p.setStrokeWidth(2 * mScale);
+        p.setColor(Utils.getAdaptiveTextColor(mContext, android.graphics.Color.WHITE, mDragEvent.color));
+        canvas.drawRoundRect(left, top, right, bottom, radius, radius, p);
+        int flags = DateUtils.FORMAT_SHOW_TIME;
+        if (DateFormat.is24HourFormat(mContext)) {
+            flags |= DateUtils.FORMAT_24HOUR;
+        }
+        String label = Utils.formatDateRange(mContext, dragMillis(mDragStartMinute),
+                dragMillis(mDragEndMinute), flags);
+        Paint text = mEventTextPaint;
+        int textColor = text.getColor();
+        text.setColor(Utils.getAdaptiveTextColor(mContext, android.graphics.Color.WHITE, mDragEvent.color));
+        canvas.drawText(label, left + 4 * mScale, top + text.getTextSize() + 2 * mScale, text);
+        text.setColor(textColor);
+        p.setStyle(style);
+        p.setColor(color);
     }
 
     private void doScroll(MotionEvent e1, MotionEvent e2, float deltaX, float deltaY) {
@@ -4340,6 +4473,22 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
                 (ev.getActionMasked() == MotionEvent.ACTION_POINTER_UP) ||
                 (ev.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN)) {
             mRecalCenterHour = true;
+        }
+
+        if (mDragEvent != null) {
+            switch (ev.getActionMasked()) {
+                case MotionEvent.ACTION_MOVE:
+                    updateDrag(ev);
+                    break;
+                case MotionEvent.ACTION_UP:
+                    mHandleActionUp = false;
+                    finishDrag(true);
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    finishDrag(false);
+                    break;
+            }
+            return true;
         }
 
         if ((mTouchMode & TOUCH_MODE_HSCROLL) == 0) {

@@ -29,6 +29,13 @@
 
     <string name="repeat_custom">Custom…</string>
 
+    <string name="move_recurring_title">Change recurring event</string>
+    <string name="move_this_event">This event</string>
+    <string name="move_all_events">All events</string>
+    <string name="move_done">Event changed</string>
+    <string name="move_undo">Undo</string>
+    <string name="move_failed">Couldn\'t change the event</string>
+
     <string name="shortcut_today">Today</string>
 
     <string name="join_meeting">Join meeting</string>
