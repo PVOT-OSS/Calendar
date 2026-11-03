@@ -49,6 +49,10 @@
     <string name="birthdays_title_birthday">%s\'s birthday</string>
     <string name="birthdays_title_anniversary">%s\'s anniversary</string>
 
+    <string name="holidays_pref_title">Holidays</string>
+    <string name="holidays_pref_summary">Add public holidays of one or more countries (works offline)</string>
+    <string name="holidays_calendar_name">Holidays in %s</string>
+
     <string name="shortcut_today">Today</string>
 
     <string name="join_meeting">Join meeting</string>

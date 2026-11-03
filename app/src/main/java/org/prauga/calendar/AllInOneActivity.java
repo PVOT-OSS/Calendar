@@ -292,6 +292,8 @@ public class AllInOneActivity extends AbstractCalendarActivity implements EventH
         AlertService.createChannels(this);
         AppShortcuts.INSTANCE.publish(this);
         org.prauga.calendar.birthdays.BirthdayWorker.Companion.schedule(this);
+        final Context appContext = getApplicationContext();
+        new Thread(() -> org.prauga.calendar.holidays.HolidaySync.INSTANCE.refreshIfNeeded(appContext)).start();
 
         // Get time from intent or icicle
         long timeMillis = -1;

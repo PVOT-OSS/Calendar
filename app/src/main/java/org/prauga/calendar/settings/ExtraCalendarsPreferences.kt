@@ -8,7 +8,9 @@ package org.prauga.calendar.settings
 import android.Manifest
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.preference.MultiSelectListPreference
 import androidx.preference.PreferenceFragmentCompat
+import org.prauga.calendar.holidays.HolidaySync
 import androidx.preference.SwitchPreferenceCompat
 import org.prauga.calendar.birthdays.BirthdaySync
 import org.prauga.calendar.birthdays.BirthdayWorker
@@ -54,6 +56,26 @@ class ExtraCalendarsPreferences : PreferenceFragmentCompat() {
             true
         }
         screen.addPreference(birthdays)
+
+        val codes = HolidaySync.availableCountries(context).sortedBy { HolidaySync.countryName(it) }
+        val holidays = MultiSelectListPreference(context).apply {
+            key = HolidaySync.PREF_COUNTRIES
+            title = getString(R.string.holidays_pref_title)
+            dialogTitle = title
+            entries = codes.map { HolidaySync.countryName(it) }.toTypedArray()
+            entryValues = codes.toTypedArray()
+            setDefaultValue(emptySet<String>())
+        }
+        holidays.summaryProvider = androidx.preference.Preference.SummaryProvider<MultiSelectListPreference> { pref ->
+            pref.values.map { HolidaySync.countryName(it) }.sorted().joinToString(", ")
+                .ifEmpty { getString(R.string.holidays_pref_summary) }
+        }
+        holidays.setOnPreferenceChangeListener { _, _ ->
+            val app = requireContext().applicationContext
+            requireView().post { CoroutineScope(Dispatchers.IO).launch { HolidaySync.sync(app) } }
+            true
+        }
+        screen.addPreference(holidays)
         preferenceScreen = screen
     }
 
