@@ -15,6 +15,7 @@ import android.provider.CalendarContract.ExtendedProperties
 import android.provider.CalendarContract.Reminders
 import android.util.Log
 import org.prauga.calendar.event.ExtendedProperty
+import org.prauga.calendar.event.SeriesWriter
 
 data class ImportTarget(
     val id: Long,
@@ -83,12 +84,12 @@ class IcsImporter(private val resolver: ContentResolver) {
                     when (actionFor(event, method, existing != null)) {
                         ImportAction.DELETE -> {
                             delete(existing!!)
-                            if (event.cancelled || method == "CANCEL") addExdate(masterId, instance)
+                            if (event.cancelled || method == "CANCEL") SeriesWriter.addExdate(resolver, masterId, instance.millis, instance.allDay)
                             deleted++
                         }
                         ImportAction.UPDATE -> { update(existing!!, event, target); updated++ }
                         ImportAction.ADD -> {
-                            if (event.cancelled) addExdate(masterId, instance) else insertException(masterId, event, target)
+                            if (event.cancelled) SeriesWriter.addExdate(resolver, masterId, instance.millis, instance.allDay) else insertException(masterId, event, target)
                             added++
                         }
                         ImportAction.SKIP -> {}
@@ -154,9 +155,9 @@ class IcsImporter(private val resolver: ContentResolver) {
 
     private fun insertException(masterId: Long, event: IcsEvent, target: ImportTarget) {
         val instance = event.recurrenceId!!
-        val syncId = syncIdOf(masterId) ?: if (target.isLocal) assignSyncId(masterId, event.uid, target) else null
+        val syncId = SeriesWriter.ensureSyncId(resolver, masterId, target.accountName, target.accountType, event.uid)
         if (syncId == null) {
-            addExdate(masterId, instance)
+            SeriesWriter.addExdate(resolver, masterId, instance.millis, instance.allDay)
             insert(event.copy(recurrenceId = null, uid = null), target)
             return
         }
@@ -171,48 +172,6 @@ class IcsImporter(private val resolver: ContentResolver) {
         val uri = resolver.insert(Events.CONTENT_URI, values)
         if (uri != null) writeChildren(ContentUris.parseId(uri), event, target)
     }
-
-    private fun syncIdOf(eventId: Long): String? = resolver.query(
-        ContentUris.withAppendedId(Events.CONTENT_URI, eventId), arrayOf(Events._SYNC_ID), null, null, null
-    )?.use { if (it.moveToFirst()) it.getString(0) else null }
-
-    private fun assignSyncId(eventId: Long, uid: String?, target: ImportTarget): String {
-        val syncId = uid ?: "ics-$eventId"
-        resolver.update(
-            asSyncAdapter(ContentUris.withAppendedId(Events.CONTENT_URI, eventId), target),
-            ContentValues().apply { put(Events._SYNC_ID, syncId) }, null, null
-        )
-        return syncId
-    }
-
-    private fun addExdate(masterId: Long, instance: IcsDateTime) {
-        val uri = ContentUris.withAppendedId(Events.CONTENT_URI, masterId)
-        val values = ContentValues()
-        val columns = arrayOf(Events.EXDATE, Events.DTSTART, Events.DURATION, Events.RRULE, Events.RDATE,
-            Events.EVENT_TIMEZONE, Events.ALL_DAY)
-        var current: String? = null
-        resolver.query(uri, columns, null, null, null)?.use {
-            if (!it.moveToFirst()) return
-            current = it.getString(0)
-            values.put(Events.DTSTART, it.getLong(1))
-            values.put(Events.DURATION, it.getString(2))
-            values.put(Events.RRULE, it.getString(3))
-            values.put(Events.RDATE, it.getString(4))
-            values.put(Events.EVENT_TIMEZONE, it.getString(5))
-            values.put(Events.ALL_DAY, it.getInt(6))
-        } ?: return
-        val date = if (instance.allDay) IcsTime.formatUtc(instance.millis).take(8) else IcsTime.formatUtc(instance.millis)
-        val dates = current?.split(',')?.filter { it.isNotBlank() }.orEmpty()
-        if (date in dates) return
-        values.put(Events.EXDATE, (dates + date).joinToString(","))
-        resolver.update(uri, values, null, null)
-    }
-
-    private fun asSyncAdapter(uri: android.net.Uri, target: ImportTarget): android.net.Uri = uri.buildUpon()
-        .appendQueryParameter(android.provider.CalendarContract.CALLER_IS_SYNCADAPTER, "true")
-        .appendQueryParameter(Calendars.ACCOUNT_NAME, target.accountName)
-        .appendQueryParameter(Calendars.ACCOUNT_TYPE, target.accountType)
-        .build()
 
     private fun update(id: Long, event: IcsEvent, target: ImportTarget) {
         val values = event.toEventValues(target.id)
