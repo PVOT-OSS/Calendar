@@ -22,7 +22,9 @@ data class ImportTarget(
     val accountName: String,
     val accountType: String,
     val color: Int
-)
+) {
+    val isLocal: Boolean get() = accountType == android.provider.CalendarContract.ACCOUNT_TYPE_LOCAL
+}
 
 enum class ImportAction { ADD, UPDATE, DELETE, SKIP }
 
@@ -76,11 +78,19 @@ class IcsImporter(private val resolver: ContentResolver) {
                 val uid = event.uid
                 val masterId = uid?.let { masterIds[it] ?: findMaster(target.id, it) }
                 if (event.isException && masterId != null) {
-                    val existing = findException(masterId, event.recurrenceId!!.millis)
+                    val instance = event.recurrenceId!!
+                    val existing = findException(masterId, instance.millis)
                     when (actionFor(event, method, existing != null)) {
-                        ImportAction.DELETE -> { delete(existing!!); deleted++ }
+                        ImportAction.DELETE -> {
+                            delete(existing!!)
+                            if (event.cancelled || method == "CANCEL") addExdate(masterId, instance)
+                            deleted++
+                        }
                         ImportAction.UPDATE -> { update(existing!!, event, target); updated++ }
-                        ImportAction.ADD -> { insertException(masterId, event, target); added++ }
+                        ImportAction.ADD -> {
+                            if (event.cancelled) addExdate(masterId, instance) else insertException(masterId, event, target)
+                            added++
+                        }
                         ImportAction.SKIP -> {}
                     }
                     continue
@@ -143,15 +153,66 @@ class IcsImporter(private val resolver: ContentResolver) {
     }
 
     private fun insertException(masterId: Long, event: IcsEvent, target: ImportTarget) {
-        val values = event.toEventValues(target.id).apply {
-            remove(Events.RRULE); remove(Events.RDATE); remove(Events.EXDATE); remove(Events.DURATION)
-            put(Events.DTEND, event.end.millis)
-            put(Events.ORIGINAL_INSTANCE_TIME, event.recurrenceId!!.millis)
-            put(Events.ORIGINAL_ALL_DAY, if (event.recurrenceId.allDay) 1 else 0)
+        val instance = event.recurrenceId!!
+        val syncId = syncIdOf(masterId) ?: if (target.isLocal) assignSyncId(masterId, event.uid, target) else null
+        if (syncId == null) {
+            addExdate(masterId, instance)
+            insert(event.copy(recurrenceId = null, uid = null), target)
+            return
         }
-        val uri = resolver.insert(ContentUris.withAppendedId(Events.CONTENT_EXCEPTION_URI, masterId), values)
-        if (uri != null && !event.cancelled) writeChildren(ContentUris.parseId(uri), event, target)
+        val values = event.toEventValues(target.id).apply {
+            remove(Events.RRULE); remove(Events.RDATE); remove(Events.EXDATE); putNull(Events.DURATION)
+            put(Events.DTEND, event.end.millis)
+            put(Events.ORIGINAL_ID, masterId)
+            put(Events.ORIGINAL_SYNC_ID, syncId)
+            put(Events.ORIGINAL_INSTANCE_TIME, instance.millis)
+            put(Events.ORIGINAL_ALL_DAY, if (instance.allDay) 1 else 0)
+        }
+        val uri = resolver.insert(Events.CONTENT_URI, values)
+        if (uri != null) writeChildren(ContentUris.parseId(uri), event, target)
     }
+
+    private fun syncIdOf(eventId: Long): String? = resolver.query(
+        ContentUris.withAppendedId(Events.CONTENT_URI, eventId), arrayOf(Events._SYNC_ID), null, null, null
+    )?.use { if (it.moveToFirst()) it.getString(0) else null }
+
+    private fun assignSyncId(eventId: Long, uid: String?, target: ImportTarget): String {
+        val syncId = uid ?: "ics-$eventId"
+        resolver.update(
+            asSyncAdapter(ContentUris.withAppendedId(Events.CONTENT_URI, eventId), target),
+            ContentValues().apply { put(Events._SYNC_ID, syncId) }, null, null
+        )
+        return syncId
+    }
+
+    private fun addExdate(masterId: Long, instance: IcsDateTime) {
+        val uri = ContentUris.withAppendedId(Events.CONTENT_URI, masterId)
+        val values = ContentValues()
+        val columns = arrayOf(Events.EXDATE, Events.DTSTART, Events.DURATION, Events.RRULE, Events.RDATE,
+            Events.EVENT_TIMEZONE, Events.ALL_DAY)
+        var current: String? = null
+        resolver.query(uri, columns, null, null, null)?.use {
+            if (!it.moveToFirst()) return
+            current = it.getString(0)
+            values.put(Events.DTSTART, it.getLong(1))
+            values.put(Events.DURATION, it.getString(2))
+            values.put(Events.RRULE, it.getString(3))
+            values.put(Events.RDATE, it.getString(4))
+            values.put(Events.EVENT_TIMEZONE, it.getString(5))
+            values.put(Events.ALL_DAY, it.getInt(6))
+        } ?: return
+        val date = if (instance.allDay) IcsTime.formatUtc(instance.millis).take(8) else IcsTime.formatUtc(instance.millis)
+        val dates = current?.split(',')?.filter { it.isNotBlank() }.orEmpty()
+        if (date in dates) return
+        values.put(Events.EXDATE, (dates + date).joinToString(","))
+        resolver.update(uri, values, null, null)
+    }
+
+    private fun asSyncAdapter(uri: android.net.Uri, target: ImportTarget): android.net.Uri = uri.buildUpon()
+        .appendQueryParameter(android.provider.CalendarContract.CALLER_IS_SYNCADAPTER, "true")
+        .appendQueryParameter(Calendars.ACCOUNT_NAME, target.accountName)
+        .appendQueryParameter(Calendars.ACCOUNT_TYPE, target.accountType)
+        .build()
 
     private fun update(id: Long, event: IcsEvent, target: ImportTarget) {
         val values = event.toEventValues(target.id)
