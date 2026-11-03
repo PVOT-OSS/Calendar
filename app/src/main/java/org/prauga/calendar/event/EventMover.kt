@@ -79,13 +79,40 @@ class EventMover(private val resolver: ContentResolver) {
             SeriesWriter.putTimeColumns(it, before)
             zone = it.getString(4) ?: "UTC"
         } ?: return null
+        val delta = newBegin - oldBegin
+        val exdate = resolver.query(uri, arrayOf(Events.EXDATE), null, null, null)
+            ?.use { if (it.moveToFirst()) it.getString(0) else null }
+        before.put(Events.EXDATE, exdate)
         val after = ContentValues(before).apply {
-            put(Events.DTSTART, before.getAsLong(Events.DTSTART) + (newBegin - oldBegin))
+            put(Events.DTSTART, before.getAsLong(Events.DTSTART) + delta)
             put(Events.DURATION, IcsTime.formatDuration(newEnd - newBegin, false))
             put(Events.RRULE, shiftWeekday(before.getAsString(Events.RRULE), oldBegin, newBegin, zone))
+            put(Events.EXDATE, shiftExdates(exdate, delta))
         }
-        if (resolver.update(uri, after, null, null) <= 0) return null
-        return { resolver.update(uri, before, null, null) }
+        shiftExceptions(eventId, delta)
+        if (resolver.update(uri, after, null, null) <= 0) {
+            shiftExceptions(eventId, -delta)
+            return null
+        }
+        return {
+            shiftExceptions(eventId, -delta)
+            resolver.update(uri, before, null, null)
+        }
+    }
+
+    private fun shiftExceptions(masterId: Long, delta: Long) {
+        resolver.query(
+            Events.CONTENT_URI, arrayOf(Events._ID, Events.ORIGINAL_INSTANCE_TIME, Events.DTSTART, Events.DTEND),
+            "${Events.ORIGINAL_ID}=? AND ${Events.DELETED}=0", arrayOf(masterId.toString()), null
+        )?.use {
+            while (it.moveToNext()) {
+                resolver.update(ContentUris.withAppendedId(Events.CONTENT_URI, it.getLong(0)), ContentValues().apply {
+                    put(Events.ORIGINAL_INSTANCE_TIME, it.getLong(1) + delta)
+                    put(Events.DTSTART, it.getLong(2))
+                    put(Events.DTEND, it.getLong(3))
+                }, null, null)
+            }
+        }
     }
 
     private fun moveOccurrence(masterId: Long, oldBegin: Long, newBegin: Long, newEnd: Long): (() -> Unit)? {
@@ -150,6 +177,20 @@ class EventMover(private val resolver: ContentResolver) {
         )
         private val ACCOUNT_COLUMNS = arrayOf(Events.ACCOUNT_NAME, Events.ACCOUNT_TYPE)
         private val DAYS = listOf("SU", "MO", "TU", "WE", "TH", "FR", "SA")
+
+        fun shiftExdates(exdate: String?, delta: Long): String? {
+            if (exdate.isNullOrEmpty() || delta == 0L) return exdate
+            val format = java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'")
+                .withZone(java.time.ZoneOffset.UTC)
+            return exdate.split(',').joinToString(",") { value ->
+                val v = value.trim()
+                if (v.length == 16 && v.endsWith("Z")) {
+                    format.format(Instant.from(format.parse(v)).plusMillis(delta))
+                } else {
+                    v
+                }
+            }
+        }
 
         fun shiftWeekday(rrule: String?, oldBegin: Long, newBegin: Long, zone: String): String? {
             if (rrule == null) return null

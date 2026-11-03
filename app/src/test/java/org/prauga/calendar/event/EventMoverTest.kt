@@ -33,4 +33,13 @@ class EventMoverTest {
             EventMover.shiftWeekday("FREQ=WEEKLY;BYDAY=MO", monday, monday + 3600_000L, "UTC")
         )
     }
+
+    @Test
+    fun timedExdatesMoveWithTheSeries() {
+        assertEquals(
+            "20261216T020000Z,20261223",
+            EventMover.shiftExdates("20261216T013000Z,20261223", 1800_000L)
+        )
+        assertEquals(null, EventMover.shiftExdates(null, 1000L))
+    }
 }
