@@ -74,6 +74,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1633,9 +1634,8 @@ public class Utils {
             if (tz == null || tz.getID().equals("GMT")) {
                 tzDisplay = localTimezone;
             } else {
-                Time startTime = new Time(localTimezone);
-                startTime.set(startMillis);
-                tzDisplay = tz.getDisplayName(false, TimeZone.SHORT);
+                tzDisplay = tz.getDisplayName(tz.inDaylightTime(new Date(startMillis)),
+                        TimeZone.SHORT);
             }
         }
         return tzDisplay;
