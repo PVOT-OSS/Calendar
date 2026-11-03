@@ -22,6 +22,11 @@
         <item quantity="other">%1$d weeks before at %2$s</item>
     </plurals>
 
+    <string name="guests_can">Guests can</string>
+    <string name="guests_can_modify">Modify the event</string>
+    <string name="guests_can_invite">Invite others</string>
+    <string name="guests_can_see">See the guest list</string>
+
     <string name="shortcut_today">Today</string>
 
     <string name="join_meeting">Join meeting</string>

@@ -133,6 +133,8 @@ public class CalendarEventModel implements Serializable {
         this();
 
         mTimezone = Utils.getTimeZone(context, null);
+        mGuestsCanInviteOthers = true;
+        mGuestsCanSeeGuests = true;
         SharedPreferences prefs = GeneralPreferences.Companion.getSharedPreferences(context);
 
         String defaultReminder = prefs.getString(

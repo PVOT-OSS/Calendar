@@ -99,7 +99,9 @@ public class EditEventHelper {
             Events.ACCOUNT_NAME, // 25
             Events.ACCOUNT_TYPE, // 26
             Events.EXDATE, // 27
-            Events.ORIGINAL_INSTANCE_TIME // 28
+            Events.ORIGINAL_INSTANCE_TIME,
+            Events.GUESTS_CAN_INVITE_OTHERS,
+            Events.GUESTS_CAN_SEE_GUESTS
     };
     protected static final int EVENT_INDEX_ID = 0;
     protected static final int EVENT_INDEX_TITLE = 1;
@@ -130,6 +132,8 @@ public class EditEventHelper {
     protected static final int EVENT_INDEX_ACCOUNT_TYPE = 26;
     protected static final int EVENT_INDEX_EXDATE = 27;
     protected static final int EVENT_INDEX_ORIGINAL_INSTANCE_TIME = 28;
+    protected static final int EVENT_INDEX_GUESTS_CAN_INVITE_OTHERS = 29;
+    protected static final int EVENT_INDEX_GUESTS_CAN_SEE_GUESTS = 30;
 
     public static final String[] REMINDERS_PROJECTION = new String[] {
             Reminders._ID, // 0
@@ -1231,6 +1235,8 @@ public class EditEventHelper {
         model.mOrganizer = cursor.getString(EVENT_INDEX_ORGANIZER);
         model.mIsOrganizer = model.mOwnerAccount.equalsIgnoreCase(model.mOrganizer);
         model.mGuestsCanModify = cursor.getInt(EVENT_INDEX_GUESTS_CAN_MODIFY) != 0;
+        model.mGuestsCanInviteOthers = cursor.getInt(EVENT_INDEX_GUESTS_CAN_INVITE_OTHERS) != 0;
+        model.mGuestsCanSeeGuests = cursor.getInt(EVENT_INDEX_GUESTS_CAN_SEE_GUESTS) != 0;
 
         int rawEventColor;
         if (cursor.isNull(EVENT_INDEX_EVENT_COLOR)) {
@@ -1427,6 +1433,9 @@ public class EditEventHelper {
         }
         values.put(Events.AVAILABILITY, model.mAvailability);
         values.put(Events.HAS_ATTENDEE_DATA, model.mHasAttendeeData ? 1 : 0);
+        values.put(Events.GUESTS_CAN_MODIFY, model.mGuestsCanModify ? 1 : 0);
+        values.put(Events.GUESTS_CAN_INVITE_OTHERS, model.mGuestsCanInviteOthers ? 1 : 0);
+        values.put(Events.GUESTS_CAN_SEE_GUESTS, model.mGuestsCanSeeGuests ? 1 : 0);
 
         int accessLevel = model.mAccessLevel;
         values.put(Events.ACCESS_LEVEL, accessLevel);

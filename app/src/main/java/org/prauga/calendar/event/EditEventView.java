@@ -223,6 +223,21 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
     private ArrayList<ConstraintLayout> mReminderItems = new ArrayList<ConstraintLayout>(0);
     private ArrayList<ReminderEntry> mUnsupportedReminders = new ArrayList<ReminderEntry>();
     private ArrayList<ReminderEntry> mAppliedDefaultReminders;
+    private CompoundButton mGuestsCanModify;
+    private CompoundButton mGuestsCanInvite;
+    private CompoundButton mGuestsCanSee;
+    private View mGuestPermissionsRow;
+
+    private void updateGuestPermissionsVisibility() {
+        if (mGuestPermissionsRow == null) {
+            return;
+        }
+        View attendeesRow = mView.findViewById(R.id.add_attendees_row);
+        boolean show = attendeesRow != null && attendeesRow.getVisibility() == View.VISIBLE
+                && mAttendeesList.isEnabled()
+                && !TextUtils.isEmpty(mAttendeesList.getText().toString().trim());
+        mGuestPermissionsRow.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
     private boolean mRemindersFromIntent;
     private String mRrule;
 
@@ -275,6 +290,24 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
         mStartHomeGroup = view.findViewById(R.id.from_row_home_tz);
         mEndHomeGroup = view.findViewById(R.id.to_row_home_tz);
         mAttendeesList = (MultiAutoCompleteTextView) view.findViewById(R.id.attendees);
+        mGuestsCanModify = view.findViewById(R.id.guests_can_modify);
+        mGuestsCanInvite = view.findViewById(R.id.guests_can_invite);
+        mGuestsCanSee = view.findViewById(R.id.guests_can_see);
+        mGuestPermissionsRow = view.findViewById(R.id.guest_permissions_row);
+        mAttendeesList.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {
+                updateGuestPermissionsVisibility();
+            }
+        });
 
         mColorPicker = view.findViewById(R.id.change_color);
 
@@ -703,6 +736,11 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
             mModel.mTimezone = mTimezone;
         }
         mModel.mAccessLevel = mAccessLevelSpinner.getSelectedItemPosition();
+        if (mGuestsCanModify != null) {
+            mModel.mGuestsCanModify = mGuestsCanModify.isChecked();
+            mModel.mGuestsCanInviteOthers = mGuestsCanInvite.isChecked();
+            mModel.mGuestsCanSeeGuests = mGuestsCanSee.isChecked();
+        }
         // TODO set correct availability value
         mModel.mAvailability = mAvailabilityValues.get(mAvailabilitySpinner
                 .getSelectedItemPosition());
@@ -727,6 +765,11 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
         mAccessAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mAccessLevelSpinner.setAdapter(mAccessAdapter);
         mAccessLevelSpinner.setSelection(mModel.mAccessLevel);
+        if (mGuestsCanModify != null) {
+            mGuestsCanModify.setChecked(mModel.mGuestsCanModify);
+            mGuestsCanInvite.setChecked(mModel.mGuestsCanInviteOthers);
+            mGuestsCanSee.setChecked(mModel.mGuestsCanSeeGuests);
+        }
     }
 
     private void prepareAvailability() {
