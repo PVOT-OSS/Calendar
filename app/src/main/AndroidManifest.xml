@@ -80,8 +80,6 @@
                 <data android:scheme="content"/>
             </intent-filter>
 
-            <meta-data android:name="android.app.shortcuts"
-                android:resource="@xml/shortcuts" />
 
             <meta-data android:name="${applicationId}.dynamic_icons"
                 android:resource="@array/calendar_icons_dynamic" />

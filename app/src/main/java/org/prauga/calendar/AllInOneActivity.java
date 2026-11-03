@@ -248,6 +248,7 @@ public class AllInOneActivity extends AbstractCalendarActivity implements EventH
     // Params for animating the controls on the right
     private LayoutParams mControlsParams;
     private LinearLayout.LayoutParams mVerticalControlsParams;
+    private boolean mPendingTodayInDayView;
     private AllInOneMenuExtensionsInterface mExtensions = ExtensionsFactory
             .getAllInOneMenuExtensions();
 
@@ -256,6 +257,10 @@ public class AllInOneActivity extends AbstractCalendarActivity implements EventH
         String action = intent.getAction();
         if (DEBUG)
             Log.d(TAG, "New intent received " + intent);
+        if (Utils.INTENT_VALUE_VIEW_TYPE_DAY.equals(intent.getStringExtra(Utils.INTENT_KEY_VIEW_TYPE))) {
+            mPendingTodayInDayView = true;
+            return;
+        }
         // Don't change the date if we're just returning to the app's home
         if (Intent.ACTION_VIEW.equals(action)
                 && !intent.getBooleanExtra(Utils.INTENT_KEY_HOME, false)) {
@@ -285,6 +290,7 @@ public class AllInOneActivity extends AbstractCalendarActivity implements EventH
 
         // Create notification channels
         AlertService.createChannels(this);
+        AppShortcuts.INSTANCE.publish(this);
 
         // Get time from intent or icicle
         long timeMillis = -1;
@@ -603,6 +609,12 @@ public class AllInOneActivity extends AbstractCalendarActivity implements EventH
         // the rest of the handlers the controller dispatches to are.
         mController.registerFirstEventHandler(HANDLER_KEY, this);
         mOnSaveInstanceStateCalled = false;
+        if (mPendingTodayInDayView) {
+            mPendingTodayInDayView = false;
+            Time today = new Time(mTimeZone);
+            today.set(System.currentTimeMillis());
+            mController.sendEvent(this, EventType.GO_TO, today, today, -1, ViewType.DAY);
+        }
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
             if (!Utils.canScheduleAlarms(this)) {

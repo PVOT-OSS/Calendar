@@ -7,6 +7,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="three_day_view">3 days</string>
 
+    <string name="shortcut_today">Today</string>
+
     <string name="join_meeting">Join meeting</string>
     <string name="join_meeting_service">Join with %s</string>
     <string name="join_meeting_no_app">No app can open this meeting link</string>
