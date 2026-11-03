@@ -11,6 +11,11 @@
     <string name="join_meeting_service">Join with %s</string>
     <string name="join_meeting_no_app">No app can open this meeting link</string>
 
+    <string name="copy_to_calendar">Copy to…</string>
+    <string name="copy_to_no_calendar">No other calendar you can add events to</string>
+    <string name="copy_to_done">Copied to %s</string>
+    <string name="copy_to_failed">Couldn\'t copy the event</string>
+
     <string name="import_title">Import events</string>
     <string name="import_target_calendar">Add to calendar</string>
     <plurals name="import_summary">

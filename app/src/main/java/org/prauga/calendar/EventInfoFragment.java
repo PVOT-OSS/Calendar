@@ -115,6 +115,8 @@ import org.prauga.calendar.event.EditEventActivity;
 import org.prauga.calendar.event.EditEventHelper;
 import org.prauga.calendar.event.EventColorPickerDialog;
 import org.prauga.calendar.event.EventViewUtils;
+import org.prauga.calendar.event.EventCopier;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import org.prauga.calendar.event.ExtendedProperty;
 import org.prauga.calendar.icalendar.IcalendarUtils;
 import org.prauga.calendar.icalendar.Organizer;
@@ -1168,8 +1170,61 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
             shareEvent(ShareType.EXPORT_SAF);
         } else if (itemId == R.id.info_action_duplicate) {
             duplicateEvent();
+        } else if (itemId == R.id.info_action_copy_to) {
+            copyToCalendar();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void copyToCalendar() {
+        final long eventId = mEventId;
+        final long sourceCalendar = mEventCursor != null
+                ? mEventCursor.getLong(EVENT_INDEX_CALENDAR_ID) : -1;
+        final android.content.ContentResolver resolver = mContext.getContentResolver();
+        new Thread(() -> {
+            java.util.List<org.prauga.calendar.ics.ImportTarget> targets = new java.util.ArrayList<>();
+            for (org.prauga.calendar.ics.ImportTarget t
+                    : new org.prauga.calendar.ics.IcsImporter(resolver).writableCalendars()) {
+                if (t.getId() != sourceCalendar) {
+                    targets.add(t);
+                }
+            }
+            if (mActivity == null) {
+                return;
+            }
+            mActivity.runOnUiThread(() -> {
+                if (!isAdded()) {
+                    return;
+                }
+                if (targets.isEmpty()) {
+                    Toast.makeText(mContext, R.string.copy_to_no_calendar, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                String[] names = new String[targets.size()];
+                for (int i = 0; i < names.length; i++) {
+                    org.prauga.calendar.ics.ImportTarget t = targets.get(i);
+                    names[i] = t.getDisplayName().equals(t.getAccountName())
+                            ? t.getDisplayName() : t.getDisplayName() + " (" + t.getAccountName() + ")";
+                }
+                new MaterialAlertDialogBuilder(mActivity)
+                        .setTitle(R.string.copy_to_calendar)
+                        .setItems(names, (dialog, which) -> {
+                            org.prauga.calendar.ics.ImportTarget target = targets.get(which);
+                            new Thread(() -> {
+                                Long copied = new EventCopier(resolver).copy(eventId, target);
+                                if (mActivity != null) {
+                                    mActivity.runOnUiThread(() -> Toast.makeText(mContext,
+                                            copied != null
+                                                    ? getString(R.string.copy_to_done, target.getDisplayName())
+                                                    : getString(R.string.copy_to_failed),
+                                            Toast.LENGTH_SHORT).show());
+                                }
+                            }).start();
+                        })
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .show();
+            });
+        }).start();
     }
 
     /**
