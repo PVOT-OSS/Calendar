@@ -222,6 +222,8 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
     private EventRecurrence mEventRecurrence = new EventRecurrence();
     private ArrayList<ConstraintLayout> mReminderItems = new ArrayList<ConstraintLayout>(0);
     private ArrayList<ReminderEntry> mUnsupportedReminders = new ArrayList<ReminderEntry>();
+    private ArrayList<ReminderEntry> mAppliedDefaultReminders;
+    private boolean mRemindersFromIntent;
     private String mRrule;
 
     public EditEventView(AppCompatActivity activity, View view, EditDoneRunnable done) {
@@ -788,7 +790,8 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
             numReminders = reminders.size();
             // Insert any minute values that aren't represented in the minutes list.
             for (ReminderEntry re : reminders) {
-                if (mReminderMethodValues.contains(re.getMethod())) {
+                if (mReminderMethodValues.contains(re.getMethod())
+                        || re.getMethod() == Reminders.METHOD_DEFAULT) {
                     EventViewUtils.addMinutesToList(mActivity, mReminderMinuteValues,
                             mReminderMinuteLabels, re.getMinutes());
                 }
@@ -825,6 +828,9 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
      */
     public void setModel(CalendarEventModel model) {
         mModel = model;
+        mRemindersFromIntent = model != null && model.mUri == null
+                && !new java.util.HashSet<>(model.mReminders)
+                        .equals(new java.util.HashSet<>(model.mDefaultReminders));
 
         // Need to close the autocomplete adapter to prevent leaking cursors.
         if (mAddressAdapter != null && mAddressAdapter instanceof EmailAddressAdapter) {
@@ -880,6 +886,16 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
                 setAllDayViewsVisibility(isChecked);
                 if(!isChecked) {
                     resetToDefaultDuration();
+                }
+                if (mModel != null && mModel.mUri == null && mReminderItems != null) {
+                    mModel.mReminders = EventViewUtils.reminderItemsToReminders(
+                            mReminderItems, mReminderMinuteValues, mReminderMethodValues);
+                    if (applyCalendarDefaultReminders()) {
+                        mReminderItems.clear();
+                        ((LinearLayout) mScrollView.findViewById(R.id.reminder_items_container))
+                                .removeAllViews();
+                        prepareReminders();
+                    }
                 }
             }
         });
@@ -1504,6 +1520,7 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
         EditEventHelper.setModelFromCalendarCursor(mModel, c, mActivity);
         // ensure model is up to date so that reminders don't get lost on calendar change
         fillModelFromUI();
+        applyCalendarDefaultReminders();
 
         // try to find the event color in the new calendar, remove it otherwise
         if (mModel.isEventColorInitialized() && mModel.getCalendarEventColors() != null) {
@@ -1527,6 +1544,30 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
         prepareReminders();
         prepareAvailability();
         prepareAccess();
+    }
+
+    private boolean applyCalendarDefaultReminders() {
+        if (mModel == null || mModel.mUri != null) {
+            return false;
+        }
+        if (mRemindersFromIntent) {
+            return false;
+        }
+        if (mAppliedDefaultReminders != null && !new java.util.HashSet<>(mModel.mReminders)
+                .equals(new java.util.HashSet<>(mAppliedDefaultReminders))) {
+            return false;
+        }
+        int minutes = org.prauga.calendar.settings.CalendarDefaults.INSTANCE.reminderMinutes(
+                mActivity, mModel.mCalendarId, mAllDayCheckBox.isChecked());
+        ArrayList<ReminderEntry> defaults = new ArrayList<>();
+        if (minutes != GeneralPreferences.NO_REMINDER) {
+            defaults.add(ReminderEntry.valueOf(minutes));
+        }
+        mModel.mReminders = new ArrayList<>(defaults);
+        mModel.mDefaultReminders = new ArrayList<>(defaults);
+        mModel.mHasAlarm = !defaults.isEmpty();
+        mAppliedDefaultReminders = defaults;
+        return true;
     }
 
     /**
