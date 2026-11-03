@@ -189,7 +189,6 @@
 
         <activity android:name="org.prauga.calendar.ImportActivity"
             android:exported="true"
-            android:theme="@android:style/Theme.NoDisplay"
             android:launchMode="singleTop">
              <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

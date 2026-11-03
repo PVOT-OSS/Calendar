@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2026 Saalim Quadri <danascape@gmail.com>
+     SPDX-License-Identifier: GPL-3.0-or-later
+-->
+<!-- Strings added by PVOT-OSS. English only for now. -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="import_title">Import events</string>
+    <string name="import_target_calendar">Add to calendar</string>
+    <plurals name="import_summary">
+        <item quantity="one">%d event in this file</item>
+        <item quantity="other">%d events in this file</item>
+    </plurals>
+    <string name="import_action_add">New</string>
+    <string name="import_action_update">Update</string>
+    <string name="import_action_delete">Cancelled, will be removed</string>
+    <string name="import_action_skip">Cancelled</string>
+    <string name="import_repeats">Repeats</string>
+    <string name="import_untitled">(No title)</string>
+    <string name="import_button">Import</string>
+    <string name="import_button_count">Import (%d)</string>
+    <string name="import_select_all">Select all</string>
+    <string name="import_select_none">Select none</string>
+    <string name="import_edit_first">Edit before adding</string>
+    <string name="import_no_calendar">No calendar you can add events to. Create an offline calendar in Settings first.</string>
+    <string name="import_unknown_zones">Unknown time zones, used yours instead: %s</string>
+    <string name="import_result">Added %1$d, updated %2$d, removed %3$d</string>
+    <string name="import_result_failed">Added %1$d, updated %2$d, removed %3$d, failed %4$d</string>
+</resources>
