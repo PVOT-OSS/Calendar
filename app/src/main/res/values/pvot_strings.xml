@@ -7,6 +7,21 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="three_day_view">3 days</string>
 
+    <string name="calendar_default_notifications">Default notifications</string>
+    <string name="calendar_default_reminder_timed">Events</string>
+    <string name="calendar_default_reminder_allday">All-day events</string>
+    <string name="calendar_default_reminder_inherit">App default</string>
+    <string name="calendar_default_reminder_same">Same as events</string>
+    <string name="allday_reminder_on_day">On the day at %s</string>
+    <plurals name="allday_reminder_days_before">
+        <item quantity="one">%1$d day before at %2$s</item>
+        <item quantity="other">%1$d days before at %2$s</item>
+    </plurals>
+    <plurals name="allday_reminder_weeks_before">
+        <item quantity="one">%1$d week before at %2$s</item>
+        <item quantity="other">%1$d weeks before at %2$s</item>
+    </plurals>
+
     <string name="shortcut_today">Today</string>
 
     <string name="join_meeting">Join meeting</string>

@@ -32,6 +32,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.preference.EditTextPreference
+import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
@@ -193,6 +194,7 @@ class CalendarPreferences : PreferenceFragmentCompat() {
         if (isLocalAccount) {
             screen.addPreference(displayNamePreference)
         }
+        addDefaultReminderPreferences(screen)
         screen.addPreference(exportPreference)
         if (isLocalAccount) {
             screen.addPreference(deletePreference)
@@ -212,6 +214,51 @@ class CalendarPreferences : PreferenceFragmentCompat() {
         }
 
         preferenceScreen = screen
+    }
+
+    private fun addDefaultReminderPreferences(screen: androidx.preference.PreferenceScreen) {
+        val context = preferenceManager.context
+        val store = CalendarDefaults.Store(context)
+        val category = PreferenceCategory(context).apply {
+            title = getString(R.string.calendar_default_notifications)
+        }
+        screen.addPreference(category)
+
+        val timedValues = listOf(CalendarDefaults.INHERIT_STRING) +
+            resources.getStringArray(R.array.preferences_default_reminder_values).toList()
+        val timed = ListPreference(context).apply {
+            preferenceDataStore = store
+            key = CalendarDefaults.reminderKey(calendarId)
+            title = getString(R.string.calendar_default_reminder_timed)
+            dialogTitle = title
+            entryValues = timedValues.toTypedArray()
+            entries = timedValues.map { reminderLabel(it.toInt(), false) }.toTypedArray()
+            setDefaultValue(CalendarDefaults.INHERIT_STRING)
+            summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
+        }
+        val allDayValues = listOf(CalendarDefaults.INHERIT_STRING) +
+            CalendarDefaults.ALL_DAY_REMINDERS.map { it.toString() }
+        val allDay = ListPreference(context).apply {
+            preferenceDataStore = store
+            key = CalendarDefaults.allDayReminderKey(calendarId)
+            title = getString(R.string.calendar_default_reminder_allday)
+            dialogTitle = title
+            entryValues = allDayValues.toTypedArray()
+            entries = allDayValues.map { reminderLabel(it.toInt(), true) }.toTypedArray()
+            setDefaultValue(CalendarDefaults.INHERIT_STRING)
+            summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
+        }
+        category.addPreference(timed)
+        category.addPreference(allDay)
+    }
+
+    private fun reminderLabel(minutes: Int, allDay: Boolean): String = when {
+        minutes == CalendarDefaults.INHERIT ->
+            getString(if (allDay) R.string.calendar_default_reminder_same else R.string.calendar_default_reminder_inherit)
+        minutes == GeneralPreferences.NO_REMINDER ->
+            org.prauga.calendar.event.EventViewUtils.constructReminderLabel(requireActivity(), minutes, false)
+        allDay -> allDayReminderLabel(requireContext(), minutes)
+        else -> org.prauga.calendar.event.EventViewUtils.constructReminderLabel(requireActivity(), minutes, false)
     }
 
     private fun getColorIcon(color: Int): Drawable {
