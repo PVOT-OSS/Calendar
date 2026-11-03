@@ -848,6 +848,17 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
                 mReminderMinuteValues, false);
         mReminderMethodValues = loadIntegerArray(r, R.array.reminder_methods_values);
         mReminderMethodLabels = loadStringArray(r, R.array.reminder_methods_labels);
+        if (mAllDayCheckBox != null && mAllDayCheckBox.isChecked()) {
+            mReminderMinuteValues = new ArrayList<>();
+            mReminderMinuteLabels = new ArrayList<>();
+            for (int minutes : org.prauga.calendar.settings.CalendarDefaults.INSTANCE.getALL_DAY_REMINDERS()) {
+                if (minutes != GeneralPreferences.NO_REMINDER) {
+                    mReminderMinuteValues.add(minutes);
+                    mReminderMinuteLabels.add(org.prauga.calendar.settings.CalendarDefaultsKt
+                            .allDayReminderLabel(mActivity, minutes));
+                }
+            }
+        }
 
         // Remove any reminder methods that aren't allowed for this calendar.  If this is
         // a new event, mCalendarAllowedReminders may not be set the first time we're called.
@@ -959,15 +970,15 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
                 if(!isChecked) {
                     resetToDefaultDuration();
                 }
-                if (mModel != null && mModel.mUri == null && mReminderItems != null) {
+                if (mModel != null && mReminderItems != null && mReminderMinuteValues != null) {
                     mModel.mReminders = EventViewUtils.reminderItemsToReminders(
                             mReminderItems, mReminderMinuteValues, mReminderMethodValues);
-                    if (applyCalendarDefaultReminders()) {
-                        mReminderItems.clear();
-                        ((LinearLayout) mScrollView.findViewById(R.id.reminder_items_container))
-                                .removeAllViews();
-                        prepareReminders();
-                    }
+                    mModel.mHasAlarm = !mModel.mReminders.isEmpty();
+                    applyCalendarDefaultReminders();
+                    mReminderItems.clear();
+                    ((LinearLayout) mScrollView.findViewById(R.id.reminder_items_container))
+                            .removeAllViews();
+                    prepareReminders();
                 }
             }
         });
@@ -1618,6 +1629,14 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
         prepareAccess();
     }
 
+    private static java.util.Set<Integer> reminderMinutes(java.util.List<ReminderEntry> reminders) {
+        java.util.Set<Integer> minutes = new java.util.HashSet<>();
+        for (ReminderEntry reminder : reminders) {
+            minutes.add(reminder.getMinutes());
+        }
+        return minutes;
+    }
+
     private boolean applyCalendarDefaultReminders() {
         if (mModel == null || mModel.mUri != null) {
             return false;
@@ -1625,8 +1644,8 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
         if (mRemindersFromIntent) {
             return false;
         }
-        if (mAppliedDefaultReminders != null && !new java.util.HashSet<>(mModel.mReminders)
-                .equals(new java.util.HashSet<>(mAppliedDefaultReminders))) {
+        if (mAppliedDefaultReminders != null
+                && !reminderMinutes(mModel.mReminders).equals(reminderMinutes(mAppliedDefaultReminders))) {
             return false;
         }
         int minutes = org.prauga.calendar.settings.CalendarDefaults.INSTANCE.reminderMinutes(
