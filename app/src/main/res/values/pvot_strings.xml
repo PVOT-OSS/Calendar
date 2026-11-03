@@ -27,6 +27,8 @@
     <string name="guests_can_invite">Invite others</string>
     <string name="guests_can_see">See the guest list</string>
 
+    <string name="repeat_custom">Custom…</string>
+
     <string name="shortcut_today">Today</string>
 
     <string name="join_meeting">Join meeting</string>

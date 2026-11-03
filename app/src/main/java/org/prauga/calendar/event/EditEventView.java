@@ -565,6 +565,35 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
     @Override
     public void onClick(View view) {
         if (view == mRruleButton) {
+            showRepeatPresets();
+            return;
+        }
+
+        removeReminderRow(view);
+    }
+
+    private void showRepeatPresets() {
+        android.widget.PopupMenu menu = new android.widget.PopupMenu(mActivity, mRruleButton);
+        java.util.List<RepeatPresets.Preset> presets = RepeatPresets.INSTANCE.presets(
+                mActivity, mStartTime.toMillis(), mStartTime.getTimezone());
+        for (int i = 0; i < presets.size(); i++) {
+            menu.getMenu().add(0, i, i, presets.get(i).getLabel());
+        }
+        menu.getMenu().add(0, presets.size(), presets.size(), R.string.repeat_custom);
+        menu.setOnMenuItemClickListener(item -> {
+            int index = item.getItemId();
+            if (index < presets.size()) {
+                onRecurrenceSet(presets.get(index).getRrule());
+            } else {
+                showRecurrencePicker();
+            }
+            return true;
+        });
+        menu.show();
+    }
+
+    private void showRecurrencePicker() {
+        {
             Bundle b = new Bundle();
             b.putLong(RecurrencePickerDialog.BUNDLE_START_TIME_MILLIS,
                     mStartTime.toMillis());
@@ -583,10 +612,10 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
             rpd.setArguments(b);
             rpd.setOnRecurrenceSetListener(EditEventView.this);
             rpd.show(fm, FRAG_TAG_RECUR_PICKER);
-            return;
         }
+    }
 
-        // This must be a click on one of the "remove reminder" buttons
+    private void removeReminderRow(View view) {
         ConstraintLayout reminderItem = (ConstraintLayout) view.getParent();
         LinearLayout parent = (LinearLayout) reminderItem.getParent();
         parent.removeView(reminderItem);
