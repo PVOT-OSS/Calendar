@@ -414,6 +414,9 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     private TextView mCalendarName;
     private ExpandableTextView mDesc;
     private ExpandableTextView mUrl;
+    private com.google.android.material.button.MaterialButton mJoinMeeting;
+    private String mEventLocation;
+    private String mEventDescription;
     private AttendeesView mLongAttendees;
     private Button emailAttendeesButton;
     private Menu mMenu = null;
@@ -838,6 +841,7 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
 
         mDesc =  mView.findViewById(R.id.description);
         mUrl =  mView.findViewById(R.id.url);
+        mJoinMeeting = mView.findViewById(R.id.join_meeting);
         mHeadlines = mView.findViewById(R.id.event_info_headline);
         mLongAttendees = (AttendeesView) mView.findViewById(R.id.long_attendee_list);
 
@@ -1660,6 +1664,10 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
             mDesc.setText(description);
         }
 
+        mEventLocation = location;
+        mEventDescription = description;
+        updateJoinButton();
+
         // Launch Custom App
         updateCustomAppButton();
 
@@ -1671,6 +1679,27 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         if (mEventUrl != null && !mEventUrl.isBlank()) {
             mUrl.setText(mEventUrl);
         }
+        updateJoinButton();
+    }
+
+    private void updateJoinButton() {
+        if (mJoinMeeting == null) {
+            return;
+        }
+        MeetingLinks.Link link = MeetingLinks.INSTANCE.find(mEventUrl, mEventLocation, mEventDescription);
+        if (link == null) {
+            mJoinMeeting.setVisibility(View.GONE);
+            return;
+        }
+        mJoinMeeting.setVisibility(View.VISIBLE);
+        mJoinMeeting.setText(getString(R.string.join_meeting_service, link.getService()));
+        mJoinMeeting.setOnClickListener(v -> {
+            try {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(link.getUrl())));
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(mContext, R.string.join_meeting_no_app, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void updateWhenTextView(View view) {

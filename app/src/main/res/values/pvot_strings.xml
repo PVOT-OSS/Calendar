@@ -7,6 +7,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="three_day_view">3 days</string>
 
+    <string name="join_meeting">Join meeting</string>
+    <string name="join_meeting_service">Join with %s</string>
+    <string name="join_meeting_no_app">No app can open this meeting link</string>
+
     <string name="import_title">Import events</string>
     <string name="import_target_calendar">Add to calendar</string>
     <plurals name="import_summary">
