@@ -35,6 +35,10 @@ import org.prauga.calendar.R
 import org.prauga.calendar.ui.Actions
 import org.prauga.calendar.ui.Formats
 import org.prauga.calendar.ui.components.Panel
+import java.time.LocalDate
+import java.time.YearMonth
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun CalendarScreen(viewModel: CalendarViewModel, contentPadding: PaddingValues, modifier: Modifier = Modifier) {
@@ -67,7 +71,18 @@ fun CalendarScreen(viewModel: CalendarViewModel, contentPadding: PaddingValues, 
                         onNext = { viewModel.step(true) },
                         onLabel = viewModel::goToday,
                     )
-                    else -> {}
+                    CalendarMode.Month -> Navigator(
+                        label = monthLabel(YearMonth.from(state.selected), state.today),
+                        onPrevious = { viewModel.step(false) },
+                        onNext = { viewModel.step(true) },
+                        onLabel = viewModel::goToday,
+                    )
+                    CalendarMode.Year -> Navigator(
+                        label = state.selected.year.toString(),
+                        onPrevious = { viewModel.step(false) },
+                        onNext = { viewModel.step(true) },
+                        onLabel = viewModel::goToday,
+                    )
                 }
                 when (state.mode) {
                     CalendarMode.Day, CalendarMode.Week -> Timeline(
@@ -80,11 +95,36 @@ fun CalendarScreen(viewModel: CalendarViewModel, contentPadding: PaddingValues, 
                         onSwipe = { forward -> viewModel.select(state.selected.plusDays(if (forward) 1 else -1)) },
                         contentPadding = contentPadding,
                     )
-                    else -> {}
+                    CalendarMode.Month -> MonthGrid(
+                        month = YearMonth.from(state.selected),
+                        selected = state.selected,
+                        today = state.today,
+                        firstDayOfWeek = state.firstDayOfWeek,
+                        agendas = state.agendas,
+                        formats = formats,
+                        onOpenDay = viewModel::openDay,
+                        onSwipe = viewModel::step,
+                        contentPadding = contentPadding,
+                    )
+                    CalendarMode.Year -> YearGrid(
+                        year = state.selected.year,
+                        focus = state.selected.month,
+                        today = state.today,
+                        firstDayOfWeek = state.firstDayOfWeek,
+                        agendas = state.agendas,
+                        onOpenMonth = viewModel::openMonth,
+                        onSwipe = viewModel::step,
+                        contentPadding = contentPadding,
+                    )
                 }
             }
         }
     }
+}
+
+private fun monthLabel(month: YearMonth, today: LocalDate): String {
+    val pattern = if (month.year == today.year) "LLLL" else "LLLL yyyy"
+    return month.format(DateTimeFormatter.ofPattern(pattern, Locale.getDefault()))
 }
 
 @Composable

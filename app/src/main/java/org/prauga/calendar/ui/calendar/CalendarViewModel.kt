@@ -91,6 +91,13 @@ class CalendarViewModel(application: Application, private val saved: SavedStateH
 
     fun goToday() = select(today)
 
+    fun openDay(date: LocalDate) = move(Position(CalendarMode.Day, date))
+
+    fun openMonth(month: YearMonth) {
+        val day = position.value.selected.dayOfMonth.coerceAtMost(month.lengthOfMonth())
+        move(Position(CalendarMode.Month, month.atDay(day)))
+    }
+
     fun step(forward: Boolean) {
         val n = if (forward) 1L else -1L
         val p = position.value
