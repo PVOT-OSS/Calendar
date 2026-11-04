@@ -13,8 +13,8 @@ import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import org.prauga.calendar.settings.GeneralPreferences
 import java.util.concurrent.TimeUnit
+import org.prauga.calendar.settings.GeneralPreferences
 
 class BirthdayWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
 
@@ -35,10 +35,15 @@ class BirthdayWorker(context: Context, params: WorkerParameters) : Worker(contex
             if (!isEnabled(context)) return
             val work = WorkManager.getInstance(context)
             work.enqueueUniquePeriodicWork(
-                PERIODIC, ExistingPeriodicWorkPolicy.KEEP,
-                PeriodicWorkRequest.Builder(BirthdayWorker::class.java, 1, TimeUnit.DAYS).build()
+                PERIODIC,
+                ExistingPeriodicWorkPolicy.KEEP,
+                PeriodicWorkRequest.Builder(BirthdayWorker::class.java, 1, TimeUnit.DAYS).build(),
             )
-            work.enqueueUniqueWork(NOW, ExistingWorkPolicy.REPLACE, OneTimeWorkRequest.from(BirthdayWorker::class.java))
+            work.enqueueUniqueWork(
+                NOW,
+                ExistingWorkPolicy.REPLACE,
+                OneTimeWorkRequest.from(BirthdayWorker::class.java),
+            )
         }
 
         fun cancel(context: Context) {

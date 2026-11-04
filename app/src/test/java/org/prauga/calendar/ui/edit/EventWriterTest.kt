@@ -6,14 +6,14 @@
 package org.prauga.calendar.ui.edit
 
 import android.provider.CalendarContract.Events
+import java.time.LocalDateTime
+import java.time.ZoneId
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import java.time.LocalDateTime
-import java.time.ZoneId
 
 @RunWith(RobolectricTestRunner::class)
 class EventWriterTest {
@@ -23,9 +23,17 @@ class EventWriterTest {
 
     @Test
     fun timedEventGetsLocalTimes() {
-        val v = EventWriter.eventValues(
-            EventDraft(title = " Sync ", calendarId = 3, start = start, end = start.plusHours(1)), zone, null,
-        )
+        val v =
+            EventWriter.eventValues(
+                EventDraft(
+                    title = " Sync ",
+                    calendarId = 3,
+                    start = start,
+                    end = start.plusHours(1),
+                ),
+                zone,
+                null,
+            )
         assertEquals("Sync", v.getAsString(Events.TITLE))
         assertEquals(1793871000000L, v.getAsLong(Events.DTSTART))
         assertEquals(1793874600000L, v.getAsLong(Events.DTEND))
@@ -35,9 +43,12 @@ class EventWriterTest {
 
     @Test
     fun allDayEventSpansUtcMidnights() {
-        val v = EventWriter.eventValues(
-            EventDraft(calendarId = 3, allDay = true, start = start, end = start.plusDays(1)), zone, null,
-        )
+        val v =
+            EventWriter.eventValues(
+                EventDraft(calendarId = 3, allDay = true, start = start, end = start.plusDays(1)),
+                zone,
+                null,
+            )
         assertEquals(1793836800000L, v.getAsLong(Events.DTSTART))
         assertEquals(1793836800000L + 2 * 86_400_000L, v.getAsLong(Events.DTEND))
         assertEquals("UTC", v.getAsString(Events.EVENT_TIMEZONE))
@@ -45,10 +56,17 @@ class EventWriterTest {
 
     @Test
     fun repeatingEventUsesADuration() {
-        val v = EventWriter.eventValues(
-            EventDraft(calendarId = 3, start = start, end = start.plusMinutes(90), rrule = "FREQ=WEEKLY;BYDAY=TH"),
-            zone, null,
-        )
+        val v =
+            EventWriter.eventValues(
+                EventDraft(
+                    calendarId = 3,
+                    start = start,
+                    end = start.plusMinutes(90),
+                    rrule = "FREQ=WEEKLY;BYDAY=TH",
+                ),
+                zone,
+                null,
+            )
         assertEquals("FREQ=WEEKLY;BYDAY=TH", v.getAsString(Events.RRULE))
         assertEquals("P5400S", v.getAsString(Events.DURATION))
         assertNull(v.getAsLong(Events.DTEND))

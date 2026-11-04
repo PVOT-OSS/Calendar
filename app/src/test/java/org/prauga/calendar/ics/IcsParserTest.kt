@@ -19,9 +19,10 @@ class IcsParserTest {
 
     @Test
     fun parsesParametersWithQuotesAndColons() {
-        val p = IcsParser.parseLine(
-            "ATTENDEE;CN=\"Doe, Jane\";ROLE=OPT-PARTICIPANT;X-URL=\"http://a:b\":mailto:jane@example.com"
-        )!!
+        val p =
+            IcsParser.parseLine(
+                "ATTENDEE;CN=\"Doe, Jane\";ROLE=OPT-PARTICIPANT;X-URL=\"http://a:b\":mailto:jane@example.com"
+            )!!
         assertEquals("ATTENDEE", p.name)
         assertEquals("Doe, Jane", p.param("cn"))
         assertEquals("OPT-PARTICIPANT", p.param("ROLE"))
@@ -43,8 +44,9 @@ class IcsParserTest {
 
     @Test
     fun buildsNestedComponents() {
-        val roots = IcsParser.parse(
-            """
+        val roots =
+            IcsParser.parse(
+                """
             BEGIN:VCALENDAR
             METHOD:PUBLISH
             BEGIN:VTIMEZONE
@@ -60,8 +62,9 @@ class IcsParserTest {
             UID:2
             END:VEVENT
             END:VCALENDAR
-            """.trimIndent()
-        )
+            """
+                    .trimIndent()
+            )
         assertEquals(1, roots.size)
         val cal = roots[0]
         assertEquals("PUBLISH", cal.text("METHOD"))

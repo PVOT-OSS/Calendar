@@ -48,13 +48,18 @@ class DetailsViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             val details = withContext(Dispatchers.IO) { EventDetailsLoader.load(resolver, eventId) }
             val s = _state.value
-            _state.value = s.copy(
-                loading = false,
-                details = details,
-                begin = if (s.begin > 0 || details == null) s.begin else details.dtStart,
-                end = if (s.end > 0 || details == null) s.end else details.dtEnd,
-            )
-            if (details != null && details.canRespond && pendingResponse != Attendees.ATTENDEE_STATUS_NONE) {
+            _state.value =
+                s.copy(
+                    loading = false,
+                    details = details,
+                    begin = if (s.begin > 0 || details == null) s.begin else details.dtStart,
+                    end = if (s.end > 0 || details == null) s.end else details.dtEnd,
+                )
+            if (
+                details != null &&
+                    details.canRespond &&
+                    pendingResponse != Attendees.ATTENDEE_STATUS_NONE
+            ) {
                 val status = pendingResponse
                 pendingResponse = Attendees.ATTENDEE_STATUS_NONE
                 if (details.self?.status != status) respond(status)
@@ -80,9 +85,11 @@ class DetailsViewModel(application: Application) : AndroidViewModel(application)
     fun duplicate(onDone: (Boolean) -> Unit) {
         val details = _state.value.details ?: return
         viewModelScope.launch {
-            val id = withContext(Dispatchers.IO) {
-                runCatching { EventCopier(resolver).copy(details.id, details.calendar) }.getOrNull()
-            }
+            val id =
+                withContext(Dispatchers.IO) {
+                    runCatching { EventCopier(resolver).copy(details.id, details.calendar) }
+                        .getOrNull()
+                }
             onDone(id != null)
         }
     }

@@ -27,11 +27,14 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import org.prauga.calendar.R
 import java.util.Calendar
 
 class AboutFragment : Fragment() {
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View? {
         return inflater.inflate(R.layout.about, container, false)
     }
 
@@ -44,7 +47,9 @@ class AboutFragment : Fragment() {
         view.findViewById<TextView>(R.id.copyright).text = getString(R.string.app_copyright, year)
 
         view.findViewById<LinearLayout>(R.id.authorsLayout).setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_authors_url))))
+            startActivity(
+                Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_authors_url)))
+            )
         }
 
         view.findViewById<Button>(R.id.changelog).setOnClickListener {
@@ -56,12 +61,13 @@ class AboutFragment : Fragment() {
         }
 
         view.findViewById<LinearLayout>(R.id.licenseLayout).setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_license_url))))
+            startActivity(
+                Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_license_url)))
+            )
         }
 
         view.findViewById<Button>(R.id.source).setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_source_url))))
         }
     }
-
 }

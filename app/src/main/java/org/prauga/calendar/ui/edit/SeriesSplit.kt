@@ -5,19 +5,26 @@
 
 package org.prauga.calendar.ui.edit
 
-import org.prauga.calendar.tasks.TasksRepository
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import org.prauga.calendar.tasks.TasksRepository
 
 object SeriesSplit {
 
     data class Result(val before: String, val from: String)
 
-    private val UTC_TIME = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'").withZone(ZoneOffset.UTC)
+    private val UTC_TIME =
+        DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'").withZone(ZoneOffset.UTC)
     private val UTC_DATE = DateTimeFormatter.ofPattern("yyyyMMdd").withZone(ZoneOffset.UTC)
 
-    fun split(rrule: String, dtStart: Long, allDay: Boolean, zone: String, occurrence: Long): Result {
+    fun split(
+        rrule: String,
+        dtStart: Long,
+        allDay: Boolean,
+        zone: String,
+        occurrence: Long,
+    ): Result {
         val parts = rrule.split(';').filter { it.isNotBlank() }
         fun key(part: String) = part.substringBefore('=').uppercase()
         val count = parts.firstOrNull { key(it) == "COUNT" }?.substringAfter('=')?.toIntOrNull()
@@ -29,8 +36,9 @@ object SeriesSplit {
                 from = (rest + "COUNT=${(count - done).coerceAtLeast(1)}").joinToString(";"),
             )
         }
-        val until = if (allDay) UTC_DATE.format(Instant.ofEpochMilli(occurrence).minusSeconds(86_400))
-        else UTC_TIME.format(Instant.ofEpochMilli(occurrence - 1000))
+        val until =
+            if (allDay) UTC_DATE.format(Instant.ofEpochMilli(occurrence).minusSeconds(86_400))
+            else UTC_TIME.format(Instant.ofEpochMilli(occurrence - 1000))
         return Result(
             before = (parts.filter { key(it) != "UNTIL" } + "UNTIL=$until").joinToString(";"),
             from = rrule,

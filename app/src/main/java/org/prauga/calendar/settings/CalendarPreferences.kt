@@ -38,6 +38,12 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
 import androidx.preference.SwitchPreference
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.prauga.calendar.R
 import org.prauga.calendar.Utils
 import org.prauga.calendar.alerts.channelId
 import org.prauga.calendar.event.EventViewUtils
@@ -45,13 +51,6 @@ import org.prauga.calendar.icalendar.IcalExporter
 import org.prauga.calendar.icalendar.IcalendarUtils
 import org.prauga.calendar.icalendar.VCalendar
 import org.prauga.calendar.persistence.ICalendarRepository
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.prauga.calendar.R
-
 
 class CalendarPreferences : PreferenceFragmentCompat() {
 
@@ -61,32 +60,46 @@ class CalendarPreferences : PreferenceFragmentCompat() {
     private var numberOfEvents: Long = -1
 
     private var mLastCalendarToExport: VCalendar? = null
-    private val mExportLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == android.app.Activity.RESULT_OK && result.data != null) {
-            val uri = result.data?.data
-            if (uri != null) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val success = try {
-                        activity?.contentResolver?.openOutputStream(uri)?.use { outputStream ->
-                            IcalendarUtils.writeCalendarToStream(mLastCalendarToExport, outputStream)
-                        } ?: false
-                    } catch (e: Exception) {
-                        Log.e("CalendarPreferences", "Error exporting calendar", e)
-                        false
-                    }
-                    withContext(Dispatchers.Main) {
-                        if (success) {
-                            Toast.makeText(activity, R.string.cal_export_success, Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(activity, R.string.cal_export_error, Toast.LENGTH_SHORT).show()
+    private val mExportLauncher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == android.app.Activity.RESULT_OK && result.data != null) {
+                val uri = result.data?.data
+                if (uri != null) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val success =
+                            try {
+                                activity?.contentResolver?.openOutputStream(uri)?.use { outputStream
+                                    ->
+                                    IcalendarUtils.writeCalendarToStream(
+                                        mLastCalendarToExport,
+                                        outputStream,
+                                    )
+                                } ?: false
+                            } catch (e: Exception) {
+                                Log.e("CalendarPreferences", "Error exporting calendar", e)
+                                false
+                            }
+                        withContext(Dispatchers.Main) {
+                            if (success) {
+                                Toast.makeText(
+                                        activity,
+                                        R.string.cal_export_success,
+                                        Toast.LENGTH_SHORT,
+                                    )
+                                    .show()
+                            } else {
+                                Toast.makeText(
+                                        activity,
+                                        R.string.cal_export_error,
+                                        Toast.LENGTH_SHORT,
+                                    )
+                                    .show()
+                            }
                         }
                     }
                 }
             }
         }
-    }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         calendarId = requireArguments().getLong(ARG_CALENDAR_ID)
@@ -94,7 +107,8 @@ class CalendarPreferences : PreferenceFragmentCompat() {
         account = calendarRepository.queryAccount(calendarId)!!
         numberOfEvents = calendarRepository.queryNumberOfEvents(calendarId)!!
 
-        // use custom data store to save/retrieve calendar preferences in Android's calendar database
+        // use custom data store to save/retrieve calendar preferences in Android's calendar
+        // database
         val preferenceManager = preferenceManager
         preferenceManager.preferenceDataStore = CalendarDataStore(requireActivity(), calendarId)
 
@@ -104,7 +118,10 @@ class CalendarPreferences : PreferenceFragmentCompat() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         val displayName = preferenceManager.preferenceDataStore!!.getString(DISPLAY_NAME_KEY, null)
-        activity?.title = if (displayName.isNullOrBlank()) getString(R.string.preferences_calendar_no_display_name) else displayName
+        activity?.title =
+            if (displayName.isNullOrBlank())
+                getString(R.string.preferences_calendar_no_display_name)
+            else displayName
     }
 
     private fun populatePreferences() {
@@ -115,80 +132,98 @@ class CalendarPreferences : PreferenceFragmentCompat() {
         val currentColor = preferenceManager.preferenceDataStore!!.getInt(COLOR_KEY, -1)
         val authenticatorInfo = getAuthenticatorInfo(account)
 
-        val visiblePreference = SwitchPreference(context).apply {
-            key = VISIBLE_KEY
-            title = getString(R.string.preferences_calendar_visible)
-        }
-        val colorPreference = Preference(context).apply {
-            key = COLOR_KEY
-            title = getString(R.string.preferences_calendar_color)
-            icon = getColorIcon(currentColor)
-        }
+        val visiblePreference =
+            SwitchPreference(context).apply {
+                key = VISIBLE_KEY
+                title = getString(R.string.preferences_calendar_visible)
+            }
+        val colorPreference =
+            Preference(context).apply {
+                key = COLOR_KEY
+                title = getString(R.string.preferences_calendar_color)
+                icon = getColorIcon(currentColor)
+            }
         colorPreference.setOnPreferenceClickListener {
             displayCalendarColorPicker()
             true
         }
-        val displayNamePreference = EditTextPreference(context).apply {
-            key = DISPLAY_NAME_KEY
-            title = getString(R.string.preferences_calendar_display_name)
-            dialogTitle = getString(R.string.preferences_calendar_display_name)
-        }
+        val displayNamePreference =
+            EditTextPreference(context).apply {
+                key = DISPLAY_NAME_KEY
+                title = getString(R.string.preferences_calendar_display_name)
+                dialogTitle = getString(R.string.preferences_calendar_display_name)
+            }
         displayNamePreference.setOnPreferenceChangeListener { _, newValue ->
             activity?.title = newValue as String
             true
         }
-        val deletePreference = Preference(context).apply {
-            title = getString(R.string.preferences_calendar_delete)
-        }
+        val deletePreference =
+            Preference(context).apply { title = getString(R.string.preferences_calendar_delete) }
         deletePreference.setOnPreferenceClickListener {
             deleteCalendar()
             true
         }
-        val exportPreference = Preference(context).apply {
-            title = getString(R.string.cal_export_calendar_title)
-            summary = getString(R.string.cal_export_calendar_summary)
-        }
+        val exportPreference =
+            Preference(context).apply {
+                title = getString(R.string.cal_export_calendar_title)
+                summary = getString(R.string.cal_export_calendar_summary)
+            }
         exportPreference.setOnPreferenceClickListener {
             startExport()
             true
         }
-        val configurePreference = Preference(context).apply {
-            title = getString(R.string.preferences_calendar_configure_account, authenticatorInfo?.label)
-            intent = authenticatorInfo?.intent
-        }
+        val configurePreference =
+            Preference(context).apply {
+                title =
+                    getString(
+                        R.string.preferences_calendar_configure_account,
+                        authenticatorInfo?.label,
+                    )
+                intent = authenticatorInfo?.intent
+            }
 
-        val infoCategory = PreferenceCategory(context).apply {
-            title = getString(R.string.preferences_calendar_info_category)
-        }
+        val infoCategory =
+            PreferenceCategory(context).apply {
+                title = getString(R.string.preferences_calendar_info_category)
+            }
 
-        val numberOfEventsPreference = Preference(context).apply {
-            title = getString(R.string.preferences_calendar_number_of_events, numberOfEvents)
-            isSelectable = false
-        }
-        val accountPreference = Preference(context).apply {
-            title = getString(R.string.preferences_calendar_account, authenticatorInfo?.label)
-            icon = authenticatorInfo?.icon
-            isSelectable = false
-        }
-        val localAccountPreference = Preference(context).apply {
-            title = getString(R.string.preferences_calendar_account_local)
-            isSelectable = false
-        }
-        val localAccountInfoPreference = Preference(context).apply {
-            title = getString(R.string.preferences_list_add_offline_message)
-            isSelectable = false
-        }
+        val numberOfEventsPreference =
+            Preference(context).apply {
+                title = getString(R.string.preferences_calendar_number_of_events, numberOfEvents)
+                isSelectable = false
+            }
+        val accountPreference =
+            Preference(context).apply {
+                title = getString(R.string.preferences_calendar_account, authenticatorInfo?.label)
+                icon = authenticatorInfo?.icon
+                isSelectable = false
+            }
+        val localAccountPreference =
+            Preference(context).apply {
+                title = getString(R.string.preferences_calendar_account_local)
+                isSelectable = false
+            }
+        val localAccountInfoPreference =
+            Preference(context).apply {
+                title = getString(R.string.preferences_list_add_offline_message)
+                isSelectable = false
+            }
 
         screen.addPreference(visiblePreference)
 
-        if(Utils.isOreoOrLater()){
-            val notificationPreference = Preference(context).apply {
-                title = getString(R.string.preferences_manage_notifications)
-                intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
-                    putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-                    putExtra(Settings.EXTRA_CHANNEL_ID, channelId(this@CalendarPreferences.calendarId))
+        if (Utils.isOreoOrLater()) {
+            val notificationPreference =
+                Preference(context).apply {
+                    title = getString(R.string.preferences_manage_notifications)
+                    intent =
+                        Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
+                            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                            putExtra(
+                                Settings.EXTRA_CHANNEL_ID,
+                                channelId(this@CalendarPreferences.calendarId),
+                            )
+                        }
                 }
-            }
             screen.addPreference(notificationPreference)
         }
 
@@ -221,47 +256,56 @@ class CalendarPreferences : PreferenceFragmentCompat() {
     private fun addDefaultReminderPreferences(screen: PreferenceScreen) {
         val context = preferenceManager.context
         val store = CalendarDefaults.Store(context)
-        val category = PreferenceCategory(context).apply {
-            title = getString(R.string.calendar_default_notifications)
-        }
+        val category =
+            PreferenceCategory(context).apply {
+                title = getString(R.string.calendar_default_notifications)
+            }
         screen.addPreference(category)
 
-        val timedValues = listOf(CalendarDefaults.INHERIT_STRING) +
-            resources.getStringArray(R.array.preferences_default_reminder_values).toList()
-        val timed = ListPreference(context).apply {
-            preferenceDataStore = store
-            key = CalendarDefaults.reminderKey(calendarId)
-            title = getString(R.string.calendar_default_reminder_timed)
-            dialogTitle = title
-            entryValues = timedValues.toTypedArray()
-            entries = timedValues.map { reminderLabel(it.toInt(), false) }.toTypedArray()
-            setDefaultValue(CalendarDefaults.INHERIT_STRING)
-            summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
-        }
-        val allDayValues = listOf(CalendarDefaults.INHERIT_STRING) +
-            CalendarDefaults.ALL_DAY_REMINDERS.map { it.toString() }
-        val allDay = ListPreference(context).apply {
-            preferenceDataStore = store
-            key = CalendarDefaults.allDayReminderKey(calendarId)
-            title = getString(R.string.calendar_default_reminder_allday)
-            dialogTitle = title
-            entryValues = allDayValues.toTypedArray()
-            entries = allDayValues.map { reminderLabel(it.toInt(), true) }.toTypedArray()
-            setDefaultValue(CalendarDefaults.INHERIT_STRING)
-            summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
-        }
+        val timedValues =
+            listOf(CalendarDefaults.INHERIT_STRING) +
+                resources.getStringArray(R.array.preferences_default_reminder_values).toList()
+        val timed =
+            ListPreference(context).apply {
+                preferenceDataStore = store
+                key = CalendarDefaults.reminderKey(calendarId)
+                title = getString(R.string.calendar_default_reminder_timed)
+                dialogTitle = title
+                entryValues = timedValues.toTypedArray()
+                entries = timedValues.map { reminderLabel(it.toInt(), false) }.toTypedArray()
+                setDefaultValue(CalendarDefaults.INHERIT_STRING)
+                summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
+            }
+        val allDayValues =
+            listOf(CalendarDefaults.INHERIT_STRING) +
+                CalendarDefaults.ALL_DAY_REMINDERS.map { it.toString() }
+        val allDay =
+            ListPreference(context).apply {
+                preferenceDataStore = store
+                key = CalendarDefaults.allDayReminderKey(calendarId)
+                title = getString(R.string.calendar_default_reminder_allday)
+                dialogTitle = title
+                entryValues = allDayValues.toTypedArray()
+                entries = allDayValues.map { reminderLabel(it.toInt(), true) }.toTypedArray()
+                setDefaultValue(CalendarDefaults.INHERIT_STRING)
+                summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
+            }
         category.addPreference(timed)
         category.addPreference(allDay)
     }
 
-    private fun reminderLabel(minutes: Int, allDay: Boolean): String = when {
-        minutes == CalendarDefaults.INHERIT ->
-            getString(if (allDay) R.string.calendar_default_reminder_same else R.string.calendar_default_reminder_inherit)
-        minutes == GeneralPreferences.NO_REMINDER ->
-            EventViewUtils.constructReminderLabel(requireActivity(), minutes, false)
-        allDay -> allDayReminderLabel(requireContext(), minutes)
-        else -> EventViewUtils.constructReminderLabel(requireActivity(), minutes, false)
-    }
+    private fun reminderLabel(minutes: Int, allDay: Boolean): String =
+        when {
+            minutes == CalendarDefaults.INHERIT ->
+                getString(
+                    if (allDay) R.string.calendar_default_reminder_same
+                    else R.string.calendar_default_reminder_inherit
+                )
+            minutes == GeneralPreferences.NO_REMINDER ->
+                EventViewUtils.constructReminderLabel(requireActivity(), minutes, false)
+            allDay -> allDayReminderLabel(requireContext(), minutes)
+            else -> EventViewUtils.constructReminderLabel(requireActivity(), minutes, false)
+        }
 
     private fun getColorIcon(color: Int): Drawable {
         val icon: Drawable = ContextCompat.getDrawable(requireContext(), R.drawable.circle)!!
@@ -275,36 +319,37 @@ class CalendarPreferences : PreferenceFragmentCompat() {
         }
 
         val isTablet = Utils.getConfigBool(context, R.bool.tablet_config)
-        val calendarDialogPicker = CalendarColorPickerDialogX.newInstance(calendarId, isTablet,
+        val calendarDialogPicker =
+            CalendarColorPickerDialogX.newInstance(
+                calendarId,
+                isTablet,
                 object : CalendarColorPickerDialogX.OnCalendarColorSelectedListener {
                     override fun onColorSelected(color: Int) {
                         val colorPref = findPreference<Preference>(COLOR_KEY)!!
                         colorPref.icon = getColorIcon(color)
                     }
-                })
+                },
+            )
         calendarDialogPicker.show(parentFragmentManager, COLOR_PICKER_DIALOG_TAG)
     }
 
-    data class AuthenticatorInfo(val label: String?,
-                                 val icon: Drawable?,
-                                 val intent: Intent?)
+    data class AuthenticatorInfo(val label: String?, val icon: Drawable?, val intent: Intent?)
 
     private fun getAuthenticatorInfo(account: Account): AuthenticatorInfo? {
         val description = getAuthenticatorDescription(account) ?: return null
 
         return try {
             val pm = activity?.packageManager
-            val label = pm?.getResourcesForApplication(description.packageName)?.getString(
-                description.labelId)
+            val label =
+                pm?.getResourcesForApplication(description.packageName)
+                    ?.getString(description.labelId)
             val icon = pm?.getDrawable(description.packageName, description.iconId, null)
             val intent = pm?.getLaunchIntentForPackage(description.packageName)
 
             AuthenticatorInfo(label, icon, intent)
-
         } catch (e: PackageManager.NameNotFoundException) {
-            val errorDialog = MaterialAlertDialogBuilder(requireActivity())
-                .setMessage("$e")
-                .create()
+            val errorDialog =
+                MaterialAlertDialogBuilder(requireActivity()).setMessage("$e").create()
             errorDialog.show()
             return null
         }
@@ -322,13 +367,15 @@ class CalendarPreferences : PreferenceFragmentCompat() {
     }
 
     private fun deleteCalendar() {
-        val warningDialog = MaterialAlertDialogBuilder(requireActivity())
+        val warningDialog =
+            MaterialAlertDialogBuilder(requireActivity())
                 .setMessage(R.string.preferences_calendar_delete_message)
                 .setPositiveButton(R.string.preferences_calendar_delete_delete) { _, _ ->
                     calendarRepository.deleteLocalCalendar(account.name, calendarId)
                     activity?.supportFragmentManager?.popBackStackImmediate()
                 }
-                .setNegativeButton(R.string.preferences_calendar_delete_cancel) { dialogInterface, _ ->
+                .setNegativeButton(R.string.preferences_calendar_delete_cancel) { dialogInterface, _
+                    ->
                     dialogInterface.dismiss()
                 }
                 .create()
@@ -336,19 +383,21 @@ class CalendarPreferences : PreferenceFragmentCompat() {
     }
 
     private fun startExport() {
-        val displayName = preferenceManager.preferenceDataStore!!.getString(DISPLAY_NAME_KEY, "calendar")!!
+        val displayName =
+            preferenceManager.preferenceDataStore!!.getString(DISPLAY_NAME_KEY, "calendar")!!
         CoroutineScope(Dispatchers.IO).launch {
             val exporter = IcalExporter(requireContext())
             mLastCalendarToExport = exporter.exportCalendar(calendarId)
 
             withContext(Dispatchers.Main) {
                 if (mLastCalendarToExport != null) {
-                    val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                        addCategory(Intent.CATEGORY_OPENABLE)
-                        type = "text/calendar"
-                        val fileName = displayName.replace("\\W+".toRegex(), "_") + ".ics"
-                        putExtra(Intent.EXTRA_TITLE, fileName)
-                    }
+                    val intent =
+                        Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                            addCategory(Intent.CATEGORY_OPENABLE)
+                            type = "text/calendar"
+                            val fileName = displayName.replace("\\W+".toRegex(), "_") + ".ics"
+                            putExtra(Intent.EXTRA_TITLE, fileName)
+                        }
                     mExportLauncher.launch(intent)
                 } else {
                     Toast.makeText(activity, R.string.cal_export_error, Toast.LENGTH_SHORT).show()
@@ -366,5 +415,4 @@ class CalendarPreferences : PreferenceFragmentCompat() {
         const val COLOR_KEY = "color"
         const val DISPLAY_NAME_KEY = "displayName"
     }
-
 }

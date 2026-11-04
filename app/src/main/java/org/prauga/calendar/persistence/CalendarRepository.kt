@@ -22,41 +22,32 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.net.Uri
 import android.provider.CalendarContract
-import org.prauga.calendar.datasource.AccountDataSource
-import org.prauga.calendar.datasource.CalendarDataSource
-import org.prauga.calendar.datasource.EventDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
-
+import org.prauga.calendar.datasource.AccountDataSource
+import org.prauga.calendar.datasource.CalendarDataSource
+import org.prauga.calendar.datasource.EventDataSource
 
 /**
  * Source of truth for everything related to Calendars.
  *
- * Repository as in
- * https://developer.android.com/jetpack/docs/guide#recommended-app-arch
+ * Repository as in https://developer.android.com/jetpack/docs/guide#recommended-app-arch
  *
- * TODO:
- * Replace usages of AsyncQueryService in Etar with repositories
- * Currently CalendarRepository is only used for settings
+ * TODO: Replace usages of AsyncQueryService in Etar with repositories Currently CalendarRepository
+ *   is only used for settings
  *
  * TODO Move to a proper /repository folder
  */
 @SuppressLint("MissingPermission")
 internal class CalendarRepository(val application: Application) : ICalendarRepository {
-    /**
-     * Source of calendar entities
-     */
+    /** Source of calendar entities */
     private val calendarDataSource = CalendarDataSource(application)
 
-    /**
-     * Source of event entities
-     */
+    /** Source of event entities */
     private val eventDataSource = EventDataSource(application)
 
-    /**
-     * Source of account entities
-     */
+    /** Source of account entities */
     private val accountDataSource = AccountDataSource(application)
 
     override fun getCalendarsOrderedByAccount(): Flow<List<Calendar>> =
@@ -88,8 +79,9 @@ internal class CalendarRepository(val application: Application) : ICalendarRepos
                 .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME, accountName)
                 .appendQueryParameter(
                     CalendarContract.Calendars.ACCOUNT_TYPE,
-                    CalendarContract.ACCOUNT_TYPE_LOCAL
-                ).build()
+                    CalendarContract.ACCOUNT_TYPE_LOCAL,
+                )
+                .build()
         }
     }
 }

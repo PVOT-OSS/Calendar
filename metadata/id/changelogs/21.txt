@@ -1,2 +1,2 @@
-- Perbaikan bug.  
+- Perbaikan bug.
 - Terjemahan baru.

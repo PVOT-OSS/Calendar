@@ -21,14 +21,16 @@ object TimelineLayout {
     const val MIN_DURATION = 30
 
     fun layout(items: List<Agenda>, julianDay: Int): List<Slot> {
-        val timed = items.filter { !it.allDay && it.occursOn(julianDay) }
-            .map { a ->
-                val start = if (a.startDay < julianDay) 0 else a.startMinute
-                val end = if (a.endDay > julianDay) MINUTES_PER_DAY else a.endMinute
-                val shown = maxOf(end, start + MIN_DURATION).coerceAtMost(MINUTES_PER_DAY)
-                Triple(a, start.coerceAtMost(MINUTES_PER_DAY - MIN_DURATION), shown)
-            }
-            .sortedWith(compareBy<Triple<Agenda, Int, Int>>({ it.second }, { -it.third }))
+        val timed =
+            items
+                .filter { !it.allDay && it.occursOn(julianDay) }
+                .map { a ->
+                    val start = if (a.startDay < julianDay) 0 else a.startMinute
+                    val end = if (a.endDay > julianDay) MINUTES_PER_DAY else a.endMinute
+                    val shown = maxOf(end, start + MIN_DURATION).coerceAtMost(MINUTES_PER_DAY)
+                    Triple(a, start.coerceAtMost(MINUTES_PER_DAY - MIN_DURATION), shown)
+                }
+                .sortedWith(compareBy<Triple<Agenda, Int, Int>>({ it.second }, { -it.third }))
 
         val result = ArrayList<Slot>(timed.size)
         var cluster = ArrayList<Pair<Triple<Agenda, Int, Int>, Int>>()
@@ -37,7 +39,9 @@ object TimelineLayout {
 
         fun flush() {
             val columns = columnEnds.size
-            cluster.forEach { (t, column) -> result += Slot(t.first, t.second, t.third, column, columns) }
+            cluster.forEach { (t, column) ->
+                result += Slot(t.first, t.second, t.third, column, columns)
+            }
             cluster = ArrayList()
             columnEnds.clear()
         }

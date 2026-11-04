@@ -65,4 +65,3 @@
 -keepclassmembers class * implements android.content.SharedPreferences$Editor {
   public *** apply();
 }
-

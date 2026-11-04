@@ -22,13 +22,11 @@ import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
-import org.prauga.calendar.Utils
-import org.prauga.calendar.R
 import java.util.*
+import org.prauga.calendar.R
+import org.prauga.calendar.Utils
 
-/**
- * Fragment to facilitate editing of quick responses when emailing guests
- */
+/** Fragment to facilitate editing of quick responses when emailing guests */
 class QuickResponsePreferences : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
     private lateinit var responsePreferences: Array<EditTextPreference?>
     private lateinit var responses: Array<String>
@@ -53,15 +51,16 @@ class QuickResponsePreferences : PreferenceFragmentCompat(), Preference.OnPrefer
 
         responsePreferences = arrayOfNulls(responses.size)
         for ((i, response) in responses.withIndex()) {
-            val responsePreference = EditTextPreference(requireActivity()).apply {
-                setDialogTitle(R.string.quick_response_settings_edit_title)
-                title = response
-                text = response
-                key = i.toString()
-                order = i
-                isPersistent = false // done manually in onPreferenceChange
-                onPreferenceChangeListener = this@QuickResponsePreferences
-            }
+            val responsePreference =
+                EditTextPreference(requireActivity()).apply {
+                    setDialogTitle(R.string.quick_response_settings_edit_title)
+                    title = response
+                    text = response
+                    key = i.toString()
+                    order = i
+                    isPersistent = false // done manually in onPreferenceChange
+                    onPreferenceChangeListener = this@QuickResponsePreferences
+                }
 
             responsePreferences[i] = responsePreference
             screen.addPreference(responsePreference)
@@ -85,5 +84,4 @@ class QuickResponsePreferences : PreferenceFragmentCompat(), Preference.OnPrefer
         }
         return false
     }
-
 }

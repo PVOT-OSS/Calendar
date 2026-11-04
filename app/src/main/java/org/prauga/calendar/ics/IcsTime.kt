@@ -22,10 +22,11 @@ object IcsTime {
     fun parse(
         property: IcsProperty,
         defaultTimeZone: String,
-        onUnknownZone: (String) -> Unit = {}
+        onUnknownZone: (String) -> Unit = {},
     ): IcsDateTime? {
         val value = property.value.trim()
-        val isDate = property.param("VALUE") == "DATE" || (value.length == 8 && value.all(Char::isDigit))
+        val isDate =
+            property.param("VALUE") == "DATE" || (value.length == 8 && value.all(Char::isDigit))
         return parseValue(value, isDate, property.param("TZID"), defaultTimeZone, onUnknownZone)
     }
 
@@ -34,24 +35,29 @@ object IcsTime {
         isDate: Boolean,
         tzid: String?,
         defaultTimeZone: String,
-        onUnknownZone: (String) -> Unit = {}
-    ): IcsDateTime? = try {
-        if (isDate) {
-            val date = LocalDate.parse(value.take(8), DATE)
-            IcsDateTime(date.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli(), true, "UTC")
-        } else if (value.endsWith("Z") || value.endsWith("z")) {
-            val time = LocalDateTime.parse(value.dropLast(1).take(15), DATE_TIME)
-            IcsDateTime(time.toInstant(ZoneOffset.UTC).toEpochMilli(), false, "UTC")
-        } else {
-            var zone = tzid?.let { resolveZone(it) }
-            if (tzid != null && zone == null) onUnknownZone(tzid)
-            if (zone == null) zone = defaultTimeZone
-            val time = LocalDateTime.parse(value.take(15), DATE_TIME)
-            IcsDateTime(time.atZone(ZoneId.of(zone)).toInstant().toEpochMilli(), false, zone)
+        onUnknownZone: (String) -> Unit = {},
+    ): IcsDateTime? =
+        try {
+            if (isDate) {
+                val date = LocalDate.parse(value.take(8), DATE)
+                IcsDateTime(
+                    date.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli(),
+                    true,
+                    "UTC",
+                )
+            } else if (value.endsWith("Z") || value.endsWith("z")) {
+                val time = LocalDateTime.parse(value.dropLast(1).take(15), DATE_TIME)
+                IcsDateTime(time.toInstant(ZoneOffset.UTC).toEpochMilli(), false, "UTC")
+            } else {
+                var zone = tzid?.let { resolveZone(it) }
+                if (tzid != null && zone == null) onUnknownZone(tzid)
+                if (zone == null) zone = defaultTimeZone
+                val time = LocalDateTime.parse(value.take(15), DATE_TIME)
+                IcsDateTime(time.atZone(ZoneId.of(zone)).toInstant().toEpochMilli(), false, zone)
+            }
+        } catch (e: RuntimeException) {
+            null
         }
-    } catch (e: RuntimeException) {
-        null
-    }
 
     fun resolveZone(tzid: String): String? {
         val id = tzid.trim().removeSurrounding("\"")
@@ -62,15 +68,18 @@ object IcsTime {
             val candidate = parts.drop(start).joinToString("/")
             if (candidate.contains('/') && isKnown(candidate)) return canonical(candidate)
         }
-        windowsZone(id)?.let { return it }
+        windowsZone(id)?.let {
+            return it
+        }
         return null
     }
 
-    private fun windowsZone(id: String): String? = try {
-        android.icu.util.TimeZone.getIDForWindowsID(id, "001")?.takeIf { it.isNotEmpty() }
-    } catch (e: Throwable) {
-        null
-    }
+    private fun windowsZone(id: String): String? =
+        try {
+            android.icu.util.TimeZone.getIDForWindowsID(id, "001")?.takeIf { it.isNotEmpty() }
+        } catch (e: Throwable) {
+            null
+        }
 
     private fun isKnown(id: String): Boolean =
         id == "UTC" || id == "GMT" || TimeZone.getAvailableIDs().contains(id)
@@ -80,14 +89,21 @@ object IcsTime {
     fun parseDuration(value: String): Long? {
         val match = DURATION.matchEntire(value.trim().uppercase()) ?: return null
         val (sign, weeks, days, hours, minutes, seconds) = match.destructured
-        if (weeks.isEmpty() && days.isEmpty() && hours.isEmpty() && minutes.isEmpty() && seconds.isEmpty()) {
+        if (
+            weeks.isEmpty() &&
+                days.isEmpty() &&
+                hours.isEmpty() &&
+                minutes.isEmpty() &&
+                seconds.isEmpty()
+        ) {
             return null
         }
-        val total = (weeks.toLongOrNull() ?: 0) * 7 * DAY +
-            (days.toLongOrNull() ?: 0) * DAY +
-            (hours.toLongOrNull() ?: 0) * HOUR +
-            (minutes.toLongOrNull() ?: 0) * MINUTE +
-            (seconds.toLongOrNull() ?: 0) * SECOND
+        val total =
+            (weeks.toLongOrNull() ?: 0) * 7 * DAY +
+                (days.toLongOrNull() ?: 0) * DAY +
+                (hours.toLongOrNull() ?: 0) * HOUR +
+                (minutes.toLongOrNull() ?: 0) * MINUTE +
+                (seconds.toLongOrNull() ?: 0) * SECOND
         return if (sign == "-") -total else total
     }
 
@@ -98,7 +114,8 @@ object IcsTime {
     fun formatUtc(millis: Long): String =
         UTC_FORMAT.format(LocalDateTime.ofEpochSecond(millis / 1000, 0, ZoneOffset.UTC))
 
-    private val DURATION = Regex("""([+-]?)P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?""")
+    private val DURATION =
+        Regex("""([+-]?)P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?""")
 
     const val SECOND = 1000L
     const val MINUTE = 60 * SECOND

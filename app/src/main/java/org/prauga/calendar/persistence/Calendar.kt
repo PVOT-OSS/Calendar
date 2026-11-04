@@ -17,17 +17,16 @@
 
 package org.prauga.calendar.persistence
 
-
-/**
- * @property isLocal This calendar is stored locally.
- */
-data class Calendar(val id: Long,
-                    val accountName: String,
-                    val accountType: String,
-                    val name: String?,
-                    val displayName: String?,
-                    val color: Int,
-                    val visible: Boolean,
-                    val syncEvents: Boolean,
-                    val isPrimary: Boolean,
-                    val isLocal: Boolean)
+/** @property isLocal This calendar is stored locally. */
+data class Calendar(
+    val id: Long,
+    val accountName: String,
+    val accountType: String,
+    val name: String?,
+    val displayName: String?,
+    val color: Int,
+    val visible: Boolean,
+    val syncEvents: Boolean,
+    val isPrimary: Boolean,
+    val isLocal: Boolean,
+)

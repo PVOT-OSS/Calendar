@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -42,18 +41,19 @@ import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import org.prauga.calendar.R
-import org.prauga.calendar.data.Agenda
-import org.prauga.calendar.data.JulianDay
-import org.prauga.calendar.ui.Formats
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
 import kotlin.math.abs
+import org.prauga.calendar.R
+import org.prauga.calendar.data.Agenda
+import org.prauga.calendar.data.JulianDay
+import org.prauga.calendar.ui.Formats
 
-fun weekdays(firstDayOfWeek: DayOfWeek): List<DayOfWeek> = (0L until 7L).map { firstDayOfWeek.plus(it) }
+fun weekdays(firstDayOfWeek: DayOfWeek): List<DayOfWeek> =
+    (0L until 7L).map { firstDayOfWeek.plus(it) }
 
 fun monthCells(month: YearMonth, firstDayOfWeek: DayOfWeek): List<LocalDate?> {
     val lead = (month.atDay(1).dayOfWeek.value - firstDayOfWeek.value + 7) % 7
@@ -79,11 +79,14 @@ fun MonthGrid(
 ) {
     val locale = Locale.getDefault()
     val cells = remember(month, firstDayOfWeek) { monthCells(month, firstDayOfWeek) }
-    val byDay = remember(agendas) {
-        val map = HashMap<Int, MutableList<Agenda>>()
-        agendas.forEach { a -> (a.startDay..a.endDay).forEach { map.getOrPut(it) { ArrayList() } += a } }
-        map
-    }
+    val byDay =
+        remember(agendas) {
+            val map = HashMap<Int, MutableList<Agenda>>()
+            agendas.forEach { a ->
+                (a.startDay..a.endDay).forEach { map.getOrPut(it) { ArrayList() } += a }
+            }
+            map
+        }
     val swipePx = with(LocalDensity.current) { 72.dp.toPx() }
     Column(
         modifier
@@ -105,11 +108,11 @@ fun MonthGrid(
             weekdays(firstDayOfWeek).forEach { day ->
                 Text(
                     text = day.getDisplayName(TextStyle.SHORT, locale),
-                    modifier = Modifier
-                        .weight(1f)
-                        .clip(RoundedCornerShape(50))
-                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                        .padding(vertical = 6.dp),
+                    modifier =
+                        Modifier.weight(1f)
+                            .clip(RoundedCornerShape(50))
+                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                            .padding(vertical = 6.dp),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
@@ -162,16 +165,20 @@ private fun DayTile(
             .clearAndSetSemantics {
                 contentDescription = "${formats.fullDate(date)}, $count"
                 selected = isSelected
-                onClick { onClick(); true }
+                onClick {
+                    onClick()
+                    true
+                }
             }
             .clickable(onClick = onClick)
             .padding(vertical = 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(3.dp)) {
-            items.distinctBy { it.color }.take(3).forEach {
-                Box(Modifier.size(7.dp).background(Color(it.color), CircleShape))
-            }
+            items
+                .distinctBy { it.color }
+                .take(3)
+                .forEach { Box(Modifier.size(7.dp).background(Color(it.color), CircleShape)) }
         }
         Spacer(Modifier.weight(1f))
         Text(

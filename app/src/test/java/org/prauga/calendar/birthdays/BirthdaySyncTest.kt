@@ -5,10 +5,10 @@
 
 package org.prauga.calendar.birthdays
 
+import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
-import java.time.LocalDate
 
 class BirthdaySyncTest {
 

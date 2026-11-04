@@ -24,27 +24,38 @@ import androidx.core.content.ContextCompat
 import org.prauga.calendar.settings.GeneralPreferences
 import org.prauga.calendar.settings.SettingsActivity
 import org.prauga.calendar.theme.applyTheme
-import org.prauga.calendar.R
 import org.prauga.calendar.ui.MainActivity
 
 class OnboardingActivity : AppCompatActivity() {
 
-    private val calendarPermission = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { refresh() }
-    private val notificationPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { refresh() }
+    private val calendarPermission =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            refresh()
+        }
+    private val notificationPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { refresh() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         applyTheme()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.onboarding_activity)
         findViewById<Button>(R.id.onboarding_calendar).setOnClickListener {
-            calendarPermission.launch(arrayOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR))
+            calendarPermission.launch(
+                arrayOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR)
+            )
         }
         findViewById<Button>(R.id.onboarding_notifications).setOnClickListener {
-            if (Build.VERSION.SDK_INT >= 33) notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+            if (Build.VERSION.SDK_INT >= 33)
+                notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
         findViewById<Button>(R.id.onboarding_alarms).setOnClickListener {
             if (Build.VERSION.SDK_INT >= 31) {
-                startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:$packageName")))
+                startActivity(
+                    Intent(
+                        Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                        Uri.parse("package:$packageName"),
+                    )
+                )
             }
         }
         findViewById<Button>(R.id.onboarding_offline).setOnClickListener {
@@ -52,9 +63,12 @@ class OnboardingActivity : AppCompatActivity() {
         }
         findViewById<Button>(R.id.onboarding_davx5).setOnClickListener { openDavx5() }
         findViewById<Button>(R.id.onboarding_done).setOnClickListener { finishOnboarding() }
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() = finishOnboarding()
-        })
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() = finishOnboarding()
+            },
+        )
     }
 
     override fun onResume() {
@@ -67,15 +81,26 @@ class OnboardingActivity : AppCompatActivity() {
             val button = findViewById<Button>(id)
             button.visibility = if (available) View.VISIBLE else View.GONE
             button.isEnabled = !granted
-            button.text = if (granted) getString(R.string.onboarding_allowed, getString(label)) else getString(label)
+            button.text =
+                if (granted) getString(R.string.onboarding_allowed, getString(label))
+                else getString(label)
         }
         mark(R.id.onboarding_calendar, R.string.onboarding_allow_calendar, hasCalendar(this))
         mark(
-            R.id.onboarding_notifications, R.string.onboarding_allow_notifications,
-            Build.VERSION.SDK_INT < 33 || granted(Manifest.permission.POST_NOTIFICATIONS), Build.VERSION.SDK_INT >= 33
+            R.id.onboarding_notifications,
+            R.string.onboarding_allow_notifications,
+            Build.VERSION.SDK_INT < 33 || granted(Manifest.permission.POST_NOTIFICATIONS),
+            Build.VERSION.SDK_INT >= 33,
         )
-        val alarms = Build.VERSION.SDK_INT < 31 || getSystemService(AlarmManager::class.java).canScheduleExactAlarms()
-        mark(R.id.onboarding_alarms, R.string.onboarding_allow_alarms, alarms, Build.VERSION.SDK_INT >= 31)
+        val alarms =
+            Build.VERSION.SDK_INT < 31 ||
+                getSystemService(AlarmManager::class.java).canScheduleExactAlarms()
+        mark(
+            R.id.onboarding_alarms,
+            R.string.onboarding_allow_alarms,
+            alarms,
+            Build.VERSION.SDK_INT >= 31,
+        )
         val calendarsReady = hasCalendar(this)
         findViewById<View>(R.id.onboarding_offline).isEnabled = calendarsReady
         findViewById<View>(R.id.onboarding_davx5).isEnabled = calendarsReady
@@ -93,19 +118,23 @@ class OnboardingActivity : AppCompatActivity() {
         try {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$DAVX5")))
         } catch (e: ActivityNotFoundException) {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://f-droid.org/packages/$DAVX5/")))
+            startActivity(
+                Intent(Intent.ACTION_VIEW, Uri.parse("https://f-droid.org/packages/$DAVX5/"))
+            )
         }
     }
 
     private fun finishOnboarding() {
-        GeneralPreferences.getSharedPreferences(this).edit()
+        GeneralPreferences.getSharedPreferences(this)
+            .edit()
             .putBoolean(PREF_DONE, true)
             .putBoolean(PREF_EXACT_ALARM_ASKED, true)
             .apply()
-        startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+        startActivity(
+            Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        )
         finish()
     }
-
 
     companion object {
         private const val PREF_DONE = "onboarding_done"
@@ -113,8 +142,10 @@ class OnboardingActivity : AppCompatActivity() {
         private const val DAVX5 = "at.bitfire.davdroid"
 
         private fun hasCalendar(context: Context) =
-            ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) ==
+                PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_CALENDAR) ==
+                    PackageManager.PERMISSION_GRANTED
 
         @JvmStatic
         fun shouldShow(context: Context): Boolean {

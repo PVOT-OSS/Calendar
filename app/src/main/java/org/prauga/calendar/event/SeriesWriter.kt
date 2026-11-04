@@ -22,41 +22,71 @@ object SeriesWriter {
     private val UTC = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'").withZone(ZoneOffset.UTC)
     private val DATE = DateTimeFormatter.ofPattern("yyyyMMdd").withZone(ZoneOffset.UTC)
 
-    fun syncId(resolver: ContentResolver, eventId: Long): String? = resolver.query(
-        ContentUris.withAppendedId(Events.CONTENT_URI, eventId), arrayOf(Events._SYNC_ID), null, null, null
-    )?.use { if (it.moveToFirst()) it.getString(0) else null }
+    fun syncId(resolver: ContentResolver, eventId: Long): String? =
+        resolver
+            .query(
+                ContentUris.withAppendedId(Events.CONTENT_URI, eventId),
+                arrayOf(Events._SYNC_ID),
+                null,
+                null,
+                null,
+            )
+            ?.use { if (it.moveToFirst()) it.getString(0) else null }
 
     fun ensureSyncId(
         resolver: ContentResolver,
         eventId: Long,
         accountName: String,
         accountType: String,
-        preferred: String? = null
+        preferred: String? = null,
     ): String? {
-        syncId(resolver, eventId)?.let { return it }
+        syncId(resolver, eventId)?.let {
+            return it
+        }
         if (accountType != CalendarContract.ACCOUNT_TYPE_LOCAL) return null
         val syncId = preferred ?: "local-$eventId"
         resolver.update(
-            asSyncAdapter(ContentUris.withAppendedId(Events.CONTENT_URI, eventId), accountName, accountType),
-            ContentValues().apply { put(Events._SYNC_ID, syncId) }, null, null
+            asSyncAdapter(
+                ContentUris.withAppendedId(Events.CONTENT_URI, eventId),
+                accountName,
+                accountType,
+            ),
+            ContentValues().apply { put(Events._SYNC_ID, syncId) },
+            null,
+            null,
         )
         return syncId
     }
 
     fun formatExdate(millis: Long, allDay: Boolean): String =
-        if (allDay) DATE.format(Instant.ofEpochMilli(millis)) else UTC.format(Instant.ofEpochMilli(millis))
+        if (allDay) DATE.format(Instant.ofEpochMilli(millis))
+        else UTC.format(Instant.ofEpochMilli(millis))
 
-    fun addExdate(resolver: ContentResolver, masterId: Long, instanceMillis: Long, allDay: Boolean) {
+    fun addExdate(
+        resolver: ContentResolver,
+        masterId: Long,
+        instanceMillis: Long,
+        allDay: Boolean,
+    ) {
         val date = formatExdate(instanceMillis, allDay)
         updateExdates(resolver, masterId) { dates -> if (date in dates) dates else dates + date }
     }
 
-    fun removeExdate(resolver: ContentResolver, masterId: Long, instanceMillis: Long, allDay: Boolean) {
+    fun removeExdate(
+        resolver: ContentResolver,
+        masterId: Long,
+        instanceMillis: Long,
+        allDay: Boolean,
+    ) {
         val date = formatExdate(instanceMillis, allDay)
         updateExdates(resolver, masterId) { dates -> dates - date }
     }
 
-    private fun updateExdates(resolver: ContentResolver, masterId: Long, change: (List<String>) -> List<String>) {
+    private fun updateExdates(
+        resolver: ContentResolver,
+        masterId: Long,
+        change: (List<String>) -> List<String>,
+    ) {
         val uri = ContentUris.withAppendedId(Events.CONTENT_URI, masterId)
         val values = ContentValues()
         var current: String? = null
@@ -72,9 +102,15 @@ object SeriesWriter {
         resolver.update(uri, values, null, null)
     }
 
-    val TIME_COLUMNS = arrayOf(
-        Events.DTSTART, Events.DURATION, Events.RRULE, Events.RDATE, Events.EVENT_TIMEZONE, Events.ALL_DAY
-    )
+    val TIME_COLUMNS =
+        arrayOf(
+            Events.DTSTART,
+            Events.DURATION,
+            Events.RRULE,
+            Events.RDATE,
+            Events.EVENT_TIMEZONE,
+            Events.ALL_DAY,
+        )
 
     fun putTimeColumns(cursor: Cursor, values: ContentValues) {
         values.put(Events.DTSTART, cursor.getLong(0))
@@ -85,9 +121,10 @@ object SeriesWriter {
         values.put(Events.ALL_DAY, cursor.getInt(5))
     }
 
-    fun asSyncAdapter(uri: Uri, accountName: String, accountType: String): Uri = uri.buildUpon()
-        .appendQueryParameter(CalendarContract.CALLER_IS_SYNCADAPTER, "true")
-        .appendQueryParameter(Calendars.ACCOUNT_NAME, accountName)
-        .appendQueryParameter(Calendars.ACCOUNT_TYPE, accountType)
-        .build()
+    fun asSyncAdapter(uri: Uri, accountName: String, accountType: String): Uri =
+        uri.buildUpon()
+            .appendQueryParameter(CalendarContract.CALLER_IS_SYNCADAPTER, "true")
+            .appendQueryParameter(Calendars.ACCOUNT_NAME, accountName)
+            .appendQueryParameter(Calendars.ACCOUNT_TYPE, accountType)
+            .build()
 }

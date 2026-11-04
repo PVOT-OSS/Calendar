@@ -13,8 +13,29 @@ class TimelineLayoutTest {
 
     private val day = 2461356
 
-    private fun agenda(id: Long, start: Int, end: Int, startDay: Int = day, endDay: Int = day, allDay: Boolean = false) =
-        Agenda(id, "e$id", "", 0, 0, allDay, 0, startDay, endDay, start, end, isTask = false, declined = false)
+    private fun agenda(
+        id: Long,
+        start: Int,
+        end: Int,
+        startDay: Int = day,
+        endDay: Int = day,
+        allDay: Boolean = false,
+    ) =
+        Agenda(
+            id,
+            "e$id",
+            "",
+            0,
+            0,
+            allDay,
+            0,
+            startDay,
+            endDay,
+            start,
+            end,
+            isTask = false,
+            declined = false,
+        )
 
     private fun List<Slot>.of(id: Long) = first { it.agenda.eventId == id }
 
@@ -27,10 +48,16 @@ class TimelineLayoutTest {
 
     @Test
     fun overlappingEventsShareColumns() {
-        val slots = TimelineLayout.layout(
-            listOf(agenda(1, 540, 660), agenda(2, 570, 600), agenda(3, 600, 630), agenda(4, 700, 760)),
-            day,
-        )
+        val slots =
+            TimelineLayout.layout(
+                listOf(
+                    agenda(1, 540, 660),
+                    agenda(2, 570, 600),
+                    agenda(3, 600, 630),
+                    agenda(4, 700, 760),
+                ),
+                day,
+            )
         assertEquals(0 to 2, slots.of(1).column to slots.of(1).columns)
         assertEquals(1 to 2, slots.of(2).column to slots.of(2).columns)
         assertEquals(1 to 2, slots.of(3).column to slots.of(3).columns)
@@ -39,10 +66,11 @@ class TimelineLayoutTest {
 
     @Test
     fun multiDayEventsAreCutToTheDayAndAllDayOnesLeftOut() {
-        val slots = TimelineLayout.layout(
-            listOf(agenda(1, 1320, 120, startDay = day - 1), agenda(2, 0, 1440, allDay = true)),
-            day,
-        )
+        val slots =
+            TimelineLayout.layout(
+                listOf(agenda(1, 1320, 120, startDay = day - 1), agenda(2, 0, 1440, allDay = true)),
+                day,
+            )
         assertEquals(1, slots.size)
         assertEquals(0, slots.of(1).startMinute)
         assertEquals(120, slots.of(1).endMinute)

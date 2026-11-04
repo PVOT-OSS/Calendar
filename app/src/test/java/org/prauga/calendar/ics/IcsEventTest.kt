@@ -19,14 +19,14 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class IcsEventTest {
 
-    private fun parse(body: String) = IcsCalendar.parse(
-        "BEGIN:VCALENDAR\nVERSION:2.0\n$body\nEND:VCALENDAR\n", "Europe/Berlin"
-    )
+    private fun parse(body: String) =
+        IcsCalendar.parse("BEGIN:VCALENDAR\nVERSION:2.0\n$body\nEND:VCALENDAR\n", "Europe/Berlin")
 
     @Test
     fun mapsAllFieldsOfATimedEvent() {
-        val cal = parse(
-            """
+        val cal =
+            parse(
+                """
             METHOD:REQUEST
             BEGIN:VEVENT
             UID:abc@example.com
@@ -52,8 +52,9 @@ class IcsEventTest {
             TRIGGER;RELATED=START:-P1D
             END:VALARM
             END:VEVENT
-            """.trimIndent()
-        )
+            """
+                    .trimIndent()
+            )
         assertEquals("REQUEST", cal.method)
         val e = cal.events.single()
         assertEquals("abc@example.com", e.uid)
@@ -66,14 +67,24 @@ class IcsEventTest {
         assertEquals(1782896400000L, e.end.millis)
         assertEquals(
             listOf(
-                IcsAttendee("jane@example.com", "Jane", Attendees.TYPE_OPTIONAL, Attendees.ATTENDEE_STATUS_ACCEPTED),
-                IcsAttendee("room@example.com", null, Attendees.TYPE_RESOURCE, Attendees.ATTENDEE_STATUS_NONE)
+                IcsAttendee(
+                    "jane@example.com",
+                    "Jane",
+                    Attendees.TYPE_OPTIONAL,
+                    Attendees.ATTENDEE_STATUS_ACCEPTED,
+                ),
+                IcsAttendee(
+                    "room@example.com",
+                    null,
+                    Attendees.TYPE_RESOURCE,
+                    Attendees.ATTENDEE_STATUS_NONE,
+                ),
             ),
-            e.attendees
+            e.attendees,
         )
         assertEquals(
             listOf(IcsAlarm(15, Reminders.METHOD_ALERT), IcsAlarm(1440, Reminders.METHOD_EMAIL)),
-            e.alarms
+            e.alarms,
         )
 
         val v = e.toEventValues(7)
@@ -90,7 +101,8 @@ class IcsEventTest {
 
     @Test
     fun allDayEventWithoutEndLastsOneDay() {
-        val e = parse("BEGIN:VEVENT\nUID:1\nDTSTART;VALUE=DATE:20260102\nEND:VEVENT").events.single()
+        val e =
+            parse("BEGIN:VEVENT\nUID:1\nDTSTART;VALUE=DATE:20260102\nEND:VEVENT").events.single()
         assertTrue(e.allDay)
         assertEquals(e.start.millis + IcsTime.DAY, e.end.millis)
         assertEquals("UTC", e.toEventValues(1).getAsString(Events.EVENT_TIMEZONE))
@@ -98,10 +110,13 @@ class IcsEventTest {
 
     @Test
     fun outlookAllDayFlagBecomesAllDay() {
-        val e = parse(
-            "BEGIN:VEVENT\nDTSTART;TZID=Europe/Berlin:20260102T000000\n" +
-                "DTEND;TZID=Europe/Berlin:20260103T000000\nX-MICROSOFT-CDO-ALLDAYEVENT:TRUE\nEND:VEVENT"
-        ).events.single()
+        val e =
+            parse(
+                    "BEGIN:VEVENT\nDTSTART;TZID=Europe/Berlin:20260102T000000\n" +
+                        "DTEND;TZID=Europe/Berlin:20260103T000000\nX-MICROSOFT-CDO-ALLDAYEVENT:TRUE\nEND:VEVENT"
+                )
+                .events
+                .single()
         assertTrue(e.allDay)
         assertEquals(1767312000000L, e.start.millis)
         assertEquals(1767312000000L + IcsTime.DAY, e.end.millis)
@@ -109,8 +124,9 @@ class IcsEventTest {
 
     @Test
     fun recurringEventUsesDurationAndExdates() {
-        val e = parse(
-            """
+        val e =
+            parse(
+                    """
             BEGIN:VEVENT
             UID:r
             DTSTART:20260105T090000Z
@@ -118,8 +134,11 @@ class IcsEventTest {
             RRULE:FREQ=WEEKLY;BYDAY=MO
             EXDATE:20260112T090000Z,20260119T090000Z
             END:VEVENT
-            """.trimIndent()
-        ).events.single()
+            """
+                        .trimIndent()
+                )
+                .events
+                .single()
         assertTrue(e.isRecurring)
         val v = e.toEventValues(1)
         assertEquals("P1800S", v.getAsString(Events.DURATION))
@@ -130,8 +149,9 @@ class IcsEventTest {
 
     @Test
     fun recurrenceIdAndCancellation() {
-        val events = parse(
-            """
+        val events =
+            parse(
+                """
             METHOD:CANCEL
             BEGIN:VEVENT
             UID:r
@@ -139,8 +159,9 @@ class IcsEventTest {
             DTSTART:20260112T100000Z
             STATUS:CANCELLED
             END:VEVENT
-            """.trimIndent()
-        )
+            """
+                    .trimIndent()
+            )
         assertEquals("CANCEL", events.method)
         val e = events.events.single()
         assertTrue(e.isException)
@@ -150,10 +171,11 @@ class IcsEventTest {
 
     @Test
     fun eventsWithoutStartAreSkippedAndZonesReported() {
-        val cal = parse(
-            "BEGIN:VEVENT\nUID:no-start\nEND:VEVENT\n" +
-                "BEGIN:VEVENT\nUID:x\nDTSTART;TZID=Mars/Olympus:20260101T100000\nEND:VEVENT"
-        )
+        val cal =
+            parse(
+                "BEGIN:VEVENT\nUID:no-start\nEND:VEVENT\n" +
+                    "BEGIN:VEVENT\nUID:x\nDTSTART;TZID=Mars/Olympus:20260101T100000\nEND:VEVENT"
+            )
         assertEquals(listOf("x"), cal.events.map { it.uid })
         assertEquals(listOf("Mars/Olympus"), cal.warnings)
         assertFalse(cal.events.single().allDay)
@@ -161,10 +183,13 @@ class IcsEventTest {
 
     @Test
     fun alarmsAfterStartAreDropped() {
-        val e = parse(
-            "BEGIN:VEVENT\nDTSTART:20260101T100000Z\nBEGIN:VALARM\nTRIGGER:PT5M\nEND:VALARM\n" +
-                "BEGIN:VALARM\nTRIGGER;VALUE=DATE-TIME:20260101T093000Z\nEND:VALARM\nEND:VEVENT"
-        ).events.single()
+        val e =
+            parse(
+                    "BEGIN:VEVENT\nDTSTART:20260101T100000Z\nBEGIN:VALARM\nTRIGGER:PT5M\nEND:VALARM\n" +
+                        "BEGIN:VALARM\nTRIGGER;VALUE=DATE-TIME:20260101T093000Z\nEND:VALARM\nEND:VEVENT"
+                )
+                .events
+                .single()
         assertEquals(listOf(IcsAlarm(30, Reminders.METHOD_ALERT)), e.alarms)
     }
 }

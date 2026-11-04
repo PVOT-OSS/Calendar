@@ -59,15 +59,15 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import java.time.LocalDate
+import java.time.LocalTime
+import kotlin.math.abs
+import kotlin.math.roundToInt
 import kotlinx.coroutines.delay
 import org.prauga.calendar.data.Agenda
 import org.prauga.calendar.data.JulianDay
 import org.prauga.calendar.settings.WorkingHours
 import org.prauga.calendar.ui.Formats
-import java.time.LocalDate
-import java.time.LocalTime
-import kotlin.math.abs
-import kotlin.math.roundToInt
 
 private val HourHeight = 72.dp
 private val LabelWidth = 84.dp
@@ -95,30 +95,28 @@ fun Timeline(
     val swipePx = with(density) { 72.dp.toPx() }
 
     LaunchedEffect(date, slots.isEmpty()) {
-        val minute = when {
-            date == today -> LocalTime.now(formats.zone).let { it.hour * 60 + it.minute } - 60
-            slots.isNotEmpty() -> slots.minOf { it.startMinute } - 30
-            else -> 8 * 60
-        }.coerceAtLeast(0)
+        val minute =
+            when {
+                date == today -> LocalTime.now(formats.zone).let { it.hour * 60 + it.minute } - 60
+                slots.isNotEmpty() -> slots.minOf { it.startMinute } - 30
+                else -> 8 * 60
+            }.coerceAtLeast(0)
         scroll.scrollTo((minute / 60f * hourPx).toInt())
     }
 
     Column(
-        modifier
-            .fillMaxSize()
-            .pointerInput(date) {
-                var total = 0f
-                detectHorizontalDragGestures(
-                    onDragStart = { total = 0f },
-                    onDragEnd = { if (abs(total) > swipePx) onSwipe(total < 0) },
-                    onHorizontalDrag = { _, delta -> total += delta },
-                )
-            }
+        modifier.fillMaxSize().pointerInput(date) {
+            var total = 0f
+            detectHorizontalDragGestures(
+                onDragStart = { total = 0f },
+                onDragEnd = { if (abs(total) > swipePx) onSwipe(total < 0) },
+                onHorizontalDrag = { _, delta -> total += delta },
+            )
+        }
     ) {
         if (allDay.isNotEmpty()) {
             Row(
-                Modifier
-                    .fillMaxWidth()
+                Modifier.fillMaxWidth()
                     .horizontalScroll(rememberScrollState())
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -127,16 +125,14 @@ fun Timeline(
             }
         }
         Box(
-            Modifier
-                .fillMaxWidth()
+            Modifier.fillMaxWidth()
                 .weight(1f)
                 .verticalScroll(scroll)
                 .padding(top = 12.dp, bottom = contentPadding.calculateBottomPadding())
         ) {
             HourGrid(formats, onCreate, hourPx)
             BoxWithConstraints(
-                Modifier
-                    .padding(start = LabelWidth, end = 16.dp)
+                Modifier.padding(start = LabelWidth, end = 16.dp)
                     .fillMaxWidth()
                     .height(HourHeight * 24)
             ) {
@@ -149,11 +145,18 @@ fun Timeline(
                         time = formats.timeRange(slot.agenda),
                         onClick = { onOpen(slot.agenda) },
                         hourPx = hourPx,
-                        onMove = if (slot.agenda.isTask) null else onMove?.let { move -> { minutes -> move(slot.agenda, minutes) } },
-                        modifier = Modifier
-                            .offset(x = columnWidth * slot.column, y = HourHeight * (slot.startMinute / 60f))
-                            .width(columnWidth - 4.dp)
-                            .height(HourHeight * ((slot.endMinute - slot.startMinute) / 60f) - 4.dp),
+                        onMove =
+                            if (slot.agenda.isTask) null
+                            else onMove?.let { move -> { minutes -> move(slot.agenda, minutes) } },
+                        modifier =
+                            Modifier.offset(
+                                    x = columnWidth * slot.column,
+                                    y = HourHeight * (slot.startMinute / 60f),
+                                )
+                                .width(columnWidth - 4.dp)
+                                .height(
+                                    HourHeight * ((slot.endMinute - slot.startMinute) / 60f) - 4.dp
+                                ),
                     )
                 }
                 if (date == today) NowLine(formats)
@@ -166,44 +169,44 @@ fun Timeline(
 private fun OffHours(date: LocalDate, hours: WorkingHours.Hours) {
     val shade = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.04f)
     val calendarDay = date.dayOfWeek.value % 7 + 1
-    val spans = if (calendarDay !in hours.days) listOf(0 to TimelineLayout.MINUTES_PER_DAY)
-    else listOf(0 to hours.startMinute, hours.endMinute to TimelineLayout.MINUTES_PER_DAY)
-    spans.filter { it.second > it.first }.forEach { (from, to) ->
-        Box(
-            Modifier
-                .offset(y = HourHeight * (from / 60f))
-                .fillMaxWidth()
-                .height(HourHeight * ((to - from) / 60f))
-                .background(shade, RoundedCornerShape(8.dp))
-        )
-    }
+    val spans =
+        if (calendarDay !in hours.days) listOf(0 to TimelineLayout.MINUTES_PER_DAY)
+        else listOf(0 to hours.startMinute, hours.endMinute to TimelineLayout.MINUTES_PER_DAY)
+    spans
+        .filter { it.second > it.first }
+        .forEach { (from, to) ->
+            Box(
+                Modifier.offset(y = HourHeight * (from / 60f))
+                    .fillMaxWidth()
+                    .height(HourHeight * ((to - from) / 60f))
+                    .background(shade, RoundedCornerShape(8.dp))
+            )
+        }
 }
 
 @Composable
 private fun HourGrid(formats: Formats, onCreate: (LocalTime) -> Unit, hourPx: Float) {
     Column(
-        Modifier
-            .fillMaxWidth()
-            .pointerInput(Unit) {
-                detectTapGestures { offset ->
-                    val hour = (offset.y / hourPx).toInt().coerceIn(0, 23)
-                    onCreate(LocalTime.of(hour, 0))
-                }
+        Modifier.fillMaxWidth().pointerInput(Unit) {
+            detectTapGestures { offset ->
+                val hour = (offset.y / hourPx).toInt().coerceIn(0, 23)
+                onCreate(LocalTime.of(hour, 0))
             }
+        }
     ) {
         repeat(24) { hour ->
             Row(Modifier.height(HourHeight).fillMaxWidth()) {
                 Text(
                     text = formats.hour(hour),
-                    modifier = Modifier
-                        .width(LabelWidth)
-                        .offset(y = (-8).dp)
-                        .padding(start = 16.dp),
+                    modifier =
+                        Modifier.width(LabelWidth).offset(y = (-8).dp).padding(start = 16.dp),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                 )
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                )
             }
         }
     }
@@ -211,17 +214,16 @@ private fun HourGrid(formats: Formats, onCreate: (LocalTime) -> Unit, hourPx: Fl
 
 @Composable
 private fun NowLine(formats: Formats) {
-    val minute by produceState(initialValue = minuteNow(formats)) {
-        while (true) {
-            delay(30_000)
-            value = minuteNow(formats)
+    val minute by
+        produceState(initialValue = minuteNow(formats)) {
+            while (true) {
+                delay(30_000)
+                value = minuteNow(formats)
+            }
         }
-    }
     val color = MaterialTheme.colorScheme.primary
     Row(
-        Modifier
-            .offset(x = (-6).dp, y = HourHeight * (minute / 60f) - 6.dp)
-            .fillMaxWidth(),
+        Modifier.offset(x = (-6).dp, y = HourHeight * (minute / 60f) - 6.dp).fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(Modifier.size(12.dp).background(color, CircleShape))
@@ -229,7 +231,8 @@ private fun NowLine(formats: Formats) {
     }
 }
 
-private fun minuteNow(formats: Formats) = LocalTime.now(formats.zone).let { it.hour * 60 + it.minute }
+private fun minuteNow(formats: Formats) =
+    LocalTime.now(formats.zone).let { it.hour * 60 + it.minute }
 
 @Composable
 private fun TimelineCard(
@@ -245,40 +248,48 @@ private fun TimelineCard(
     val haptics = LocalHapticFeedback.current
     val snapPx = hourPx / 4
     Surface(
-        modifier = modifier
-            .zIndex(if (dragging) 1f else 0f)
-            .graphicsLayer { translationY = (drag / snapPx).roundToInt() * snapPx }
-            .let { base ->
-                if (onMove == null) base else base.pointerInput(agenda.eventId, agenda.begin) {
-                    detectDragGesturesAfterLongPress(
-                        onDragStart = {
-                            dragging = true
-                            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                        },
-                        onDrag = { change, amount ->
-                            change.consume()
-                            drag += amount.y
-                        },
-                        onDragEnd = {
-                            val steps = (drag / snapPx).roundToInt()
-                            dragging = false
-                            drag = 0f
-                            if (steps != 0) onMove(steps * 15)
-                        },
-                        onDragCancel = {
-                            dragging = false
-                            drag = 0f
-                        },
-                    )
+        modifier =
+            modifier
+                .zIndex(if (dragging) 1f else 0f)
+                .graphicsLayer { translationY = (drag / snapPx).roundToInt() * snapPx }
+                .let { base ->
+                    if (onMove == null) base
+                    else
+                        base.pointerInput(agenda.eventId, agenda.begin) {
+                            detectDragGesturesAfterLongPress(
+                                onDragStart = {
+                                    dragging = true
+                                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                                },
+                                onDrag = { change, amount ->
+                                    change.consume()
+                                    drag += amount.y
+                                },
+                                onDragEnd = {
+                                    val steps = (drag / snapPx).roundToInt()
+                                    dragging = false
+                                    drag = 0f
+                                    if (steps != 0) onMove(steps * 15)
+                                },
+                                onDragCancel = {
+                                    dragging = false
+                                    drag = 0f
+                                },
+                            )
+                        }
                 }
-            }
-            .clip(RoundedCornerShape(12.dp))
-            .clearAndSetSemantics {
-                contentDescription = "${agenda.title}, $time"
-                onClick { onClick(); true }
-            }
-            .clickable(onClick = onClick),
-        color = if (dragging) MaterialTheme.colorScheme.surfaceContainerHighest else MaterialTheme.colorScheme.surfaceContainerHigh,
+                .clip(RoundedCornerShape(12.dp))
+                .clearAndSetSemantics {
+                    contentDescription = "${agenda.title}, $time"
+                    onClick {
+                        onClick()
+                        true
+                    }
+                }
+                .clickable(onClick = onClick),
+        color =
+            if (dragging) MaterialTheme.colorScheme.surfaceContainerHighest
+            else MaterialTheme.colorScheme.surfaceContainerHigh,
         shape = RoundedCornerShape(12.dp),
         shadowElevation = if (dragging) 8.dp else 0.dp,
     ) {
@@ -291,7 +302,8 @@ private fun TimelineCard(
                     fontWeight = FontWeight.Medium,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
-                    textDecoration = if (agenda.title.startsWith("☑")) TextDecoration.LineThrough else null,
+                    textDecoration =
+                        if (agenda.title.startsWith("☑")) TextDecoration.LineThrough else null,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
                 if (time.isNotEmpty()) {
@@ -311,8 +323,7 @@ private fun TimelineCard(
 @Composable
 private fun AllDayChip(agenda: Agenda, onClick: () -> Unit) {
     Row(
-        Modifier
-            .clip(RoundedCornerShape(50))
+        Modifier.clip(RoundedCornerShape(50))
             .background(MaterialTheme.colorScheme.surfaceContainerHigh)
             .clickable(onClick = onClick)
             .padding(horizontal = 12.dp, vertical = 8.dp),

@@ -23,40 +23,32 @@ import android.content.ContentResolver
 import android.content.ContentUris
 import android.provider.CalendarContract
 
-/**
- * Datasource of Account entities
- */
-class AccountDataSource(
-    private val application: Application
-) {
-    /**
-     * Convenience to get the content resolver
-     */
+/** Datasource of Account entities */
+class AccountDataSource(private val application: Application) {
+    /** Convenience to get the content resolver */
     private val contentResolver: ContentResolver
         get() = application.contentResolver
 
-    /**
-     * TODO Document
-     */
+    /** TODO Document */
     fun queryAccount(calendarId: Long): Account? {
         val calendarUri =
             ContentUris.withAppendedId(CalendarContract.Calendars.CONTENT_URI, calendarId)
-        contentResolver.query(calendarUri, ACCOUNT_PROJECTION, null, null, null)
-            ?.use {
-                if (it.moveToFirst()) {
-                    val accountName = it.getString(PROJECTION_ACCOUNT_INDEX_NAME)
-                    val accountType = it.getString(PROJECTION_ACCOUNT_INDEX_TYPE)
-                    return Account(accountName, accountType) // TODO Is this the right type?
-                }
+        contentResolver.query(calendarUri, ACCOUNT_PROJECTION, null, null, null)?.use {
+            if (it.moveToFirst()) {
+                val accountName = it.getString(PROJECTION_ACCOUNT_INDEX_NAME)
+                val accountType = it.getString(PROJECTION_ACCOUNT_INDEX_TYPE)
+                return Account(accountName, accountType) // TODO Is this the right type?
             }
+        }
         return null
     }
 
     companion object {
-        private val ACCOUNT_PROJECTION = arrayOf(
-            CalendarContract.Calendars.ACCOUNT_NAME,
-            CalendarContract.Calendars.ACCOUNT_TYPE
-        )
+        private val ACCOUNT_PROJECTION =
+            arrayOf(
+                CalendarContract.Calendars.ACCOUNT_NAME,
+                CalendarContract.Calendars.ACCOUNT_TYPE,
+            )
 
         private const val PROJECTION_ACCOUNT_INDEX_NAME = 0
         private const val PROJECTION_ACCOUNT_INDEX_TYPE = 1

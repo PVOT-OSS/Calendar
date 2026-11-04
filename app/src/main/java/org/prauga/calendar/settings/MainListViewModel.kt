@@ -24,7 +24,6 @@ import androidx.lifecycle.asLiveData
 import org.prauga.calendar.persistence.Calendar
 import org.prauga.calendar.persistence.ICalendarRepository
 
-
 class MainListViewModel(application: Application) : AndroidViewModel(application) {
 
     private var repository = ICalendarRepository.get(application)
@@ -46,5 +45,4 @@ class MainListViewModel(application: Application) : AndroidViewModel(application
     fun getCalendarsOrderedByAccount(): LiveData<List<Calendar>> {
         return allCalendars
     }
-
 }

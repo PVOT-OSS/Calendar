@@ -32,4 +32,3 @@ Everything below stays on your device and is only used to show your calendar:
 - **Imported .ics files** are read when you open them with the app.
 
 The app has no Internet permission, so none of this can leave your device through it.
-

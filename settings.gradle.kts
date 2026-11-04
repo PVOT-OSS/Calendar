@@ -8,6 +8,7 @@ pluginManagement {
         mavenCentral()
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
@@ -15,6 +16,7 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+
 rootProject.name = "Etar-Calendar"
 
 includeBuild("PvotLib") {
@@ -22,4 +24,5 @@ includeBuild("PvotLib") {
         substitute(module("com.prauga.pvot:design-system")).using(project(":design-system"))
     }
 }
+
 include(":app")

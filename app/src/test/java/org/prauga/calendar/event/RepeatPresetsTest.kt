@@ -18,10 +18,13 @@ class RepeatPresetsTest {
     fun rulesFollowTheStartDate() {
         assertEquals(
             listOf(
-                "FREQ=DAILY", "FREQ=WEEKLY;BYDAY=MO", "FREQ=MONTHLY;BYDAY=2MO", "FREQ=YEARLY",
-                "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR"
+                "FREQ=DAILY",
+                "FREQ=WEEKLY;BYDAY=MO",
+                "FREQ=MONTHLY;BYDAY=2MO",
+                "FREQ=YEARLY",
+                "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR",
             ),
-            RepeatPresets.rules(1794218400000L, "UTC")
+            RepeatPresets.rules(1794218400000L, "UTC"),
         )
     }
 
@@ -33,7 +36,8 @@ class RepeatPresetsTest {
 
     @Test
     fun presetsHaveLabels() {
-        val presets = RepeatPresets.presets(RuntimeEnvironment.getApplication(), 1794218400000L, "UTC")
+        val presets =
+            RepeatPresets.presets(RuntimeEnvironment.getApplication(), 1794218400000L, "UTC")
         assertEquals(6, presets.size)
         assertEquals(null, presets[0].rrule)
         presets.forEach { assert(it.label.isNotBlank()) }

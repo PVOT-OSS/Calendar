@@ -28,12 +28,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.prauga.pvot.designsystem.components.button.PvotButton
 import com.prauga.pvot.designsystem.platform.PvotBaseActivity
 import com.prauga.pvot.designsystem.theme.PvotAppTheme
 import org.prauga.calendar.OnboardingActivity
 import org.prauga.calendar.R
 import org.prauga.calendar.Utils
-import com.prauga.pvot.designsystem.components.button.PvotButton
 
 class MainActivity : PvotBaseActivity() {
 
@@ -49,7 +49,9 @@ class MainActivity : PvotBaseActivity() {
         }
         setPvotContent {
             PvotAppTheme {
-                var granted by remember { mutableStateOf(Utils.isCalendarPermissionGranted(this, false)) }
+                var granted by remember {
+                    mutableStateOf(Utils.isCalendarPermissionGranted(this, false))
+                }
                 if (granted) {
                     CalendarApp(launch, onLaunched = { launch = null })
                 } else {
@@ -68,14 +70,12 @@ class MainActivity : PvotBaseActivity() {
 @Composable
 private fun PermissionScreen(onGranted: () -> Unit) {
     val context = LocalContext.current
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-        if (Utils.isCalendarPermissionGranted(context, false)) onGranted()
-    }
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            if (Utils.isCalendarPermissionGranted(context, false)) onGranted()
+        }
     Column(
-        Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(32.dp),
+        Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(32.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -94,7 +94,9 @@ private fun PermissionScreen(onGranted: () -> Unit) {
         PvotButton(
             text = stringResource(R.string.ui_permission_allow),
             onClick = {
-                launcher.launch(arrayOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR))
+                launcher.launch(
+                    arrayOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR)
+                )
             },
         )
     }

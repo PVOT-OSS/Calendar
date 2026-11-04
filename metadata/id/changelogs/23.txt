@@ -1,2 +1,2 @@
-- Perbaikan tampilan opsi.  
+- Perbaikan tampilan opsi.
 - Terjemahan baru.

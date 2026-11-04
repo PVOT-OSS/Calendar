@@ -15,11 +15,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import org.prauga.calendar.R
 import org.prauga.calendar.Utils
 import org.prauga.calendar.theme.ThemeUtils.getSuffix
 import org.prauga.calendar.theme.ThemeUtils.isPureBlackModeEnabled
 import org.prauga.calendar.theme.model.Theme
-import org.prauga.calendar.R
 
 private const val TEAL: String = "teal"
 private const val MONET: String = "monet"
@@ -30,7 +30,10 @@ fun AppCompatActivity.applyTheme() {
     val uiModeManager = getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
 
     // Handle black theme/mode
-    if (selectedTheme == Theme.SYSTEM && isPureBlackModeEnabled && isSystemInDarkTheme(this) || selectedTheme == Theme.DARK && isPureBlackModeEnabled) {
+    if (
+        selectedTheme == Theme.SYSTEM && isPureBlackModeEnabled && isSystemInDarkTheme(this) ||
+            selectedTheme == Theme.DARK && isPureBlackModeEnabled
+    ) {
         theme.applyStyle(R.style.colorBackgroundBlack, true)
     }
 
@@ -92,14 +95,16 @@ private fun Context.getStyledAttributeColor(id: Int): Int {
 fun getDialogStyle(context: Context): Int {
     val theme = ThemeUtils.getTheme(context)
     when (theme) {
-        Theme.SYSTEM -> if (isSystemInDarkTheme(context)) {
-            return android.R.style.Theme_DeviceDefault_Dialog
-        } else {
-            return android.R.style.Theme_DeviceDefault_Light_Dialog
-        }
+        Theme.SYSTEM ->
+            if (isSystemInDarkTheme(context)) {
+                return android.R.style.Theme_DeviceDefault_Dialog
+            } else {
+                return android.R.style.Theme_DeviceDefault_Light_Dialog
+            }
 
         Theme.LIGHT -> return android.R.style.Theme_DeviceDefault_Light_Dialog
-        Theme.DARK, Theme.BLACK -> return android.R.style.Theme_DeviceDefault_Dialog
+        Theme.DARK,
+        Theme.BLACK -> return android.R.style.Theme_DeviceDefault_Dialog
         else -> throw UnsupportedOperationException("Unknown theme: " + theme)
     }
 }
@@ -108,16 +113,16 @@ fun getWidgetBackgroundStyle(context: Context): Int {
     val theme = ThemeUtils.getTheme(context)
     val pureBlack = context.isPureBlackModeEnabled
     when (theme) {
-        Theme.SYSTEM -> if ((isSystemInDarkTheme(context))
-                ) {
-            if (pureBlack) {
-                return R.color.bg_black
+        Theme.SYSTEM ->
+            if ((isSystemInDarkTheme(context))) {
+                if (pureBlack) {
+                    return R.color.bg_black
+                } else {
+                    return R.color.bg_dark
+                }
             } else {
-                return R.color.bg_dark
+                return R.color.background_color
             }
-        } else {
-            return R.color.background_color
-        }
 
         Theme.LIGHT -> return R.color.background_color
         Theme.DARK -> return R.color.bg_dark
@@ -163,8 +168,8 @@ fun getDrawableId(context: Context, id: String?): Int {
 }
 
 fun isSystemInDarkTheme(context: Context): Boolean {
-    return (context.resources
-        .configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+    return (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+        Configuration.UI_MODE_NIGHT_YES
 }
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
@@ -173,13 +178,12 @@ private fun setupEdgeToEdge(activity: Activity) {
     val rootView = activity.window.decorView.rootView
 
     WindowCompat.setDecorFitsSystemWindows(window, false)
-    ViewCompat.setOnApplyWindowInsetsListener(
-        rootView
-    ) { v: View, windowInsets: WindowInsetsCompat ->
-        val insets = windowInsets.getInsets(
-            WindowInsetsCompat.Type.systemBars() or
-                WindowInsetsCompat.Type.displayCutout()
-        )
+    ViewCompat.setOnApplyWindowInsetsListener(rootView) { v: View, windowInsets: WindowInsetsCompat
+        ->
+        val insets =
+            windowInsets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
         v.setPadding(insets.left, insets.top, insets.right, insets.bottom)
         WindowInsetsCompat.CONSUMED
     }
@@ -192,10 +196,8 @@ private fun setupEdgeToEdge(activity: Activity) {
 private fun setSystemBarsColors(activity: Activity) {
     val lightAppearance = !isSystemInDarkTheme(activity)
     val rootView = activity.window.decorView.rootView
-    val windowInsetsController =
-        WindowCompat.getInsetsController(activity.window, rootView)
+    val windowInsetsController = WindowCompat.getInsetsController(activity.window, rootView)
 
     windowInsetsController.isAppearanceLightStatusBars = lightAppearance
     windowInsetsController.isAppearanceLightNavigationBars = lightAppearance
-
 }

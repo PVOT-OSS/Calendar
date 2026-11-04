@@ -5,14 +5,11 @@
 
 package org.prauga.calendar.ics
 
-data class IcsProperty(
-    val name: String,
-    val params: Map<String, String>,
-    val value: String
-) {
+data class IcsProperty(val name: String, val params: Map<String, String>, val value: String) {
     fun param(name: String): String? = params[name.uppercase()]
 
-    val text: String get() = IcsParser.unescapeText(value)
+    val text: String
+        get() = IcsParser.unescapeText(value)
 }
 
 class IcsComponent(val name: String) {
@@ -134,7 +131,8 @@ object IcsParser {
             val c = value[i]
             if (c == '\\' && i + 1 < value.length) {
                 when (val next = value[i + 1]) {
-                    'n', 'N' -> out.append('\n')
+                    'n',
+                    'N' -> out.append('\n')
                     else -> out.append(next)
                 }
                 i += 2
@@ -146,10 +144,11 @@ object IcsParser {
         return out.toString()
     }
 
-    fun escapeText(value: String): String = value
-        .replace("\\", "\\\\")
-        .replace(";", "\\;")
-        .replace(",", "\\,")
-        .replace("\r\n", "\\n")
-        .replace("\n", "\\n")
+    fun escapeText(value: String): String =
+        value
+            .replace("\\", "\\\\")
+            .replace(";", "\\;")
+            .replace(",", "\\,")
+            .replace("\r\n", "\\n")
+            .replace("\n", "\\n")
 }

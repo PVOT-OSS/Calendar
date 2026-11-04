@@ -8,6 +8,9 @@ package org.prauga.calendar.ui.home
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -18,9 +21,6 @@ import org.prauga.calendar.data.AgendaDetails
 import org.prauga.calendar.data.AgendaRepository
 import org.prauga.calendar.data.JulianDay
 import org.prauga.calendar.ui.Formats
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.temporal.TemporalAdjusters
 
 data class HomeDay(val date: LocalDate, val items: List<Agenda>)
 
@@ -44,28 +44,41 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         val weekStart = today.with(TemporalAdjusters.previousOrSame(firstDayOfWeek()))
         val startDay = JulianDay.of(weekStart)
         val days = (JulianDay.of(today.plusDays(UPCOMING_DAYS)) - startDay) + 1
-        repository.agendas(startDay, days)
+        repository
+            .agendas(startDay, days)
             .map { build(it, today, weekStart) }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeState(today = today))
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5_000),
+                HomeState(today = today),
+            )
     }
 
-    private suspend fun build(all: List<Agenda>, today: LocalDate, weekStart: LocalDate): HomeState {
+    private suspend fun build(
+        all: List<Agenda>,
+        today: LocalDate,
+        weekStart: LocalDate,
+    ): HomeState {
         val now = System.currentTimeMillis()
         val weekDays = JulianDay.of(weekStart)..JulianDay.of(weekStart.plusDays(6))
         val thisWeek = all.filter { it.startDay in weekDays && !it.declined }
         val todayDay = JulianDay.of(today)
         fun ahead(a: Agenda) = if (a.allDay) a.endDay >= todayDay else a.end > now
-        val saturday = if (today.dayOfWeek == DayOfWeek.SUNDAY) today.minusDays(1)
-        else today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY))
+        val saturday =
+            if (today.dayOfWeek == DayOfWeek.SUNDAY) today.minusDays(1)
+            else today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY))
         val weekend = JulianDay.of(saturday)..JulianDay.of(saturday.plusDays(1))
-        val weekendPlan = all.firstOrNull { a ->
-            !a.isTask && !a.declined && ahead(a) && weekend.any { a.occursOn(it) }
-        }?.title
+        val weekendPlan =
+            all.firstOrNull { a ->
+                    !a.isTask && !a.declined && ahead(a) && weekend.any { a.occursOn(it) }
+                }
+                ?.title
 
-        val upcoming = all.filter { ahead(it) && !it.declined }
-            .groupBy { maxOf(it.startDay, todayDay) }
-            .toSortedMap()
-            .map { (day, items) -> HomeDay(JulianDay.toDate(day), items) }
+        val upcoming =
+            all.filter { ahead(it) && !it.declined }
+                .groupBy { maxOf(it.startDay, todayDay) }
+                .toSortedMap()
+                .map { (day, items) -> HomeDay(JulianDay.toDate(day), items) }
         val shown = upcoming.flatMap { it.items }.take(DETAILS_LIMIT)
         return HomeState(
             loading = false,

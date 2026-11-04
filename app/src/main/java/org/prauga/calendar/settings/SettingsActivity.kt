@@ -21,45 +21,42 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import org.prauga.calendar.theme.applyTheme
 import org.prauga.calendar.R
 import org.prauga.calendar.databinding.SimpleFrameLayoutMaterialBinding
-
+import org.prauga.calendar.theme.applyTheme
 
 const val EXTRA_SHOW_FRAGMENT = "settingsShowFragment"
 
 /**
  * Based on the official Kotlin example for AndroidX preferences:
  * https://github.com/android/user-interface-samples/blob/master/PreferencesKotlin/app/src/main/java/com/example/androidx/preference/sample/MainActivity.kt
- *
  * - Added EXTRA_SHOW_FRAGMENT
  * - Don't assume title from setting, instead set it in each fragment individually
  */
-class SettingsActivity : AppCompatActivity(),
-        PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
+class SettingsActivity :
+    AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         applyTheme()
 
-        val fragment = if (intent.hasExtra(EXTRA_SHOW_FRAGMENT)) {
-            supportFragmentManager.fragmentFactory.instantiate(
+        val fragment =
+            if (intent.hasExtra(EXTRA_SHOW_FRAGMENT)) {
+                supportFragmentManager.fragmentFactory.instantiate(
                     classLoader,
-                    intent.getStringExtra(EXTRA_SHOW_FRAGMENT)!!
-            )
-        } else {
-            MainListPreferences()
-        }
+                    intent.getStringExtra(EXTRA_SHOW_FRAGMENT)!!,
+                )
+            } else {
+                MainListPreferences()
+            }
 
-        val binding: SimpleFrameLayoutMaterialBinding = SimpleFrameLayoutMaterialBinding.inflate(layoutInflater)
+        val binding: SimpleFrameLayoutMaterialBinding =
+            SimpleFrameLayoutMaterialBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.include.toolbar)
 
         if (savedInstanceState == null) {
-            supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.body_frame, fragment)
-                    .commit()
+            supportFragmentManager.beginTransaction().replace(R.id.body_frame, fragment).commit()
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
@@ -72,23 +69,22 @@ class SettingsActivity : AppCompatActivity(),
     }
 
     override fun onPreferenceStartFragment(
-            caller: PreferenceFragmentCompat,
-            pref: Preference
+        caller: PreferenceFragmentCompat,
+        pref: Preference,
     ): Boolean {
         // Instantiate the new Fragment
         val args = pref.extras
-        val fragment = supportFragmentManager.fragmentFactory.instantiate(
-                classLoader,
-                pref.fragment!!
-        ).apply {
-            arguments = args
-            setTargetFragment(caller, 0)
-        }
+        val fragment =
+            supportFragmentManager.fragmentFactory.instantiate(classLoader, pref.fragment!!).apply {
+                arguments = args
+                setTargetFragment(caller, 0)
+            }
         // Replace the existing Fragment with the new Fragment
-        supportFragmentManager.beginTransaction()
-                .replace(R.id.body_frame, fragment)
-                .addToBackStack(null)
-                .commit()
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.body_frame, fragment)
+            .addToBackStack(null)
+            .commit()
         return true
     }
 }

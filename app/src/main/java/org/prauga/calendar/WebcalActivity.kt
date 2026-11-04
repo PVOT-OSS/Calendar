@@ -11,7 +11,6 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import org.prauga.calendar.R
 
 class WebcalActivity : AppCompatActivity() {
 
@@ -36,7 +35,12 @@ class WebcalActivity : AppCompatActivity() {
                 try {
                     startActivity(market)
                 } catch (e: ActivityNotFoundException) {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://f-droid.org/packages/$ICSX5/")))
+                    startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("https://f-droid.org/packages/$ICSX5/"),
+                        )
+                    )
                 }
             }
             .setNegativeButton(android.R.string.cancel, null)

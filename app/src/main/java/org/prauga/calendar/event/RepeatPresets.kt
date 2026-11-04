@@ -7,9 +7,9 @@ package org.prauga.calendar.event
 
 import android.content.Context
 import org.prauga.calendar.EventRecurrenceFormatter
+import org.prauga.calendar.R
 import org.prauga.calendar.calendarcommon2.EventRecurrence
 import org.prauga.calendar.calendarcommon2.Time
-import org.prauga.calendar.R
 
 object RepeatPresets {
 
@@ -28,7 +28,7 @@ object RepeatPresets {
             "FREQ=WEEKLY;BYDAY=$weekday",
             "FREQ=MONTHLY;BYDAY=$ordinal$weekday",
             "FREQ=YEARLY",
-            "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR"
+            "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR",
         )
     }
 
@@ -36,12 +36,18 @@ object RepeatPresets {
         val start = Time(timeZone).apply { set(startMillis) }
         val presets = mutableListOf(Preset(null, context.getString(R.string.does_not_repeat)))
         for (rule in rules(startMillis, timeZone)) {
-            val recurrence = EventRecurrence().apply {
-                parse(rule)
-                setStartDate(start)
-            }
-            val label = EventRecurrenceFormatter.getRepeatString(context, context.resources, recurrence, true)
-                ?: continue
+            val recurrence =
+                EventRecurrence().apply {
+                    parse(rule)
+                    setStartDate(start)
+                }
+            val label =
+                EventRecurrenceFormatter.getRepeatString(
+                    context,
+                    context.resources,
+                    recurrence,
+                    true,
+                ) ?: continue
             presets += Preset(rule, label)
         }
         return presets

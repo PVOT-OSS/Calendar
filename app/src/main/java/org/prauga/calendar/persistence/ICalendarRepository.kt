@@ -38,9 +38,7 @@ interface ICalendarRepository {
      */
     fun getCalendarsOrderedByAccount(): Flow<List<Calendar>>
 
-    /**
-     * TODO document
-     */
+    /** TODO document */
     fun addLocalCalendar(accountName: String, displayName: String): Uri
 
     /**
@@ -50,14 +48,10 @@ interface ICalendarRepository {
      */
     fun deleteLocalCalendar(accountName: String, id: Long): Boolean
 
-    /**
-     * Query the owning account of a given calendar
-     */
+    /** Query the owning account of a given calendar */
     fun queryAccount(calendarId: Long): Account?
 
-    /**
-     * TODO document
-     */
+    /** TODO document */
     fun queryNumberOfEvents(calendarId: Long): Long?
 
     companion object {
@@ -68,9 +62,7 @@ interface ICalendarRepository {
          */
         private var static: ICalendarRepository? = null
 
-        /**
-         * TODO Replace with proper dependency injection
-         */
+        /** TODO Replace with proper dependency injection */
         fun get(application: Application): ICalendarRepository {
             if (static == null) {
                 static = CalendarRepository(application)

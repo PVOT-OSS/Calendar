@@ -25,20 +25,21 @@ class IcalExporter(private val context: Context) {
     companion object {
         private const val TAG = "IcalExporter"
 
-        private val PROJECTION = arrayOf(
-            Events._ID,                 // 0
-            Events.TITLE,               // 1
-            Events.DESCRIPTION,         // 2
-            Events.EVENT_LOCATION,      // 3
-            Events.DTSTART,             // 4
-            Events.DTEND,               // 5
-            Events.EVENT_TIMEZONE,      // 6
-            Events.ALL_DAY,             // 7
-            Events.RRULE,               // 8
-            Events.DURATION,            // 9
-            Events._SYNC_ID,            // 10
-            Events.ORGANIZER            // 11
-        )
+        private val PROJECTION =
+            arrayOf(
+                Events._ID, // 0
+                Events.TITLE, // 1
+                Events.DESCRIPTION, // 2
+                Events.EVENT_LOCATION, // 3
+                Events.DTSTART, // 4
+                Events.DTEND, // 5
+                Events.EVENT_TIMEZONE, // 6
+                Events.ALL_DAY, // 7
+                Events.RRULE, // 8
+                Events.DURATION, // 9
+                Events._SYNC_ID, // 10
+                Events.ORGANIZER, // 11
+            )
 
         private const val INDEX_ID = 0
         private const val INDEX_TITLE = 1
@@ -63,66 +64,65 @@ class IcalExporter(private val context: Context) {
         val selection = "${Events.CALENDAR_ID}=? AND ${Events.DELETED}=0"
         val selectionArgs = arrayOf(calendarId.toString())
 
-        context.contentResolver.query(
-            Events.CONTENT_URI,
-            PROJECTION,
-            selection,
-            selectionArgs,
-            null
-        )?.use { cursor ->
-            while (cursor.moveToNext()) {
-                val event = VEvent()
+        context.contentResolver
+            .query(Events.CONTENT_URI, PROJECTION, selection, selectionArgs, null)
+            ?.use { cursor ->
+                while (cursor.moveToNext()) {
+                    val event = VEvent()
 
-                val title = cursor.getString(INDEX_TITLE)
-                val description = cursor.getString(INDEX_DESCRIPTION)
-                val location = cursor.getString(INDEX_LOCATION)
-                val dtStart = cursor.getLong(INDEX_DTSTART)
-                val dtEnd = cursor.getLong(INDEX_DTEND)
-                val timeZone = cursor.getString(INDEX_TIMEZONE) ?: "UTC"
-                val allDay = cursor.getInt(INDEX_ALL_DAY) != 0
-                val rrule = cursor.getString(INDEX_RRULE)
-                val syncId = cursor.getString(INDEX_SYNC_ID)
-                val organizer = cursor.getString(INDEX_ORGANIZER)
+                    val title = cursor.getString(INDEX_TITLE)
+                    val description = cursor.getString(INDEX_DESCRIPTION)
+                    val location = cursor.getString(INDEX_LOCATION)
+                    val dtStart = cursor.getLong(INDEX_DTSTART)
+                    val dtEnd = cursor.getLong(INDEX_DTEND)
+                    val timeZone = cursor.getString(INDEX_TIMEZONE) ?: "UTC"
+                    val allDay = cursor.getInt(INDEX_ALL_DAY) != 0
+                    val rrule = cursor.getString(INDEX_RRULE)
+                    val syncId = cursor.getString(INDEX_SYNC_ID)
+                    val organizer = cursor.getString(INDEX_ORGANIZER)
 
-                event.addProperty(VEvent.SUMMARY, title)
-                event.addProperty(VEvent.DESCRIPTION, description)
-                event.addProperty(VEvent.LOCATION, location)
+                    event.addProperty(VEvent.SUMMARY, title)
+                    event.addProperty(VEvent.DESCRIPTION, description)
+                    event.addProperty(VEvent.LOCATION, location)
 
-                if (allDay) {
-                    val localTimeZone = Utils.getTimeZone(context, null)
-                    val eventStart = IcalendarUtils.convertTimeToUtc(dtStart, localTimeZone)
-                    // If dtEnd is 0 (can happen for recurring events), we might need to handle it.
-                    // But for simple all-day events it should be set.
-                    val eventEnd = if (dtEnd > 0) {
-                        IcalendarUtils.convertTimeToUtc(dtEnd, localTimeZone)
+                    if (allDay) {
+                        val localTimeZone = Utils.getTimeZone(context, null)
+                        val eventStart = IcalendarUtils.convertTimeToUtc(dtStart, localTimeZone)
+                        // If dtEnd is 0 (can happen for recurring events), we might need to handle
+                        // it.
+                        // But for simple all-day events it should be set.
+                        val eventEnd =
+                            if (dtEnd > 0) {
+                                IcalendarUtils.convertTimeToUtc(dtEnd, localTimeZone)
+                            } else {
+                                eventStart + 86400000 // +1 day
+                            }
+                        event.addEventStart(eventStart, "UTC")
+                        event.addEventEnd(eventEnd, "UTC")
                     } else {
-                        eventStart + 86400000 // +1 day
+                        event.addEventStart(dtStart, timeZone)
+                        if (dtEnd > 0) {
+                            event.addEventEnd(dtEnd, timeZone)
+                        }
                     }
-                    event.addEventStart(eventStart, "UTC")
-                    event.addEventEnd(eventEnd, "UTC")
-                } else {
-                    event.addEventStart(dtStart, timeZone)
-                    if (dtEnd > 0) {
-                        event.addEventEnd(dtEnd, timeZone)
+
+                    if (!rrule.isNullOrEmpty()) {
+                        event.addProperty(VEvent.RRULE, rrule)
                     }
-                }
 
-                if (!rrule.isNullOrEmpty()) {
-                    event.addProperty(VEvent.RRULE, rrule)
-                }
+                    if (!syncId.isNullOrEmpty()) {
+                        // Use syncId if available as UID or part of it
+                        // VEvent constructor already generates a UUID, but we could override it if
+                        // we want stability
+                    }
 
-                if (!syncId.isNullOrEmpty()) {
-                    // Use syncId if available as UID or part of it
-                    // VEvent constructor already generates a UUID, but we could override it if we want stability
-                }
+                    if (!organizer.isNullOrEmpty()) {
+                        event.addOrganizer(Organizer(organizer, organizer))
+                    }
 
-                if (!organizer.isNullOrEmpty()) {
-                    event.addOrganizer(Organizer(organizer, organizer))
+                    calendar.addEvent(event)
                 }
-
-                calendar.addEvent(event)
-            }
-        } ?: return null
+            } ?: return null
 
         return calendar
     }

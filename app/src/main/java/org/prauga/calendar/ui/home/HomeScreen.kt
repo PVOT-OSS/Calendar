@@ -40,14 +40,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.prauga.pvot.designsystem.components.button.PvotButton
 import com.prauga.pvot.designsystem.components.button.PvotButtonStyle
 import com.prauga.pvot.designsystem.components.calendar.PvotEventCard
+import java.time.LocalTime
 import org.prauga.calendar.R
 import org.prauga.calendar.ui.Actions
 import org.prauga.calendar.ui.Formats
 import org.prauga.calendar.ui.components.Panel
-import java.time.LocalTime
 
 @Composable
-fun HomeScreen(contentPadding: PaddingValues, modifier: Modifier = Modifier, viewModel: HomeViewModel = viewModel()) {
+fun HomeScreen(
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = viewModel(),
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val formats = remember { Formats(context) }
@@ -65,18 +69,12 @@ fun HomeScreen(contentPadding: PaddingValues, modifier: Modifier = Modifier, vie
     }
 }
 
-private fun LazyListScope.upcoming(
-    state: HomeState,
-    formats: Formats,
-    context: Context,
-) {
+private fun LazyListScope.upcoming(state: HomeState, formats: Formats, context: Context) {
     item {
         Text(
             text = stringResource(R.string.ui_upcoming),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp, bottom = 4.dp)
-                .semantics { heading() },
+            modifier =
+                Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 4.dp).semantics { heading() },
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center,
@@ -110,16 +108,17 @@ private fun LazyListScope.upcoming(
                 accent = Color(agenda.color),
                 supportingText = formats.timeRange(agenda),
                 guests = details?.guests.orEmpty(),
-                action = details?.meetingUrl?.let { url ->
-                    {
-                        PvotButton(
-                            text = stringResource(R.string.ui_join),
-                            onClick = { Actions.join(context, url) },
-                            style = PvotButtonStyle.Tonal,
-                            icon = painterResource(R.drawable.ic_ui_video),
-                        )
-                    }
-                },
+                action =
+                    details?.meetingUrl?.let { url ->
+                        {
+                            PvotButton(
+                                text = stringResource(R.string.ui_join),
+                                onClick = { Actions.join(context, url) },
+                                style = PvotButtonStyle.Tonal,
+                                icon = painterResource(R.drawable.ic_ui_video),
+                            )
+                        }
+                    },
             )
         }
     }
@@ -129,21 +128,26 @@ private fun LazyListScope.upcoming(
 private fun Greeting(state: HomeState, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val hour = LocalTime.now().hour
-    val hello = stringResource(
-        when {
-            hour < 12 -> R.string.ui_good_morning
-            hour < 18 -> R.string.ui_good_afternoon
-            else -> R.string.ui_good_evening
-        }
-    )
-    val events = pluralStringResource(R.plurals.ui_meetings, state.eventsThisWeek, state.eventsThisWeek)
+    val hello =
+        stringResource(
+            when {
+                hour < 12 -> R.string.ui_good_morning
+                hour < 18 -> R.string.ui_good_afternoon
+                else -> R.string.ui_good_evening
+            }
+        )
+    val events =
+        pluralStringResource(R.plurals.ui_meetings, state.eventsThisWeek, state.eventsThisWeek)
     val tasks = pluralStringResource(R.plurals.ui_tasks, state.tasksThisWeek, state.tasksThisWeek)
-    val week = when {
-        state.eventsThisWeek == 0 && state.tasksThisWeek == 0 -> stringResource(R.string.ui_summary_free)
-        state.tasksThisWeek == 0 -> stringResource(R.string.ui_summary_week_events, events)
-        else -> stringResource(R.string.ui_summary_week, events, tasks)
-    }
-    val weekend = state.weekendPlan?.let { " " + stringResource(R.string.ui_summary_weekend, it) }.orEmpty()
+    val week =
+        when {
+            state.eventsThisWeek == 0 && state.tasksThisWeek == 0 ->
+                stringResource(R.string.ui_summary_free)
+            state.tasksThisWeek == 0 -> stringResource(R.string.ui_summary_week_events, events)
+            else -> stringResource(R.string.ui_summary_week, events, tasks)
+        }
+    val weekend =
+        state.weekendPlan?.let { " " + stringResource(R.string.ui_summary_weekend, it) }.orEmpty()
 
     Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
         Column(Modifier.weight(1f)) {

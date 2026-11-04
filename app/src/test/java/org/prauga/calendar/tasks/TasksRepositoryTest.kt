@@ -18,14 +18,27 @@ class TasksRepositoryTest {
     @Test
     fun weeklyTaskRepeatsUntilTheEnd() {
         val start = 1794380400000L
-        val list = TasksRepository.occurrences("FREQ=WEEKLY", start, false, "Asia/Kolkata", start + 3 * week + 1)
+        val list =
+            TasksRepository.occurrences(
+                "FREQ=WEEKLY",
+                start,
+                false,
+                "Asia/Kolkata",
+                start + 3 * week + 1,
+            )
         assertEquals(listOf(start, start + week, start + 2 * week, start + 3 * week), list)
     }
 
     @Test
     fun allDayAndBadRules() {
         val day = 1794355200000L
-        assertEquals(listOf(day, day + 24 * 3600_000L), TasksRepository.occurrences("FREQ=DAILY;COUNT=2", day, true, "UTC", day + week))
-        assertEquals(emptyList<Long>(), TasksRepository.occurrences("FREQ=NONSENSE", day, true, "UTC", day + week))
+        assertEquals(
+            listOf(day, day + 24 * 3600_000L),
+            TasksRepository.occurrences("FREQ=DAILY;COUNT=2", day, true, "UTC", day + week),
+        )
+        assertEquals(
+            emptyList<Long>(),
+            TasksRepository.occurrences("FREQ=NONSENSE", day, true, "UTC", day + week),
+        )
     }
 }

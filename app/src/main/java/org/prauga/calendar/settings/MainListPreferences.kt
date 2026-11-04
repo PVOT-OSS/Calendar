@@ -30,9 +30,8 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
-import org.prauga.calendar.persistence.Calendar
 import org.prauga.calendar.R
-
+import org.prauga.calendar.persistence.Calendar
 
 class MainListPreferences : PreferenceFragmentCompat() {
 
@@ -59,9 +58,14 @@ class MainListPreferences : PreferenceFragmentCompat() {
         // Add an observer on the LiveData returned by getCalendarsOrderedByAccount.
         // The onChanged() method fires when the observed data changes and the activity is
         // in the foreground.
-        mainListViewModel.getCalendarsOrderedByAccount().observe(viewLifecycleOwner, Observer<List<Calendar>> { calendars ->
-            updateCalendarPreferences(preferenceScreen, calendars)
-        })
+        mainListViewModel
+            .getCalendarsOrderedByAccount()
+            .observe(
+                viewLifecycleOwner,
+                Observer<List<Calendar>> { calendars ->
+                    updateCalendarPreferences(preferenceScreen, calendars)
+                },
+            )
     }
 
     private fun updateCalendarPreferences(screen: PreferenceScreen, allCalendars: List<Calendar>) {
@@ -71,16 +75,23 @@ class MainListPreferences : PreferenceFragmentCompat() {
             newCalendars.add(calendar.id)
 
             // add category per account if not already present
-            val accountCategoryUniqueKey = "account_category_${calendar.accountName}_${calendar.accountType}"
-            var accountCategory = screen.findPreference<PreferenceCategory>(accountCategoryUniqueKey)
+            val accountCategoryUniqueKey =
+                "account_category_${calendar.accountName}_${calendar.accountType}"
+            var accountCategory =
+                screen.findPreference<PreferenceCategory>(accountCategoryUniqueKey)
             if (accountCategory == null) {
-                accountCategory = PreferenceCategory(requireContext()).apply {
-                    key = accountCategoryUniqueKey
-                    title = calendar.accountName
-                    icon = ContextCompat.getDrawable(requireContext(), R.drawable.outline_account_circle)
-                    order = if (calendar.isLocal) 10 else 11 // show offline calendar first
-                    isOrderingAsAdded = false // use alphabetic ordering for children
-                }
+                accountCategory =
+                    PreferenceCategory(requireContext()).apply {
+                        key = accountCategoryUniqueKey
+                        title = calendar.accountName
+                        icon =
+                            ContextCompat.getDrawable(
+                                requireContext(),
+                                R.drawable.outline_account_circle,
+                            )
+                        order = if (calendar.isLocal) 10 else 11 // show offline calendar first
+                        isOrderingAsAdded = false // use alphabetic ordering for children
+                    }
                 screen.addPreference(accountCategory)
             }
 
@@ -93,9 +104,14 @@ class MainListPreferences : PreferenceFragmentCompat() {
             }
             calendarPreference.apply {
                 key = calendarUniqueKey
-                title = if (calendar.displayName.isNullOrBlank()) getString(R.string.preferences_calendar_no_display_name) else calendar.displayName
+                title =
+                    if (calendar.displayName.isNullOrBlank())
+                        getString(R.string.preferences_calendar_no_display_name)
+                    else calendar.displayName
                 fragment = CalendarPreferences::class.java.name
-                order = if (calendar.isPrimary) 1 else 2 // primary calendar is first, others are alphabetically ordered below
+                order =
+                    if (calendar.isPrimary) 1
+                    else 2 // primary calendar is first, others are alphabetically ordered below
                 icon = getCalendarIcon(calendar.color, calendar.visible, calendar.syncEvents)
                 summary = getCalendarSummary(calendar.visible, calendar.syncEvents)
             }
@@ -120,9 +136,7 @@ class MainListPreferences : PreferenceFragmentCompat() {
                 }
             }
         }
-        categoriesToDelete.forEach {
-            screen.removePreference(it)
-        }
+        categoriesToDelete.forEach { screen.removePreference(it) }
 
         currentCalendars = newCalendars
     }
@@ -138,44 +152,49 @@ class MainListPreferences : PreferenceFragmentCompat() {
     }
 
     private fun getCalendarIcon(color: Int, visible: Boolean, syncEvents: Boolean): Drawable {
-        val icon = if (!syncEvents) {
-            ContextCompat.getDrawable(requireContext(), R.drawable.ic_sync_off_light)
-        } else if (visible) {
-            ContextCompat.getDrawable(requireContext(), R.drawable.circle)
-        } else {
-            ContextCompat.getDrawable(requireContext(), R.drawable.circle_outline)
-        }
+        val icon =
+            if (!syncEvents) {
+                ContextCompat.getDrawable(requireContext(), R.drawable.ic_sync_off_light)
+            } else if (visible) {
+                ContextCompat.getDrawable(requireContext(), R.drawable.circle)
+            } else {
+                ContextCompat.getDrawable(requireContext(), R.drawable.circle_outline)
+            }
 
         icon!!.mutate().setColorFilter(color, Mode.SRC_IN)
         return icon
     }
 
     private fun addGeneralPreferences(screen: PreferenceScreen) {
-        val generalPreference = Preference(requireContext()).apply {
-            title = getString(R.string.preferences_list_general)
-            icon = ContextCompat.getDrawable(requireContext(), R.drawable.outline_settings)
-            fragment = GeneralPreferences::class.java.name
-        }
-        val addCaldavPreference = Preference(requireContext()).apply {
-            title = getString(R.string.preferences_list_add_remote)
-            icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_add)
-        }
+        val generalPreference =
+            Preference(requireContext()).apply {
+                title = getString(R.string.preferences_list_general)
+                icon = ContextCompat.getDrawable(requireContext(), R.drawable.outline_settings)
+                fragment = GeneralPreferences::class.java.name
+            }
+        val addCaldavPreference =
+            Preference(requireContext()).apply {
+                title = getString(R.string.preferences_list_add_remote)
+                icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_add)
+            }
         addCaldavPreference.setOnPreferenceClickListener {
             launchDavX5Login()
             true
         }
-        val addEtesyncPreference = Preference(requireContext()).apply {
-            title = getString(R.string.preferences_list_add_remote_etesync)
-            icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_add)
-        }
+        val addEtesyncPreference =
+            Preference(requireContext()).apply {
+                title = getString(R.string.preferences_list_add_remote_etesync)
+                icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_add)
+            }
         addEtesyncPreference.setOnPreferenceClickListener {
             launchAddEtesync()
             true
         }
-        val addOfflinePreference = Preference(requireContext()).apply {
-            title = getString(R.string.preferences_list_add_offline)
-            icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_add)
-        }
+        val addOfflinePreference =
+            Preference(requireContext()).apply {
+                title = getString(R.string.preferences_list_add_offline)
+                icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_add)
+            }
         addOfflinePreference.setOnPreferenceClickListener {
             addOfflineCalendar()
             true
@@ -191,28 +210,31 @@ class MainListPreferences : PreferenceFragmentCompat() {
         dialog.show(parentFragmentManager, "addOfflineCalendar")
     }
 
-    /**
-     * Based on https://manual.davx5.com/integration.html
-     */
+    /** Based on https://manual.davx5.com/integration.html */
     private fun launchDavX5Login() {
-        val davX5Intent = Intent().apply {
-            setClassName("at.bitfire.davdroid", "at.bitfire.davdroid.ui.setup.LoginActivity")
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
+        val davX5Intent =
+            Intent().apply {
+                setClassName("at.bitfire.davdroid", "at.bitfire.davdroid.ui.setup.LoginActivity")
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
 
         if (requireActivity().packageManager.resolveActivity(davX5Intent, 0) != null) {
             startActivity(davX5Intent)
         } else {
             // DAVx5 is not installed
-            val installIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=at.bitfire.davdroid"))
+            val installIntent =
+                Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=at.bitfire.davdroid"))
 
             // launch market
             if (installIntent.resolveActivity(requireActivity().packageManager) != null) {
                 startActivity(installIntent)
             } else {
                 // no f-droid market app or Play store installed -> launch browser for f-droid url
-                val downloadIntent = Intent(Intent.ACTION_VIEW,
-                        Uri.parse("https://f-droid.org/repository/browse/?fdid=at.bitfire.davdroid"))
+                val downloadIntent =
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://f-droid.org/repository/browse/?fdid=at.bitfire.davdroid"),
+                    )
                 if (downloadIntent.resolveActivity(requireActivity().packageManager) != null) {
                     startActivity(downloadIntent)
                 } else {
@@ -231,15 +253,19 @@ class MainListPreferences : PreferenceFragmentCompat() {
             startActivity(etesyncIntent)
         } else {
             // EteSync is not installed
-            val installIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=${etesyncPackage}"))
+            val installIntent =
+                Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=${etesyncPackage}"))
 
             // launch market
             if (installIntent.resolveActivity(packageManager) != null) {
                 startActivity(installIntent)
             } else {
                 // no f-droid market app or Play store installed -> launch browser for f-droid url
-                val downloadIntent = Intent(Intent.ACTION_VIEW,
-                        Uri.parse("https://f-droid.org/repository/browse/?fdid=${etesyncPackage}"))
+                val downloadIntent =
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://f-droid.org/repository/browse/?fdid=${etesyncPackage}"),
+                    )
                 if (downloadIntent.resolveActivity(packageManager) != null) {
                     startActivity(downloadIntent)
                 } else {
@@ -264,9 +290,13 @@ class MainListPreferences : PreferenceFragmentCompat() {
         // Add an observer on the LiveData returned by getCalendarsOrderedByAccount.
         // The onChanged() method fires when the observed data changes and the activity is
         // in the foreground.
-        mainListViewModel.getCalendarsOrderedByAccount().observe(viewLifecycleOwner, Observer<List<Calendar>> { calendars ->
-            updateCalendarPreferences(preferenceScreen, calendars)
-        })
+        mainListViewModel
+            .getCalendarsOrderedByAccount()
+            .observe(
+                viewLifecycleOwner,
+                Observer<List<Calendar>> { calendars ->
+                    updateCalendarPreferences(preferenceScreen, calendars)
+                },
+            )
     }
-
 }

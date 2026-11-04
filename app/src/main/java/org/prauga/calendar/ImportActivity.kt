@@ -28,6 +28,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import java.io.File
+import java.util.Formatter
+import java.util.Locale
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.prauga.calendar.event.ExtendedProperty
 import org.prauga.calendar.ics.IcsCalendar
 import org.prauga.calendar.ics.IcsEvent
@@ -36,15 +43,7 @@ import org.prauga.calendar.ics.ImportAction
 import org.prauga.calendar.persistence.CalendarTarget
 import org.prauga.calendar.persistence.WritableCalendars
 import org.prauga.calendar.theme.applyTheme
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.prauga.calendar.R
 import org.prauga.calendar.ui.edit.EditorActivity
-import java.io.File
-import java.util.Formatter
-import java.util.Locale
 
 class ImportActivity : AppCompatActivity() {
 
@@ -60,7 +59,11 @@ class ImportActivity : AppCompatActivity() {
         applyTheme()
         super.onCreate(savedInstanceState)
         val uri = intent?.data
-        if (uri == null || (uri.scheme != ContentResolver.SCHEME_CONTENT && uri.scheme != ContentResolver.SCHEME_FILE)) {
+        if (
+            uri == null ||
+                (uri.scheme != ContentResolver.SCHEME_CONTENT &&
+                    uri.scheme != ContentResolver.SCHEME_FILE)
+        ) {
             Toast.makeText(this, R.string.cal_nothing_to_import, Toast.LENGTH_SHORT).show()
             finish()
             return
@@ -83,12 +86,19 @@ class ImportActivity : AppCompatActivity() {
         importButton.isEnabled = false
 
         lifecycleScope.launch {
-            val loaded = withContext(Dispatchers.IO) {
-                val text = readText(uri) ?: return@withContext null
-                IcsCalendar.parse(text, Utils.getTimeZone(this@ImportActivity, null)) to WritableCalendars.list(contentResolver)
-            }
+            val loaded =
+                withContext(Dispatchers.IO) {
+                    val text = readText(uri) ?: return@withContext null
+                    IcsCalendar.parse(text, Utils.getTimeZone(this@ImportActivity, null)) to
+                        WritableCalendars.list(contentResolver)
+                }
             if (loaded == null || loaded.first.events.isEmpty()) {
-                Toast.makeText(this@ImportActivity, R.string.cal_nothing_to_import, Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                        this@ImportActivity,
+                        R.string.cal_nothing_to_import,
+                        Toast.LENGTH_SHORT,
+                    )
+                    .show()
                 finish()
                 return@launch
             }
@@ -96,16 +106,18 @@ class ImportActivity : AppCompatActivity() {
         }
     }
 
-    private fun readText(uri: Uri): String? = try {
-        val stream = if (uri.scheme == ContentResolver.SCHEME_FILE) {
-            File(uri.path ?: return null).inputStream()
-        } else {
-            contentResolver.openInputStream(uri)
+    private fun readText(uri: Uri): String? =
+        try {
+            val stream =
+                if (uri.scheme == ContentResolver.SCHEME_FILE) {
+                    File(uri.path ?: return null).inputStream()
+                } else {
+                    contentResolver.openInputStream(uri)
+                }
+            stream?.bufferedReader(Charsets.UTF_8)?.use { it.readText() }
+        } catch (e: Exception) {
+            null
         }
-        stream?.bufferedReader(Charsets.UTF_8)?.use { it.readText() }
-    } catch (e: Exception) {
-        null
-    }
 
     private fun show(parsed: IcsCalendar, writable: List<CalendarTarget>) {
         calendar = parsed
@@ -117,7 +129,12 @@ class ImportActivity : AppCompatActivity() {
             }
         }
         adapter.submit(parsed.events)
-        summary.text = resources.getQuantityString(R.plurals.import_summary, adapter.rowCount(), adapter.rowCount())
+        summary.text =
+            resources.getQuantityString(
+                R.plurals.import_summary,
+                adapter.rowCount(),
+                adapter.rowCount(),
+            )
         invalidateOptionsMenu()
         if (writable.isEmpty()) {
             MaterialAlertDialogBuilder(this)
@@ -128,19 +145,32 @@ class ImportActivity : AppCompatActivity() {
             return
         }
         val spinner = findViewById<Spinner>(R.id.calendar_spinner)
-        spinner.adapter = ArrayAdapter(
-            this, android.R.layout.simple_spinner_dropdown_item,
-            writable.map { if (it.displayName == it.accountName) it.displayName else "${it.displayName} (${it.accountName})" }
-        )
-        val last = getSharedPreferences(Utils.SHARED_PREFS_NAME, MODE_PRIVATE).getLong(PREF_LAST_TARGET, -1)
+        spinner.adapter =
+            ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_dropdown_item,
+                writable.map {
+                    if (it.displayName == it.accountName) it.displayName
+                    else "${it.displayName} (${it.accountName})"
+                },
+            )
+        val last =
+            getSharedPreferences(Utils.SHARED_PREFS_NAME, MODE_PRIVATE)
+                .getLong(PREF_LAST_TARGET, -1)
         spinner.setSelection(writable.indexOfFirst { it.id == last }.coerceAtLeast(0))
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                selectTarget(writable[position])
-            }
+        spinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long,
+                ) {
+                    selectTarget(writable[position])
+                }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
+            }
         selectTarget(writable[spinner.selectedItemPosition.coerceAtLeast(0)])
     }
 
@@ -148,7 +178,10 @@ class ImportActivity : AppCompatActivity() {
         target = newTarget
         val parsed = calendar ?: return
         lifecycleScope.launch {
-            val actions = withContext(Dispatchers.IO) { importer.plan(parsed.events, parsed.method, newTarget.id) }
+            val actions =
+                withContext(Dispatchers.IO) {
+                    importer.plan(parsed.events, parsed.method, newTarget.id)
+                }
             if (target == newTarget) {
                 adapter.setActions(actions)
                 updateButton()
@@ -159,7 +192,9 @@ class ImportActivity : AppCompatActivity() {
     private fun updateButton() {
         val count = adapter.selectedRowCount()
         importButton.isEnabled = count > 0 && target != null
-        importButton.text = if (count > 0) getString(R.string.import_button_count, count) else getString(R.string.import_button)
+        importButton.text =
+            if (count > 0) getString(R.string.import_button_count, count)
+            else getString(R.string.import_button)
     }
 
     private fun runImport() {
@@ -167,14 +202,25 @@ class ImportActivity : AppCompatActivity() {
         val chosen = target ?: return
         val events = adapter.selectedEvents()
         importButton.isEnabled = false
-        getSharedPreferences(Utils.SHARED_PREFS_NAME, MODE_PRIVATE).edit().putLong(PREF_LAST_TARGET, chosen.id).apply()
+        getSharedPreferences(Utils.SHARED_PREFS_NAME, MODE_PRIVATE)
+            .edit()
+            .putLong(PREF_LAST_TARGET, chosen.id)
+            .apply()
         lifecycleScope.launch {
-            val result = withContext(Dispatchers.IO) { importer.import(events, parsed.method, chosen) }
-            val message = if (result.failed == 0) {
-                getString(R.string.import_result, result.added, result.updated, result.deleted)
-            } else {
-                getString(R.string.import_result_failed, result.added, result.updated, result.deleted, result.failed)
-            }
+            val result =
+                withContext(Dispatchers.IO) { importer.import(events, parsed.method, chosen) }
+            val message =
+                if (result.failed == 0) {
+                    getString(R.string.import_result, result.added, result.updated, result.deleted)
+                } else {
+                    getString(
+                        R.string.import_result_failed,
+                        result.added,
+                        result.updated,
+                        result.deleted,
+                        result.failed,
+                    )
+                }
             Toast.makeText(this@ImportActivity, message, Toast.LENGTH_LONG).show()
             finish()
         }
@@ -189,9 +235,13 @@ class ImportActivity : AppCompatActivity() {
         val events = calendar?.events.orEmpty()
         menu.findItem(R.id.select_all)?.apply {
             isVisible = adapter.rowCount() > 1
-            setTitle(if (adapter.allSelected()) R.string.import_select_none else R.string.import_select_all)
+            setTitle(
+                if (adapter.allSelected()) R.string.import_select_none
+                else R.string.import_select_all
+            )
         }
-        menu.findItem(R.id.edit_first)?.isVisible = events.size == 1 && !events[0].cancelled && !events[0].isException
+        menu.findItem(R.id.edit_first)?.isVisible =
+            events.size == 1 && !events[0].cancelled && !events[0].isException
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -209,23 +259,24 @@ class ImportActivity : AppCompatActivity() {
     }
 
     private fun openInEditor(event: IcsEvent) {
-        val intent = Intent(Intent.ACTION_INSERT).apply {
-            type = "vnd.android.cursor.item/event"
-            setClass(this@ImportActivity, EditorActivity::class.java)
-            putExtra(CalendarContract.Events.TITLE, event.title)
-            putExtra(CalendarContract.Events.EVENT_LOCATION, event.location)
-            putExtra(CalendarContract.Events.DESCRIPTION, event.description)
-            putExtra(ExtendedProperty.URL, event.url)
-            putExtra(CalendarContract.Events.ORGANIZER, event.organizer)
-            putExtra(CalendarContract.Events.RRULE, event.rrule)
-            putExtra(CalendarContract.Events.EVENT_TIMEZONE, event.start.timeZone)
-            putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, event.allDay)
-            putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, event.start.millis)
-            putExtra(CalendarContract.EXTRA_EVENT_END_TIME, event.end.millis)
-            if (event.attendees.isNotEmpty()) {
-                putExtra(Intent.EXTRA_EMAIL, event.attendees.joinToString(",") { it.email })
+        val intent =
+            Intent(Intent.ACTION_INSERT).apply {
+                type = "vnd.android.cursor.item/event"
+                setClass(this@ImportActivity, EditorActivity::class.java)
+                putExtra(CalendarContract.Events.TITLE, event.title)
+                putExtra(CalendarContract.Events.EVENT_LOCATION, event.location)
+                putExtra(CalendarContract.Events.DESCRIPTION, event.description)
+                putExtra(ExtendedProperty.URL, event.url)
+                putExtra(CalendarContract.Events.ORGANIZER, event.organizer)
+                putExtra(CalendarContract.Events.RRULE, event.rrule)
+                putExtra(CalendarContract.Events.EVENT_TIMEZONE, event.start.timeZone)
+                putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, event.allDay)
+                putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, event.start.millis)
+                putExtra(CalendarContract.EXTRA_EVENT_END_TIME, event.end.millis)
+                if (event.attendees.isNotEmpty()) {
+                    putExtra(Intent.EXTRA_EMAIL, event.attendees.joinToString(",") { it.email })
+                }
             }
-        }
         try {
             startActivity(intent)
         } catch (e: ActivityNotFoundException) {
@@ -235,8 +286,11 @@ class ImportActivity : AppCompatActivity() {
     }
 
     private fun describeWhen(event: IcsEvent): String {
-        var flags = DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_WEEKDAY or
-            DateUtils.FORMAT_ABBREV_ALL or DateUtils.FORMAT_SHOW_YEAR
+        var flags =
+            DateUtils.FORMAT_SHOW_DATE or
+                DateUtils.FORMAT_SHOW_WEEKDAY or
+                DateUtils.FORMAT_ABBREV_ALL or
+                DateUtils.FORMAT_SHOW_YEAR
         val tz: String
         var end = event.end.millis
         if (event.allDay) {
@@ -247,11 +301,21 @@ class ImportActivity : AppCompatActivity() {
             if (DateFormat.is24HourFormat(this)) flags = flags or DateUtils.FORMAT_24HOUR
             tz = Utils.getTimeZone(this, null)
         }
-        val text = DateUtils.formatDateRange(this, Formatter(StringBuilder(50), Locale.getDefault()), event.start.millis, end, flags, tz).toString()
+        val text =
+            DateUtils.formatDateRange(
+                    this,
+                    Formatter(StringBuilder(50), Locale.getDefault()),
+                    event.start.millis,
+                    end,
+                    flags,
+                    tz,
+                )
+                .toString()
         return if (event.isRecurring) "$text · ${getString(R.string.import_repeats)}" else text
     }
 
-    private inner class EventAdapter(private val onChange: () -> Unit) : RecyclerView.Adapter<EventHolder>() {
+    private inner class EventAdapter(private val onChange: () -> Unit) :
+        RecyclerView.Adapter<EventHolder>() {
         private var all: List<IcsEvent> = emptyList()
         private var allActions: List<ImportAction> = emptyList()
         private var rows: List<Int> = emptyList()
@@ -261,7 +325,8 @@ class ImportActivity : AppCompatActivity() {
 
         fun submit(list: List<IcsEvent>) {
             all = list
-            val seriesUids = list.filter { !it.isException && it.uid != null }.mapNotNull { it.uid }.toSet()
+            val seriesUids =
+                list.filter { !it.isException && it.uid != null }.mapNotNull { it.uid }.toSet()
             rows = list.indices.filter { !list[it].isException || list[it].uid !in seriesUids }
             events = rows.map { list[it] }
             allActions = emptyList()
@@ -279,10 +344,17 @@ class ImportActivity : AppCompatActivity() {
         }
 
         fun selectedEvents(): List<IcsEvent> {
-            val chosen = rows.filterIndexed { i, _ -> i in selected && actionAt(i) != ImportAction.SKIP }.toSet()
+            val chosen =
+                rows
+                    .filterIndexed { i, _ -> i in selected && actionAt(i) != ImportAction.SKIP }
+                    .toSet()
             val chosenUids = chosen.mapNotNull { all[it].uid }.toSet()
             return all.filterIndexed { i, e ->
-                i in chosen || (e.isException && i !in rows && e.uid in chosenUids && allActions.getOrNull(i) != ImportAction.SKIP)
+                i in chosen ||
+                    (e.isException &&
+                        i !in rows &&
+                        e.uid in chosenUids &&
+                        allActions.getOrNull(i) != ImportAction.SKIP)
             }
         }
 
@@ -290,11 +362,15 @@ class ImportActivity : AppCompatActivity() {
 
         fun selectedRowCount(): Int = selected.count { actionAt(it) != ImportAction.SKIP }
 
-        fun allSelected(): Boolean = events.indices.all { it in selected || actionAt(it) == ImportAction.SKIP }
+        fun allSelected(): Boolean =
+            events.indices.all { it in selected || actionAt(it) == ImportAction.SKIP }
 
         fun selectAll(select: Boolean) {
             selected.clear()
-            if (select) events.indices.filter { actionAt(it) != ImportAction.SKIP }.forEach { selected += it }
+            if (select)
+                events.indices
+                    .filter { actionAt(it) != ImportAction.SKIP }
+                    .forEach { selected += it }
             notifyDataSetChanged()
             onChange()
         }
@@ -302,24 +378,29 @@ class ImportActivity : AppCompatActivity() {
         private fun actionAt(i: Int): ImportAction? = actions.getOrNull(i)
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-            EventHolder(LayoutInflater.from(parent.context).inflate(R.layout.import_item, parent, false))
+            EventHolder(
+                LayoutInflater.from(parent.context).inflate(R.layout.import_item, parent, false)
+            )
 
         override fun getItemCount() = events.size
 
         override fun onBindViewHolder(holder: EventHolder, position: Int) {
             val event = events[position]
             val action = actionAt(position)
-            holder.title.text = event.title?.takeIf { it.isNotBlank() } ?: getString(R.string.import_untitled)
+            holder.title.text =
+                event.title?.takeIf { it.isNotBlank() } ?: getString(R.string.import_untitled)
             holder.whenText.text = describeWhen(event)
             holder.where.text = event.location.orEmpty()
-            holder.where.visibility = if (event.location.isNullOrBlank()) View.GONE else View.VISIBLE
-            holder.action.text = when (action) {
-                ImportAction.ADD -> getString(R.string.import_action_add)
-                ImportAction.UPDATE -> getString(R.string.import_action_update)
-                ImportAction.DELETE -> getString(R.string.import_action_delete)
-                ImportAction.SKIP -> getString(R.string.import_action_skip)
-                null -> ""
-            }
+            holder.where.visibility =
+                if (event.location.isNullOrBlank()) View.GONE else View.VISIBLE
+            holder.action.text =
+                when (action) {
+                    ImportAction.ADD -> getString(R.string.import_action_add)
+                    ImportAction.UPDATE -> getString(R.string.import_action_update)
+                    ImportAction.DELETE -> getString(R.string.import_action_delete)
+                    ImportAction.SKIP -> getString(R.string.import_action_skip)
+                    null -> ""
+                }
             val enabled = action != null && action != ImportAction.SKIP
             holder.check.isEnabled = enabled
             holder.check.isChecked = enabled && position in selected

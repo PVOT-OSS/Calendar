@@ -20,33 +20,29 @@ package org.prauga.calendar.datasource
 import android.app.Application
 import android.provider.CalendarContract
 
-/**
- * Datasource of Event entities
- */
-class EventDataSource(
-    private val application: Application
-) {
-    /**
-     * TODO Document
-     */
+/** Datasource of Event entities */
+class EventDataSource(private val application: Application) {
+    /** TODO Document */
     fun queryNumberOfEvents(calendarId: Long): Long? {
         val args = arrayOf(calendarId.toString())
-        application.contentResolver.query(
-            CalendarContract.Events.CONTENT_URI,
-            PROJECTION_COUNT_EVENTS,
-            WHERE_COUNT_EVENTS, args, null
-        )?.use {
-            if (it.moveToFirst()) {
-                return it.getLong(PROJECTION_COUNT_EVENTS_INDEX_COUNT)
+        application.contentResolver
+            .query(
+                CalendarContract.Events.CONTENT_URI,
+                PROJECTION_COUNT_EVENTS,
+                WHERE_COUNT_EVENTS,
+                args,
+                null,
+            )
+            ?.use {
+                if (it.moveToFirst()) {
+                    return it.getLong(PROJECTION_COUNT_EVENTS_INDEX_COUNT)
+                }
             }
-        }
         return null
     }
 
     companion object {
-        private val PROJECTION_COUNT_EVENTS = arrayOf(
-            CalendarContract.Events._COUNT
-        )
+        private val PROJECTION_COUNT_EVENTS = arrayOf(CalendarContract.Events._COUNT)
         private const val PROJECTION_COUNT_EVENTS_INDEX_COUNT = 0
         private const val WHERE_COUNT_EVENTS = CalendarContract.Events.CALENDAR_ID + "=?"
     }

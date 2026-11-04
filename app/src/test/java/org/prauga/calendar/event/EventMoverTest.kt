@@ -17,20 +17,23 @@ class EventMoverTest {
     fun weeklyRuleFollowsTheNewWeekday() {
         assertEquals(
             "FREQ=WEEKLY;BYDAY=TU;COUNT=6",
-            EventMover.shiftWeekday("FREQ=WEEKLY;BYDAY=MO;COUNT=6", monday, monday + day, "UTC")
+            EventMover.shiftWeekday("FREQ=WEEKLY;BYDAY=MO;COUNT=6", monday, monday + day, "UTC"),
         )
     }
 
     @Test
     fun otherRulesAreLeftAlone() {
-        assertEquals("FREQ=DAILY", EventMover.shiftWeekday("FREQ=DAILY", monday, monday + day, "UTC"))
+        assertEquals(
+            "FREQ=DAILY",
+            EventMover.shiftWeekday("FREQ=DAILY", monday, monday + day, "UTC"),
+        )
         assertEquals(
             "FREQ=WEEKLY;BYDAY=MO,WE",
-            EventMover.shiftWeekday("FREQ=WEEKLY;BYDAY=MO,WE", monday, monday + day, "UTC")
+            EventMover.shiftWeekday("FREQ=WEEKLY;BYDAY=MO,WE", monday, monday + day, "UTC"),
         )
         assertEquals(
             "FREQ=WEEKLY;BYDAY=MO",
-            EventMover.shiftWeekday("FREQ=WEEKLY;BYDAY=MO", monday, monday + 3600_000L, "UTC")
+            EventMover.shiftWeekday("FREQ=WEEKLY;BYDAY=MO", monday, monday + 3600_000L, "UTC"),
         )
     }
 
@@ -38,7 +41,7 @@ class EventMoverTest {
     fun timedExdatesMoveWithTheSeries() {
         assertEquals(
             "20261216T020000Z,20261223",
-            EventMover.shiftExdates("20261216T013000Z,20261223", 1800_000L)
+            EventMover.shiftExdates("20261216T013000Z,20261223", 1800_000L),
         )
         assertEquals(null, EventMover.shiftExdates(null, 1000L))
     }

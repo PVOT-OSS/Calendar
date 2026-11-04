@@ -11,7 +11,7 @@ Well, I wanted a simple, material designed and state of the art open source cale
 ## Special thanks
 
 The application is an enhanced version of AOSP Calendar. Without the help of
-[Free Software for Android](https://github.com/Free-Software-for-Android/Standalone-Calendar) team, 
+[Free Software for Android](https://github.com/Free-Software-for-Android/Standalone-Calendar) team,
 this app would be just a dream. So thanks to them!
 
 ## Features
@@ -45,10 +45,10 @@ You can even configure in Etar which ones are to be shown and when adding
 an event to which calendar it should be added.
 
 ### Important permissions Etar requires
-- READ_CONTACTS(optional)  
+- READ_CONTACTS(optional)
   Is queried the first time an appointment is created and can be rejected. But then search and location suggestions no longer work.
-->allows search and location suggestions when adding guests to an event  
-- READ_CALENDAR & WRITE_CALENDAR  
+->allows search and location suggestions when adding guests to an event
+- READ_CALENDAR & WRITE_CALENDAR
 ->read and create calendar events
 
 ### Known issues with the ICS import feature

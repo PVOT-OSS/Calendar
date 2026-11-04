@@ -57,7 +57,10 @@ import org.prauga.calendar.ui.calendar.CalendarScreen
 import org.prauga.calendar.ui.calendar.CalendarViewModel
 import org.prauga.calendar.ui.home.HomeScreen
 
-enum class Destination { Home, Calendar }
+enum class Destination {
+    Home,
+    Calendar,
+}
 
 @Composable
 fun CalendarApp(launch: LaunchTarget? = null, onLaunched: () -> Unit = {}) {
@@ -77,25 +80,31 @@ fun CalendarApp(launch: LaunchTarget? = null, onLaunched: () -> Unit = {}) {
     val backdrop = rememberPvotGlassBackdrop()
     val contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 120.dp)
 
-    Box(
-        Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
+    Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         Column(
-            Modifier
-                .fillMaxSize()
+            Modifier.fillMaxSize()
                 .pvotGlassBackdrop(backdrop)
                 .background(MaterialTheme.colorScheme.background)
                 .statusBarsPadding()
         ) {
             TopRow(
-                title = stringResource(if (destination == Destination.Home) R.string.ui_home else R.string.ui_calendar),
+                title =
+                    stringResource(
+                        if (destination == Destination.Home) R.string.ui_home
+                        else R.string.ui_calendar
+                    )
             )
             PvotDateHeader(
                 headerDate,
                 Modifier.padding(vertical = 8.dp),
-                secondary = AlternateCalendar.label(context, headerDate.year, headerDate.monthValue - 1, headerDate.dayOfMonth, false),
+                secondary =
+                    AlternateCalendar.label(
+                        context,
+                        headerDate.year,
+                        headerDate.monthValue - 1,
+                        headerDate.dayOfMonth,
+                        false,
+                    ),
             )
             when (destination) {
                 Destination.Home -> HomeScreen(contentPadding)
@@ -106,13 +115,15 @@ fun CalendarApp(launch: LaunchTarget? = null, onLaunched: () -> Unit = {}) {
             BottomBar(
                 destination = destination,
                 onSwitch = {
-                    destination = if (destination == Destination.Home) Destination.Calendar else Destination.Home
+                    destination =
+                        if (destination == Destination.Home) Destination.Calendar
+                        else Destination.Home
                 },
                 onAdd = { Actions.create(context, headerDate, formats.zone) },
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .navigationBarsPadding()
-                    .padding(bottom = 16.dp),
+                modifier =
+                    Modifier.align(Alignment.BottomCenter)
+                        .navigationBarsPadding()
+                        .padding(bottom = 16.dp),
             )
         }
     }
@@ -122,20 +133,18 @@ fun CalendarApp(launch: LaunchTarget? = null, onLaunched: () -> Unit = {}) {
 private fun TopRow(title: String) {
     val context = LocalContext.current
     var menu by remember { mutableStateOf(false) }
-    val importLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-        if (uri != null) context.startActivity(Intent(context, ImportActivity::class.java).setData(uri))
-    }
+    val importLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+            if (uri != null)
+                context.startActivity(Intent(context, ImportActivity::class.java).setData(uri))
+        }
     Row(
-        Modifier
-            .fillMaxWidth()
-            .padding(start = 24.dp, end = 12.dp, top = 8.dp),
+        Modifier.fillMaxWidth().padding(start = 24.dp, end = 12.dp, top = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = title,
-            modifier = Modifier
-                .weight(1f)
-                .semantics { heading() },
+            modifier = Modifier.weight(1f).semantics { heading() },
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onBackground,
@@ -149,7 +158,9 @@ private fun TopRow(title: String) {
             DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
                 MenuItem(R.string.search) { Actions.search(context) }
                 MenuItem(R.string.cal_import_menu_title) {
-                    importLauncher.launch(arrayOf("text/calendar", "text/x-vcalendar", "application/ics"))
+                    importLauncher.launch(
+                        arrayOf("text/calendar", "text/x-vcalendar", "application/ics")
+                    )
                 }
                 MenuItem(R.string.menu_preferences) { Actions.settings(context) }
                 MenuItem(R.string.ui_about) { Actions.about(context) }
@@ -164,9 +175,17 @@ private fun MenuItem(label: Int, onClick: () -> Unit) {
 }
 
 @Composable
-private fun BottomBar(destination: Destination, onSwitch: () -> Unit, onAdd: () -> Unit, modifier: Modifier = Modifier) {
+private fun BottomBar(
+    destination: Destination,
+    onSwitch: () -> Unit,
+    onAdd: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     PvotCapsule(modifier = modifier) {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             val add: @Composable () -> Unit = {
                 PvotButton(
                     text = stringResource(R.string.ui_add),

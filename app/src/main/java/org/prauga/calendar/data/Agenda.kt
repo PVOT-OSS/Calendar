@@ -6,8 +6,8 @@
 package org.prauga.calendar.data
 
 import android.provider.CalendarContract
-import org.prauga.calendar.Event
 import java.time.LocalDate
+import org.prauga.calendar.Event
 
 data class Agenda(
     val eventId: Long,
@@ -27,28 +27,27 @@ data class Agenda(
     fun occursOn(julianDay: Int) = julianDay in startDay..endDay
 
     companion object {
-        fun from(e: Event, isTask: Boolean) = Agenda(
-            eventId = e.id,
-            title = e.title?.toString().orEmpty(),
-            location = e.location?.toString().orEmpty(),
-            begin = e.startMillis,
-            end = e.endMillis,
-            allDay = e.allDay,
-            color = e.color,
-            startDay = e.startDay,
-            endDay = e.endDay,
-            startMinute = e.startTime,
-            endMinute = e.endTime,
-            isTask = isTask,
-            declined = e.selfAttendeeStatus == CalendarContract.Attendees.ATTENDEE_STATUS_DECLINED,
-        )
+        fun from(e: Event, isTask: Boolean) =
+            Agenda(
+                eventId = e.id,
+                title = e.title?.toString().orEmpty(),
+                location = e.location?.toString().orEmpty(),
+                begin = e.startMillis,
+                end = e.endMillis,
+                allDay = e.allDay,
+                color = e.color,
+                startDay = e.startDay,
+                endDay = e.endDay,
+                startMinute = e.startTime,
+                endMinute = e.endTime,
+                isTask = isTask,
+                declined =
+                    e.selfAttendeeStatus == CalendarContract.Attendees.ATTENDEE_STATUS_DECLINED,
+            )
     }
 }
 
-data class AgendaDetails(
-    val guests: List<String>,
-    val meetingUrl: String?,
-)
+data class AgendaDetails(val guests: List<String>, val meetingUrl: String?)
 
 object JulianDay {
     private const val EPOCH_OFFSET = 2440588L

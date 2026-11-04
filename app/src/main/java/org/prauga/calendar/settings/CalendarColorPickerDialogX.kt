@@ -27,16 +27,15 @@ import android.os.Bundle
 import android.provider.CalendarContract.Calendars
 import android.provider.CalendarContract.Colors
 import android.util.SparseIntArray
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import java.util.ArrayList
+import java.util.Arrays
 import org.prauga.calendar.AsyncQueryService
+import org.prauga.calendar.R
 import org.prauga.calendar.Utils
 import org.prauga.calendar.colorpicker.ColorPickerDialog
 import org.prauga.calendar.colorpicker.ColorPickerSwatch.OnColorSelectedListener
 import org.prauga.calendar.colorpicker.HsvColorComparator
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import org.prauga.calendar.R
-import java.util.ArrayList
-import java.util.Arrays
-
 
 /**
  * Based on CalendarColorPickerDialog.java
@@ -125,9 +124,15 @@ class CalendarColorPickerDialogX : ColorPickerDialog() {
     private inner class QueryService(context: Context) : AsyncQueryService(context) {
 
         fun startCalendarQuery() {
-            startQuery(TOKEN_QUERY_CALENDARS, null,
-                    ContentUris.withAppendedId(Calendars.CONTENT_URI, calendarId),
-                    CALENDARS_PROJECTION, null, null, null)
+            startQuery(
+                TOKEN_QUERY_CALENDARS,
+                null,
+                ContentUris.withAppendedId(Calendars.CONTENT_URI, calendarId),
+                CALENDARS_PROJECTION,
+                null,
+                null,
+                null,
+            )
         }
 
         private fun startColorQuery(account: Account) {
@@ -157,9 +162,16 @@ class CalendarColorPickerDialogX : ColorPickerDialog() {
                         dismiss()
                         return
                     }
-                    mSelectedColor = Utils.getDisplayColorFromColor(activity, cursor.getInt(CALENDARS_INDEX_CALENDAR_COLOR))
-                    val account = Account(cursor.getString(CALENDARS_INDEX_ACCOUNT_NAME),
-                            cursor.getString(CALENDARS_INDEX_ACCOUNT_TYPE))
+                    mSelectedColor =
+                        Utils.getDisplayColorFromColor(
+                            activity,
+                            cursor.getInt(CALENDARS_INDEX_CALENDAR_COLOR),
+                        )
+                    val account =
+                        Account(
+                            cursor.getString(CALENDARS_INDEX_ACCOUNT_NAME),
+                            cursor.getString(CALENDARS_INDEX_ACCOUNT_TYPE),
+                        )
                     cursor.close()
 
                     startColorQuery(account)
@@ -176,7 +188,6 @@ class CalendarColorPickerDialogX : ColorPickerDialog() {
                 }
             }
         }
-
     }
 
     private fun useColorKeyMap(cursor: Cursor) {
@@ -195,10 +206,13 @@ class CalendarColorPickerDialogX : ColorPickerDialog() {
     }
 
     private fun useDefaultColors() {
-        val warningDialog = MaterialAlertDialogBuilder(requireActivity())
+        val warningDialog =
+            MaterialAlertDialogBuilder(requireActivity())
                 .setTitle(R.string.preferences_calendar_color_warning_title)
                 .setMessage(R.string.preferences_calendar_color_warning_message)
-                .setPositiveButton(R.string.preferences_calendar_color_warning_button) { dialogInterface, _ ->
+                .setPositiveButton(R.string.preferences_calendar_color_warning_button) {
+                    dialogInterface,
+                    _ ->
                     dialogInterface.dismiss()
                 }
                 .create()
@@ -229,40 +243,54 @@ class CalendarColorPickerDialogX : ColorPickerDialog() {
             } else {
                 values.put(Calendars.CALENDAR_COLOR_KEY, colorKeyMap.get(color))
             }
-            queryService!!.startUpdate(queryService!!.nextToken, null, ContentUris.withAppendedId(
-                    Calendars.CONTENT_URI, calendarId), values, null, null, Utils.UNDO_DELAY)
+            queryService!!.startUpdate(
+                queryService!!.nextToken,
+                null,
+                ContentUris.withAppendedId(Calendars.CONTENT_URI, calendarId),
+                values,
+                null,
+                null,
+                Utils.UNDO_DELAY,
+            )
             calendarColorListener!!.onColorSelected(color)
         }
     }
 
     companion object {
 
-        fun newInstance(calendarId: Long, isTablet: Boolean, newListener: OnCalendarColorSelectedListener): CalendarColorPickerDialogX {
+        fun newInstance(
+            calendarId: Long,
+            isTablet: Boolean,
+            newListener: OnCalendarColorSelectedListener,
+        ): CalendarColorPickerDialogX {
             val fragment = CalendarColorPickerDialogX()
-            fragment.setArguments(R.string.calendar_color_picker_dialog_title, NUM_COLUMNS, if (isTablet) SIZE_LARGE else SIZE_SMALL)
+            fragment.setArguments(
+                R.string.calendar_color_picker_dialog_title,
+                NUM_COLUMNS,
+                if (isTablet) SIZE_LARGE else SIZE_SMALL,
+            )
             fragment.setCalendarId(calendarId)
             fragment.setCalendarColorListener(newListener)
             return fragment
         }
 
-        internal val CALENDARS_PROJECTION = arrayOf(
-                Calendars.ACCOUNT_NAME,
-                Calendars.ACCOUNT_TYPE,
-                Calendars.CALENDAR_COLOR
-        )
+        internal val CALENDARS_PROJECTION =
+            arrayOf(Calendars.ACCOUNT_NAME, Calendars.ACCOUNT_TYPE, Calendars.CALENDAR_COLOR)
         internal const val CALENDARS_INDEX_ACCOUNT_NAME = 0
         internal const val CALENDARS_INDEX_ACCOUNT_TYPE = 1
         internal const val CALENDARS_INDEX_CALENDAR_COLOR = 2
 
-        internal val COLORS_PROJECTION = arrayOf(
-                Colors.COLOR,
-                Colors.COLOR_KEY
-        )
+        internal val COLORS_PROJECTION = arrayOf(Colors.COLOR, Colors.COLOR_KEY)
         const val COLORS_INDEX_COLOR = 0
         const val COLORS_INDEX_COLOR_KEY = 1
-        internal const val COLORS_WHERE = Colors.ACCOUNT_NAME + "=? AND " +
-                Colors.ACCOUNT_TYPE + "=? AND " +
-                Colors.COLOR_TYPE + "=" + Colors.TYPE_CALENDAR
+        internal const val COLORS_WHERE =
+            Colors.ACCOUNT_NAME +
+                "=? AND " +
+                Colors.ACCOUNT_TYPE +
+                "=? AND " +
+                Colors.COLOR_TYPE +
+                "=" +
+                Colors.TYPE_CALENDAR
 
         private const val NUM_COLUMNS = 4
         private const val KEY_CALENDAR_ID = "calendar_id"

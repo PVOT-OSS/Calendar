@@ -76,13 +76,14 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     val query = MutableStateFlow("")
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-    val results: StateFlow<List<Agenda>> = query
-        .debounce(250)
-        .mapLatest { q ->
-            val now = System.currentTimeMillis()
-            repository.search(q, now - YEAR, now + 2 * YEAR)
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    val results: StateFlow<List<Agenda>> =
+        query
+            .debounce(250)
+            .mapLatest { q ->
+                val now = System.currentTimeMillis()
+                repository.search(q, now - YEAR, now + 2 * YEAR)
+            }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     private companion object {
         const val YEAR = 366L * 24 * 3_600_000
@@ -97,9 +98,7 @@ class SearchActivity : PvotBaseActivity() {
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) handle(intent)
         setPvotContent {
-            PvotAppTheme {
-                SearchScreen(viewModel, onBack = ::finish, onSubmit = ::saveQuery)
-            }
+            PvotAppTheme { SearchScreen(viewModel, onBack = ::finish, onSubmit = ::saveQuery) }
         }
     }
 
@@ -119,13 +118,21 @@ class SearchActivity : PvotBaseActivity() {
 
     private fun saveQuery(query: String) {
         if (query.isBlank()) return
-        SearchRecentSuggestions(this, Utils.getSearchAuthority(this), CalendarRecentSuggestionsProvider.MODE)
+        SearchRecentSuggestions(
+                this,
+                Utils.getSearchAuthority(this),
+                CalendarRecentSuggestionsProvider.MODE,
+            )
             .saveRecentQuery(query.trim(), null)
     }
 }
 
 @Composable
-private fun SearchScreen(viewModel: SearchViewModel, onBack: () -> Unit, onSubmit: (String) -> Unit) {
+private fun SearchScreen(
+    viewModel: SearchViewModel,
+    onBack: () -> Unit,
+    onSubmit: (String) -> Unit,
+) {
     val context = LocalContext.current
     val formats = remember { Formats(context) }
     val query by viewModel.query.collectAsStateWithLifecycle()
@@ -134,8 +141,7 @@ private fun SearchScreen(viewModel: SearchViewModel, onBack: () -> Unit, onSubmi
     LaunchedEffect(Unit) { if (query.isEmpty()) focus.requestFocus() }
 
     Column(
-        Modifier
-            .fillMaxSize()
+        Modifier.fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
             .navigationBarsPadding()
@@ -146,7 +152,11 @@ private fun SearchScreen(viewModel: SearchViewModel, onBack: () -> Unit, onSubmi
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            PvotIconButton(painterResource(R.drawable.ic_ui_back), stringResource(R.string.ui_back), onBack)
+            PvotIconButton(
+                painterResource(R.drawable.ic_ui_back),
+                stringResource(R.string.ui_back),
+                onBack,
+            )
             PvotTextField(
                 value = query,
                 onValueChange = { viewModel.query.value = it },

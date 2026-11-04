@@ -24,68 +24,61 @@ import android.content.ContentValues
 import android.database.ContentObserver
 import android.net.Uri
 import android.provider.CalendarContract
-import org.prauga.calendar.Utils
-import org.prauga.calendar.persistence.Calendar
-import org.prauga.calendar.persistence.CalendarRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import org.prauga.calendar.R
+import org.prauga.calendar.Utils
+import org.prauga.calendar.persistence.Calendar
+import org.prauga.calendar.persistence.CalendarRepository
 
-/**
- * Datasource for Calendar entities
- */
-class CalendarDataSource(
-    private val application: Application
-) {
-    /**
-     * Convenience to get the content resolver
-     */
+/** Datasource for Calendar entities */
+class CalendarDataSource(private val application: Application) {
+    /** Convenience to get the content resolver */
     private val contentResolver: ContentResolver
         get() = application.contentResolver
 
-    /**
-     * Get all calendars
-     */
+    /** Get all calendars */
     private fun getContentProviderValue(): List<Calendar> {
         val calendars: MutableList<Calendar> = mutableListOf()
 
-        contentResolver.query(
-            CalendarContract.Calendars.CONTENT_URI,
-            PROJECTION,
-            null,
-            null,
-            CalendarContract.Calendars.ACCOUNT_NAME
-        )?.use {
-            while (it.moveToNext()) {
-                val id = it.getLong(PROJECTION_INDEX_ID)
-                val accountName = it.getString(PROJECTION_INDEX_ACCOUNT_NAME)
-                val accountType = it.getString(PROJECTION_INDEX_ACCOUNT_TYPE)
-                val name = it.getString(PROJECTION_INDEX_NAME)
-                val displayName =
-                    it.getString(PROJECTION_INDEX_CALENDAR_DISPLAY_NAME)
-                val color = it.getInt(PROJECTION_INDEX_CALENDAR_COLOR)
-                val visible = it.getInt(PROJECTION_INDEX_VISIBLE) == 1
-                val syncEvents = it.getInt(PROJECTION_INDEX_SYNC_EVENTS) == 1
-                val isPrimary = it.getInt(PROJECTION_INDEX_IS_PRIMARY) == 1
-                val isLocal = accountType == CalendarContract.ACCOUNT_TYPE_LOCAL
+        contentResolver
+            .query(
+                CalendarContract.Calendars.CONTENT_URI,
+                PROJECTION,
+                null,
+                null,
+                CalendarContract.Calendars.ACCOUNT_NAME,
+            )
+            ?.use {
+                while (it.moveToNext()) {
+                    val id = it.getLong(PROJECTION_INDEX_ID)
+                    val accountName = it.getString(PROJECTION_INDEX_ACCOUNT_NAME)
+                    val accountType = it.getString(PROJECTION_INDEX_ACCOUNT_TYPE)
+                    val name = it.getString(PROJECTION_INDEX_NAME)
+                    val displayName = it.getString(PROJECTION_INDEX_CALENDAR_DISPLAY_NAME)
+                    val color = it.getInt(PROJECTION_INDEX_CALENDAR_COLOR)
+                    val visible = it.getInt(PROJECTION_INDEX_VISIBLE) == 1
+                    val syncEvents = it.getInt(PROJECTION_INDEX_SYNC_EVENTS) == 1
+                    val isPrimary = it.getInt(PROJECTION_INDEX_IS_PRIMARY) == 1
+                    val isLocal = accountType == CalendarContract.ACCOUNT_TYPE_LOCAL
 
-                calendars.add(
-                    Calendar(
-                        id = id,
-                        accountName = accountName,
-                        accountType = accountType,
-                        name = name,
-                        displayName = displayName,
-                        color = color,
-                        visible = visible,
-                        syncEvents = syncEvents,
-                        isPrimary = isPrimary,
-                        isLocal = isLocal
+                    calendars.add(
+                        Calendar(
+                            id = id,
+                            accountName = accountName,
+                            accountType = accountType,
+                            name = name,
+                            displayName = displayName,
+                            color = color,
+                            visible = visible,
+                            syncEvents = syncEvents,
+                            isPrimary = isPrimary,
+                            isLocal = isLocal,
+                        )
                     )
-                )
+                }
             }
-        }
         return calendars
     }
 
@@ -94,35 +87,31 @@ class CalendarDataSource(
      *
      * Updates on any changes.
      */
-    fun getAllCalendars(): Flow<List<Calendar>> =
-        callbackFlow {
-            val observer = object : ContentObserver(null) {
+    fun getAllCalendars(): Flow<List<Calendar>> = callbackFlow {
+        val observer =
+            object : ContentObserver(null) {
                 override fun onChange(self: Boolean) {
                     // Notify collectors that data at the uri has changed
                     trySend(getContentProviderValue())
                 }
             }
 
-            if (Utils.isCalendarPermissionGranted(application, true)) {
-                contentResolver.registerContentObserver(
-                    CalendarContract.Calendars.CONTENT_URI,
-                    true,
-                    observer
-                )
-                trySend(getContentProviderValue())
-            }
-
-            awaitClose {
-                contentResolver.unregisterContentObserver(observer)
-            }
+        if (Utils.isCalendarPermissionGranted(application, true)) {
+            contentResolver.registerContentObserver(
+                CalendarContract.Calendars.CONTENT_URI,
+                true,
+                observer,
+            )
+            trySend(getContentProviderValue())
         }
 
-    /**
-     * Creates the content values needed to insert a local account.
-     */
+        awaitClose { contentResolver.unregisterContentObserver(observer) }
+    }
+
+    /** Creates the content values needed to insert a local account. */
     private fun buildLocalCalendarContentValues(
         accountName: String,
-        displayName: String
+        displayName: String,
     ): ContentValues {
         val internalName = "etar_local_" + displayName.replace("[^a-zA-Z0-9]".toRegex(), "")
 
@@ -135,33 +124,32 @@ class CalendarDataSource(
             put(CalendarContract.Calendars.CALENDAR_COLOR_KEY, DEFAULT_COLOR_KEY)
             put(
                 CalendarContract.Calendars.CALENDAR_ACCESS_LEVEL,
-                CalendarContract.Calendars.CAL_ACCESS_ROOT
+                CalendarContract.Calendars.CAL_ACCESS_ROOT,
             )
             put(CalendarContract.Calendars.VISIBLE, 1)
             put(CalendarContract.Calendars.SYNC_EVENTS, 1)
             put(CalendarContract.Calendars.IS_PRIMARY, 0)
             put(CalendarContract.Calendars.CAN_ORGANIZER_RESPOND, 0)
             put(CalendarContract.Calendars.CAN_MODIFY_TIME_ZONE, 1)
-            // from Android docs: "the device will only process METHOD_DEFAULT and METHOD_ALERT reminders"
+            // from Android docs: "the device will only process METHOD_DEFAULT and METHOD_ALERT
+            // reminders"
             put(
                 CalendarContract.Calendars.ALLOWED_REMINDERS,
-                CalendarContract.Reminders.METHOD_ALERT.toString()
+                CalendarContract.Reminders.METHOD_ALERT.toString(),
             )
             put(
                 CalendarContract.Calendars.ALLOWED_ATTENDEE_TYPES,
-                CalendarContract.Attendees.TYPE_NONE.toString()
+                CalendarContract.Attendees.TYPE_NONE.toString(),
             )
         }
     }
 
-    /**
-     * Build content values needed to insert calendar colors
-     */
+    /** Build content values needed to insert calendar colors */
     private fun buildLocalCalendarColorsContentValues(
         accountName: String,
         colorType: Int,
         colorKey: String,
-        color: Int
+        color: Int,
     ): ContentValues {
         return ContentValues().apply {
             put(CalendarContract.Colors.ACCOUNT_NAME, accountName)
@@ -172,27 +160,28 @@ class CalendarDataSource(
         }
     }
 
-    /**
-     * TODO Figure out exactly what this does
-     */
+    /** TODO Figure out exactly what this does */
     private fun areCalendarColorsExisting(accountName: String): Boolean {
-        contentResolver.query(
-            CalendarContract.Colors.CONTENT_URI,
-            null,
-            CalendarContract.Colors.ACCOUNT_NAME + "=? AND " + CalendarContract.Colors.ACCOUNT_TYPE + "=?",
-            arrayOf(accountName, CalendarContract.ACCOUNT_TYPE_LOCAL),
-            null
-        ).use {
-            if (it!!.moveToFirst()) {
-                return true
+        contentResolver
+            .query(
+                CalendarContract.Colors.CONTENT_URI,
+                null,
+                CalendarContract.Colors.ACCOUNT_NAME +
+                    "=? AND " +
+                    CalendarContract.Colors.ACCOUNT_TYPE +
+                    "=?",
+                arrayOf(accountName, CalendarContract.ACCOUNT_TYPE_LOCAL),
+                null,
+            )
+            .use {
+                if (it!!.moveToFirst()) {
+                    return true
+                }
             }
-        }
         return false
     }
 
-    /**
-     * TODO Figure out why is this a maybe?
-     */
+    /** TODO Figure out why is this a maybe? */
     private fun maybeAddCalendarAndEventColors(accountName: String) {
         if (areCalendarColorsExisting(accountName)) {
             return
@@ -204,32 +193,33 @@ class CalendarDataSource(
         val insertBulk = mutableListOf<ContentValues>()
         for ((i, color) in defaultColors.withIndex()) {
             val colorKey = i.toString()
-            val colorCvCalendar = buildLocalCalendarColorsContentValues(
-                accountName,
-                CalendarContract.Colors.TYPE_CALENDAR,
-                colorKey,
-                color
-            )
-            val colorCvEvent = buildLocalCalendarColorsContentValues(
-                accountName,
-                CalendarContract.Colors.TYPE_EVENT,
-                colorKey,
-                color
-            )
+            val colorCvCalendar =
+                buildLocalCalendarColorsContentValues(
+                    accountName,
+                    CalendarContract.Colors.TYPE_CALENDAR,
+                    colorKey,
+                    color,
+                )
+            val colorCvEvent =
+                buildLocalCalendarColorsContentValues(
+                    accountName,
+                    CalendarContract.Colors.TYPE_EVENT,
+                    colorKey,
+                    color,
+                )
             insertBulk.add(colorCvCalendar)
             insertBulk.add(colorCvEvent)
         }
         contentResolver.bulkInsert(
             CalendarRepository.asLocalCalendarSyncAdapter(
                 accountName,
-                CalendarContract.Colors.CONTENT_URI
-            ), insertBulk.toTypedArray()
+                CalendarContract.Colors.CONTENT_URI,
+            ),
+            insertBulk.toTypedArray(),
         )
     }
 
-    /**
-     * TODO Document
-     */
+    /** TODO Document */
     fun addLocalCalendar(accountName: String, displayName: String): Uri {
 
         maybeAddCalendarAndEventColors(accountName)
@@ -238,38 +228,39 @@ class CalendarDataSource(
         return contentResolver.insert(
             CalendarRepository.asLocalCalendarSyncAdapter(
                 accountName,
-                CalendarContract.Calendars.CONTENT_URI
-            ), cv
-        )
-            ?: throw IllegalArgumentException()
+                CalendarContract.Calendars.CONTENT_URI,
+            ),
+            cv,
+        ) ?: throw IllegalArgumentException()
     }
 
-    /**
-     * TODO Document
-     */
+    /** TODO Document */
     fun deleteLocalCalendar(accountName: String, id: Long): Boolean {
-        val calUri = ContentUris.withAppendedId(
-            CalendarRepository.asLocalCalendarSyncAdapter(
-                accountName,
-                CalendarContract.Calendars.CONTENT_URI
-            ), id
-        )
+        val calUri =
+            ContentUris.withAppendedId(
+                CalendarRepository.asLocalCalendarSyncAdapter(
+                    accountName,
+                    CalendarContract.Calendars.CONTENT_URI,
+                ),
+                id,
+            )
         return contentResolver.delete(calUri, null, null) == 1
     }
 
     companion object {
-        private val PROJECTION = arrayOf(
-            CalendarContract.Calendars._ID,
-            CalendarContract.Calendars.ACCOUNT_NAME,
-            CalendarContract.Calendars.ACCOUNT_TYPE,
-            CalendarContract.Calendars.OWNER_ACCOUNT,
-            CalendarContract.Calendars.NAME,
-            CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
-            CalendarContract.Calendars.CALENDAR_COLOR,
-            CalendarContract.Calendars.VISIBLE,
-            CalendarContract.Calendars.SYNC_EVENTS,
-            CalendarContract.Calendars.IS_PRIMARY
-        )
+        private val PROJECTION =
+            arrayOf(
+                CalendarContract.Calendars._ID,
+                CalendarContract.Calendars.ACCOUNT_NAME,
+                CalendarContract.Calendars.ACCOUNT_TYPE,
+                CalendarContract.Calendars.OWNER_ACCOUNT,
+                CalendarContract.Calendars.NAME,
+                CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
+                CalendarContract.Calendars.CALENDAR_COLOR,
+                CalendarContract.Calendars.VISIBLE,
+                CalendarContract.Calendars.SYNC_EVENTS,
+                CalendarContract.Calendars.IS_PRIMARY,
+            )
         private const val PROJECTION_INDEX_ID = 0
         private const val PROJECTION_INDEX_ACCOUNT_NAME = 1
         private const val PROJECTION_INDEX_ACCOUNT_TYPE = 2

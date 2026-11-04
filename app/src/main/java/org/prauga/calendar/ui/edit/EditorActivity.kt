@@ -24,11 +24,12 @@ class EditorActivity : PvotBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val fromUri = if (intent.action == Intent.ACTION_EDIT) {
-            intent.data?.pathSegments?.getOrNull(1)?.toLongOrNull()
-        } else {
-            null
-        }
+        val fromUri =
+            if (intent.action == Intent.ACTION_EDIT) {
+                intent.data?.pathSegments?.getOrNull(1)?.toLongOrNull()
+            } else {
+                null
+            }
         val eventId = fromUri ?: intent.getLongExtra(EXTRA_EVENT_ID, -1L)
         if (eventId >= 0) {
             viewModel.startEdit(
@@ -42,13 +43,14 @@ class EditorActivity : PvotBaseActivity() {
                 endMillis = intent.getLongExtra(CalendarContract.EXTRA_EVENT_END_TIME, 0L),
                 allDay = intent.getBooleanExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, false),
                 title = intent.getStringExtra(Events.TITLE),
-                prefill = EditorViewModel.Prefill(
-                    description = intent.getStringExtra(Events.DESCRIPTION).orEmpty(),
-                    location = intent.getStringExtra(Events.EVENT_LOCATION).orEmpty(),
-                    rrule = intent.getStringExtra(Events.RRULE)?.takeIf { it.isNotBlank() },
-                    guests = guests(),
-                    calendarId = intent.getLongExtra(Events.CALENDAR_ID, -1L),
-                ),
+                prefill =
+                    EditorViewModel.Prefill(
+                        description = intent.getStringExtra(Events.DESCRIPTION).orEmpty(),
+                        location = intent.getStringExtra(Events.EVENT_LOCATION).orEmpty(),
+                        rrule = intent.getStringExtra(Events.RRULE)?.takeIf { it.isNotBlank() },
+                        guests = guests(),
+                        calendarId = intent.getLongExtra(Events.CALENDAR_ID, -1L),
+                    ),
             )
         }
         setPvotContent {
@@ -60,7 +62,12 @@ class EditorActivity : PvotBaseActivity() {
                     onBack = ::finish,
                     onSave = { scope ->
                         viewModel.save(scope) { ok ->
-                            Toast.makeText(this, if (ok) R.string.ui_saved else R.string.ui_save_failed, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                    this,
+                                    if (ok) R.string.ui_saved else R.string.ui_save_failed,
+                                    Toast.LENGTH_SHORT,
+                                )
+                                .show()
                             if (ok) finish()
                         }
                     },
@@ -70,10 +77,13 @@ class EditorActivity : PvotBaseActivity() {
     }
 
     private fun guests(): List<String> {
-        val raw = intent.getStringArrayExtra(Intent.EXTRA_EMAIL)?.toList()
-            ?: intent.getStringExtra(Intent.EXTRA_EMAIL)?.split(',', ';')
-            ?: return emptyList()
-        return raw.map { it.trim() }.filter { Patterns.EMAIL_ADDRESS.matcher(it).matches() }.distinct()
+        val raw =
+            intent.getStringArrayExtra(Intent.EXTRA_EMAIL)?.toList()
+                ?: intent.getStringExtra(Intent.EXTRA_EMAIL)?.split(',', ';')
+                ?: return emptyList()
+        return raw.map { it.trim() }
+            .filter { Patterns.EMAIL_ADDRESS.matcher(it).matches() }
+            .distinct()
     }
 
     companion object {

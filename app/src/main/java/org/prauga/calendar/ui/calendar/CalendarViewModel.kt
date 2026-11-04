@@ -9,6 +9,10 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.YearMonth
+import java.time.temporal.TemporalAdjusters
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -21,15 +25,17 @@ import org.prauga.calendar.data.Agenda
 import org.prauga.calendar.data.AgendaRepository
 import org.prauga.calendar.data.JulianDay
 import org.prauga.calendar.ui.Formats
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.YearMonth
-import java.time.temporal.TemporalAdjusters
 
-enum class CalendarMode { Day, Week, Month, Year }
+enum class CalendarMode {
+    Day,
+    Week,
+    Month,
+    Year,
+}
 
 data class DaySpan(val first: LocalDate, val last: LocalDate) {
-    val days: Int get() = (last.toEpochDay() - first.toEpochDay() + 1).toInt()
+    val days: Int
+        get() = (last.toEpochDay() - first.toEpochDay() + 1).toInt()
 }
 
 data class CalendarState(
@@ -52,32 +58,40 @@ class CalendarViewModel(application: Application, private val saved: SavedStateH
     private val repository = AgendaRepository(application)
     private val formats = Formats(application)
     private val today = formats.today()
-    private val firstDayOfWeek = DayOfWeek.SUNDAY.plus(Utils.getFirstDayOfWeek(application).toLong())
+    private val firstDayOfWeek =
+        DayOfWeek.SUNDAY.plus(Utils.getFirstDayOfWeek(application).toLong())
 
-    private val position = MutableStateFlow(
-        Position(
-            mode = saved.get<String>(KEY_MODE)?.let { CalendarMode.valueOf(it) } ?: CalendarMode.Week,
-            selected = saved.get<Long>(KEY_DATE)?.let { LocalDate.ofEpochDay(it) } ?: today,
+    private val position =
+        MutableStateFlow(
+            Position(
+                mode =
+                    saved.get<String>(KEY_MODE)?.let { CalendarMode.valueOf(it) }
+                        ?: CalendarMode.Week,
+                selected = saved.get<Long>(KEY_DATE)?.let { LocalDate.ofEpochDay(it) } ?: today,
+            )
         )
-    )
 
     private data class Position(val mode: CalendarMode, val selected: LocalDate)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val state: StateFlow<CalendarState> = position
-        .flatMapLatest { p ->
-            val span = spanOf(p.mode, p.selected)
-            repository.agendas(JulianDay.of(span.first), span.days).map { list ->
-                CalendarState(p.mode, p.selected, today, firstDayOfWeek, span, list)
+    val state: StateFlow<CalendarState> =
+        position
+            .flatMapLatest { p ->
+                val span = spanOf(p.mode, p.selected)
+                repository.agendas(JulianDay.of(span.first), span.days).map { list ->
+                    CalendarState(p.mode, p.selected, today, firstDayOfWeek, span, list)
+                }
             }
-        }
-        .stateIn(
-            viewModelScope, SharingStarted.WhileSubscribed(5_000),
-            CalendarState(position.value.mode, position.value.selected, today, firstDayOfWeek),
-        )
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5_000),
+                CalendarState(position.value.mode, position.value.selected, today, firstDayOfWeek),
+            )
 
-    val selected: StateFlow<LocalDate> = position.map { it.selected }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, position.value.selected)
+    val selected: StateFlow<LocalDate> =
+        position
+            .map { it.selected }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, position.value.selected)
 
     private fun move(p: Position) {
         position.value = p
@@ -113,15 +127,17 @@ class CalendarViewModel(application: Application, private val saved: SavedStateH
 
     fun refresh() = repository.refresh()
 
-    private fun spanOf(mode: CalendarMode, date: LocalDate): DaySpan = when (mode) {
-        CalendarMode.Day -> DaySpan(date, date)
-        CalendarMode.Week -> weekOf(date)
-        CalendarMode.Month -> {
-            val month = YearMonth.from(date)
-            DaySpan(weekOf(month.atDay(1)).first, weekOf(month.atEndOfMonth()).last)
+    private fun spanOf(mode: CalendarMode, date: LocalDate): DaySpan =
+        when (mode) {
+            CalendarMode.Day -> DaySpan(date, date)
+            CalendarMode.Week -> weekOf(date)
+            CalendarMode.Month -> {
+                val month = YearMonth.from(date)
+                DaySpan(weekOf(month.atDay(1)).first, weekOf(month.atEndOfMonth()).last)
+            }
+            CalendarMode.Year ->
+                DaySpan(date.withDayOfYear(1), date.withDayOfYear(date.lengthOfYear()))
         }
-        CalendarMode.Year -> DaySpan(date.withDayOfYear(1), date.withDayOfYear(date.lengthOfYear()))
-    }
 
     fun weekOf(date: LocalDate): DaySpan {
         val first = date.with(TemporalAdjusters.previousOrSame(firstDayOfWeek))

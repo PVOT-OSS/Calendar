@@ -37,8 +37,6 @@ import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.prauga.calendar.data.Agenda
-import org.prauga.calendar.data.JulianDay
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.Month
@@ -46,6 +44,8 @@ import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
 import kotlin.math.abs
+import org.prauga.calendar.data.Agenda
+import org.prauga.calendar.data.JulianDay
 
 @Composable
 fun YearGrid(
@@ -59,19 +59,19 @@ fun YearGrid(
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
-    val busy = remember(agendas) {
-        val days = HashSet<Int>()
-        agendas.forEach { a -> (a.startDay..a.endDay).forEach { days += it } }
-        days
-    }
+    val busy =
+        remember(agendas) {
+            val days = HashSet<Int>()
+            agendas.forEach { a -> (a.startDay..a.endDay).forEach { days += it } }
+            days
+        }
     val swipePx = with(LocalDensity.current) { 72.dp.toPx() }
     val grid = rememberLazyGridState(initialFirstVisibleItemIndex = (focus.ordinal / 2) * 2)
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         state = grid,
-        modifier = modifier
-            .fillMaxSize()
-            .pointerInput(year) {
+        modifier =
+            modifier.fillMaxSize().pointerInput(year) {
                 var total = 0f
                 detectHorizontalDragGestures(
                     onDragStart = { total = 0f },
@@ -79,14 +79,20 @@ fun YearGrid(
                     onHorizontalDrag = { _, delta -> total += delta },
                 )
             },
-        contentPadding = PaddingValues(
-            start = 12.dp, end = 12.dp, top = 4.dp, bottom = contentPadding.calculateBottomPadding(),
-        ),
+        contentPadding =
+            PaddingValues(
+                start = 12.dp,
+                end = 12.dp,
+                top = 4.dp,
+                bottom = contentPadding.calculateBottomPadding(),
+            ),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         items(Month.entries) { month ->
-            MiniMonth(YearMonth.of(year, month), today, firstDayOfWeek, busy) { onOpenMonth(YearMonth.of(year, month)) }
+            MiniMonth(YearMonth.of(year, month), today, firstDayOfWeek, busy) {
+                onOpenMonth(YearMonth.of(year, month))
+            }
         }
     }
 }
@@ -104,12 +110,14 @@ private fun MiniMonth(
     val colors = MaterialTheme.colorScheme
     val isCurrent = YearMonth.from(today) == month
     Column(
-        Modifier
-            .clip(RoundedCornerShape(16.dp))
+        Modifier.clip(RoundedCornerShape(16.dp))
             .background(colors.surfaceContainer)
             .clearAndSetSemantics {
                 contentDescription = "$name ${month.year}"
-                onClick { onClick(); true }
+                onClick {
+                    onClick()
+                    true
+                }
             }
             .clickable(onClick = onClick)
             .padding(8.dp),
@@ -131,8 +139,7 @@ private fun MiniMonth(
                         val isToday = date == today
                         val hasEvents = JulianDay.of(date) in busy
                         Box(
-                            Modifier
-                                .weight(1f)
+                            Modifier.weight(1f)
                                 .aspectRatio(1f)
                                 .clip(RoundedCornerShape(4.dp))
                                 .background(
@@ -148,11 +155,12 @@ private fun MiniMonth(
                                 text = date.dayOfMonth.toString(),
                                 fontSize = 8.sp,
                                 lineHeight = 8.sp,
-                                color = when {
-                                    isToday -> colors.onPrimary
-                                    hasEvents -> colors.onSecondaryContainer
-                                    else -> colors.onSurfaceVariant
-                                },
+                                color =
+                                    when {
+                                        isToday -> colors.onPrimary
+                                        hasEvents -> colors.onSecondaryContainer
+                                        else -> colors.onSurfaceVariant
+                                    },
                             )
                         }
                     }

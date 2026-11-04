@@ -39,7 +39,9 @@ class DetailsActivity : PvotBaseActivity() {
             begin = segments[3].toLongOrNull() ?: begin
             end = segments[4].toLongOrNull() ?: end
         }
-        viewModel.respondOnLoad(intent.getIntExtra(Attendees.ATTENDEE_STATUS, Attendees.ATTENDEE_STATUS_NONE))
+        viewModel.respondOnLoad(
+            intent.getIntExtra(Attendees.ATTENDEE_STATUS, Attendees.ATTENDEE_STATUS_NONE)
+        )
         if (eventId < 0) {
             finish()
             return
@@ -54,7 +56,12 @@ class DetailsActivity : PvotBaseActivity() {
                     onEdit = ::edit,
                     onDuplicate = {
                         viewModel.duplicate { ok ->
-                            Toast.makeText(this, if (ok) R.string.ui_duplicated else R.string.ui_save_failed, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                    this,
+                                    if (ok) R.string.ui_duplicated else R.string.ui_save_failed,
+                                    Toast.LENGTH_SHORT,
+                                )
+                                .show()
                         }
                     },
                     onDelete = {
@@ -86,8 +93,9 @@ class DetailsActivity : PvotBaseActivity() {
 
     private fun openMap(location: String) {
         try {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=" + Uri.encode(location))))
-        } catch (_: ActivityNotFoundException) {
-        }
+            startActivity(
+                Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=" + Uri.encode(location)))
+            )
+        } catch (_: ActivityNotFoundException) {}
     }
 }

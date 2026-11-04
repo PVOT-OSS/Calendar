@@ -17,16 +17,21 @@ import android.provider.CalendarContract.Instances
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import android.text.format.DateUtils
-import org.prauga.calendar.R
-import org.prauga.calendar.ui.MainActivity
-import org.prauga.calendar.ui.details.DetailsActivity
 import java.util.Formatter
 import java.util.Locale
 import java.util.concurrent.Executors
+import org.prauga.calendar.ui.MainActivity
+import org.prauga.calendar.ui.details.DetailsActivity
 
 class NextEventTileService : TileService() {
 
-    private data class Next(val eventId: Long, val title: String, val begin: Long, val end: Long, val allDay: Boolean)
+    private data class Next(
+        val eventId: Long,
+        val title: String,
+        val begin: Long,
+        val end: Long,
+        val allDay: Boolean,
+    )
 
     private val executor = Executors.newSingleThreadExecutor()
     @Volatile private var next: Next? = null
@@ -41,24 +46,44 @@ class NextEventTileService : TileService() {
 
     private fun query(): Next? {
         val now = System.currentTimeMillis()
-        val uri = Instances.CONTENT_URI.buildUpon().also {
-            ContentUris.appendId(it, now)
-            ContentUris.appendId(it, now + 7 * DateUtils.DAY_IN_MILLIS)
-        }.build()
-        return try {
-            contentResolver.query(
-                uri, arrayOf(Instances.EVENT_ID, Instances.TITLE, Instances.BEGIN, Instances.END, Instances.ALL_DAY),
-                "${Instances.VISIBLE}=1 AND ${Instances.STATUS}!=${CalendarContract.Events.STATUS_CANCELED} AND ${Instances.END}>?",
-                arrayOf(now.toString()), "${Instances.ALL_DAY} ASC, ${Instances.BEGIN} ASC"
-            )?.use {
-                var allDay: Next? = null
-                while (it.moveToNext()) {
-                    val n = Next(it.getLong(0), it.getString(1) ?: "", it.getLong(2), it.getLong(3), it.getInt(4) != 0)
-                    if (!n.allDay) return n
-                    if (allDay == null) allDay = n
+        val uri =
+            Instances.CONTENT_URI.buildUpon()
+                .also {
+                    ContentUris.appendId(it, now)
+                    ContentUris.appendId(it, now + 7 * DateUtils.DAY_IN_MILLIS)
                 }
-                allDay
-            }
+                .build()
+        return try {
+            contentResolver
+                .query(
+                    uri,
+                    arrayOf(
+                        Instances.EVENT_ID,
+                        Instances.TITLE,
+                        Instances.BEGIN,
+                        Instances.END,
+                        Instances.ALL_DAY,
+                    ),
+                    "${Instances.VISIBLE}=1 AND ${Instances.STATUS}!=${CalendarContract.Events.STATUS_CANCELED} AND ${Instances.END}>?",
+                    arrayOf(now.toString()),
+                    "${Instances.ALL_DAY} ASC, ${Instances.BEGIN} ASC",
+                )
+                ?.use {
+                    var allDay: Next? = null
+                    while (it.moveToNext()) {
+                        val n =
+                            Next(
+                                it.getLong(0),
+                                it.getString(1) ?: "",
+                                it.getLong(2),
+                                it.getLong(3),
+                                it.getInt(4) != 0,
+                            )
+                        if (!n.allDay) return n
+                        if (allDay == null) allDay = n
+                    }
+                    allDay
+                }
         } catch (e: SecurityException) {
             null
         }
@@ -70,16 +95,33 @@ class NextEventTileService : TileService() {
         if (n == null) {
             tile.state = Tile.STATE_INACTIVE
             tile.label = getString(R.string.tile_next_event)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) tile.subtitle = getString(R.string.tile_no_events)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+                tile.subtitle = getString(R.string.tile_no_events)
         } else {
             tile.state = Tile.STATE_ACTIVE
             tile.label = n.title.ifBlank { getString(R.string.no_title_label) }
-            val flags = if (n.allDay) DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_WEEKDAY or DateUtils.FORMAT_ABBREV_ALL
-            else DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_WEEKDAY or DateUtils.FORMAT_ABBREV_ALL
+            val flags =
+                if (n.allDay)
+                    DateUtils.FORMAT_SHOW_DATE or
+                        DateUtils.FORMAT_SHOW_WEEKDAY or
+                        DateUtils.FORMAT_ABBREV_ALL
+                else
+                    DateUtils.FORMAT_SHOW_TIME or
+                        DateUtils.FORMAT_SHOW_WEEKDAY or
+                        DateUtils.FORMAT_ABBREV_ALL
             val tz = if (n.allDay) "UTC" else Utils.getTimeZone(this, null)
-            val whenText = DateUtils.formatDateRange(this, Formatter(StringBuilder(), Locale.getDefault()),
-                n.begin, n.begin, flags, tz).toString()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) tile.subtitle = whenText else tile.label = "${tile.label} · $whenText"
+            val whenText =
+                DateUtils.formatDateRange(
+                        this,
+                        Formatter(StringBuilder(), Locale.getDefault()),
+                        n.begin,
+                        n.begin,
+                        flags,
+                        tz,
+                    )
+                    .toString()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) tile.subtitle = whenText
+            else tile.label = "${tile.label} · $whenText"
         }
         tile.updateTile()
     }
@@ -88,20 +130,34 @@ class NextEventTileService : TileService() {
     override fun onClick() {
         super.onClick()
         val n = next
-        val intent = if (n == null) {
-            Intent(this, MainActivity::class.java)
-        } else {
-            Intent(Intent.ACTION_VIEW, ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, n.eventId))
-                .setClass(this, DetailsActivity::class.java)
-                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, n.begin)
-                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, n.end)
-                .putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, n.allDay)
-        }.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val intent =
+            if (n == null) {
+                    Intent(this, MainActivity::class.java)
+                } else {
+                    Intent(
+                            Intent.ACTION_VIEW,
+                            ContentUris.withAppendedId(
+                                CalendarContract.Events.CONTENT_URI,
+                                n.eventId,
+                            ),
+                        )
+                        .setClass(this, DetailsActivity::class.java)
+                        .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, n.begin)
+                        .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, n.end)
+                        .putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, n.allDay)
+                }
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         if (Build.VERSION.SDK_INT >= 34) {
-            startActivityAndCollapse(PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT))
+            startActivityAndCollapse(
+                PendingIntent.getActivity(
+                    this,
+                    0,
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+                )
+            )
         } else {
-            @Suppress("DEPRECATION")
-            startActivityAndCollapse(intent)
+            @Suppress("DEPRECATION") startActivityAndCollapse(intent)
         }
     }
 }

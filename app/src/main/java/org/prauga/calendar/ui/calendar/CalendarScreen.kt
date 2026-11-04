@@ -43,6 +43,10 @@ import com.prauga.pvot.designsystem.components.PvotSegmentedControl
 import com.prauga.pvot.designsystem.components.PvotSnackbarHost
 import com.prauga.pvot.designsystem.components.button.PvotIconButton
 import com.prauga.pvot.designsystem.components.calendar.PvotDayStrip
+import java.time.LocalDate
+import java.time.YearMonth
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -53,13 +57,13 @@ import org.prauga.calendar.settings.WorkingHours
 import org.prauga.calendar.ui.Actions
 import org.prauga.calendar.ui.Formats
 import org.prauga.calendar.ui.components.Panel
-import java.time.LocalDate
-import java.time.YearMonth
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @Composable
-fun CalendarScreen(viewModel: CalendarViewModel, contentPadding: PaddingValues, modifier: Modifier = Modifier) {
+fun CalendarScreen(
+    viewModel: CalendarViewModel,
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val formats = remember { Formats(context) }
@@ -81,18 +85,27 @@ fun CalendarScreen(viewModel: CalendarViewModel, contentPadding: PaddingValues, 
                 return@launch
             }
             val shift = minutes * 60_000L
-            val undo = withContext(Dispatchers.IO) {
-                mover.move(agenda.eventId, agenda.begin, agenda.end, agenda.begin + shift, agenda.end + shift,
-                    which ?: EventMover.Scope.THIS)
-            }
+            val undo =
+                withContext(Dispatchers.IO) {
+                    mover.move(
+                        agenda.eventId,
+                        agenda.begin,
+                        agenda.end,
+                        agenda.begin + shift,
+                        agenda.end + shift,
+                        which ?: EventMover.Scope.THIS,
+                    )
+                }
             if (undo == null) {
                 snackbar.showSnackbar(context.getString(R.string.move_failed))
                 return@launch
             }
-            val result = snackbar.showSnackbar(
-                context.getString(R.string.move_done), context.getString(R.string.move_undo),
-                duration = SnackbarDuration.Long,
-            )
+            val result =
+                snackbar.showSnackbar(
+                    context.getString(R.string.move_done),
+                    context.getString(R.string.move_undo),
+                    duration = SnackbarDuration.Long,
+                )
             if (result == SnackbarResult.ActionPerformed) withContext(Dispatchers.IO) { undo() }
         }
     }
@@ -108,76 +121,95 @@ fun CalendarScreen(viewModel: CalendarViewModel, contentPadding: PaddingValues, 
             Panel {
                 Column {
                     when (state.mode) {
-                        CalendarMode.Week -> PvotDayStrip(
-                            days = (0L until 7L).map { state.span.first.plusDays(it) },
-                            selected = state.selected,
-                            today = state.today,
-                            onSelect = viewModel::select,
-                            modifier = Modifier.padding(start = 12.dp, end = 12.dp, top = 16.dp, bottom = 8.dp),
-                            marked = { date -> state.on(date).isNotEmpty() },
-                            onSwipe = viewModel::step,
-                        )
-                        CalendarMode.Day -> Navigator(
-                            label = formats.dayLabel(state.selected, state.today),
-                            onPrevious = { viewModel.step(false) },
-                            onNext = { viewModel.step(true) },
-                            onLabel = viewModel::goToday,
-                        )
-                        CalendarMode.Month -> Navigator(
-                            label = monthLabel(YearMonth.from(state.selected), state.today),
-                            onPrevious = { viewModel.step(false) },
-                            onNext = { viewModel.step(true) },
-                            onLabel = viewModel::goToday,
-                        )
-                        CalendarMode.Year -> Navigator(
-                            label = state.selected.year.toString(),
-                            onPrevious = { viewModel.step(false) },
-                            onNext = { viewModel.step(true) },
-                            onLabel = viewModel::goToday,
-                        )
+                        CalendarMode.Week ->
+                            PvotDayStrip(
+                                days = (0L until 7L).map { state.span.first.plusDays(it) },
+                                selected = state.selected,
+                                today = state.today,
+                                onSelect = viewModel::select,
+                                modifier =
+                                    Modifier.padding(
+                                        start = 12.dp,
+                                        end = 12.dp,
+                                        top = 16.dp,
+                                        bottom = 8.dp,
+                                    ),
+                                marked = { date -> state.on(date).isNotEmpty() },
+                                onSwipe = viewModel::step,
+                            )
+                        CalendarMode.Day ->
+                            Navigator(
+                                label = formats.dayLabel(state.selected, state.today),
+                                onPrevious = { viewModel.step(false) },
+                                onNext = { viewModel.step(true) },
+                                onLabel = viewModel::goToday,
+                            )
+                        CalendarMode.Month ->
+                            Navigator(
+                                label = monthLabel(YearMonth.from(state.selected), state.today),
+                                onPrevious = { viewModel.step(false) },
+                                onNext = { viewModel.step(true) },
+                                onLabel = viewModel::goToday,
+                            )
+                        CalendarMode.Year ->
+                            Navigator(
+                                label = state.selected.year.toString(),
+                                onPrevious = { viewModel.step(false) },
+                                onNext = { viewModel.step(true) },
+                                onLabel = viewModel::goToday,
+                            )
                     }
                     when (state.mode) {
-                        CalendarMode.Day, CalendarMode.Week -> Timeline(
-                            date = state.selected,
-                            items = state.on(state.selected),
-                            today = state.today,
-                            formats = formats,
-                            onOpen = { Actions.open(context, it) },
-                            onCreate = { Actions.create(context, state.selected, it, formats.zone) },
-                            onSwipe = { forward -> viewModel.select(state.selected.plusDays(if (forward) 1 else -1)) },
-                            contentPadding = contentPadding,
-                            onMove = { agenda, minutes -> move(agenda, minutes, null) },
-                        workingHours = workingHours,
-                        )
-                        CalendarMode.Month -> MonthGrid(
-                            month = YearMonth.from(state.selected),
-                            selected = state.selected,
-                            today = state.today,
-                            firstDayOfWeek = state.firstDayOfWeek,
-                            agendas = state.agendas,
-                            formats = formats,
-                            onOpenDay = viewModel::openDay,
-                            onSwipe = viewModel::step,
-                            contentPadding = contentPadding,
-                        )
-                        CalendarMode.Year -> YearGrid(
-                            year = state.selected.year,
-                            focus = state.selected.month,
-                            today = state.today,
-                            firstDayOfWeek = state.firstDayOfWeek,
-                            agendas = state.agendas,
-                            onOpenMonth = viewModel::openMonth,
-                            onSwipe = viewModel::step,
-                            contentPadding = contentPadding,
-                        )
+                        CalendarMode.Day,
+                        CalendarMode.Week ->
+                            Timeline(
+                                date = state.selected,
+                                items = state.on(state.selected),
+                                today = state.today,
+                                formats = formats,
+                                onOpen = { Actions.open(context, it) },
+                                onCreate = {
+                                    Actions.create(context, state.selected, it, formats.zone)
+                                },
+                                onSwipe = { forward ->
+                                    viewModel.select(
+                                        state.selected.plusDays(if (forward) 1 else -1)
+                                    )
+                                },
+                                contentPadding = contentPadding,
+                                onMove = { agenda, minutes -> move(agenda, minutes, null) },
+                                workingHours = workingHours,
+                            )
+                        CalendarMode.Month ->
+                            MonthGrid(
+                                month = YearMonth.from(state.selected),
+                                selected = state.selected,
+                                today = state.today,
+                                firstDayOfWeek = state.firstDayOfWeek,
+                                agendas = state.agendas,
+                                formats = formats,
+                                onOpenDay = viewModel::openDay,
+                                onSwipe = viewModel::step,
+                                contentPadding = contentPadding,
+                            )
+                        CalendarMode.Year ->
+                            YearGrid(
+                                year = state.selected.year,
+                                focus = state.selected.month,
+                                today = state.today,
+                                firstDayOfWeek = state.firstDayOfWeek,
+                                agendas = state.agendas,
+                                onOpenMonth = viewModel::openMonth,
+                                onSwipe = viewModel::step,
+                                contentPadding = contentPadding,
+                            )
                     }
                 }
             }
         }
         PvotSnackbarHost(
             snackbar,
-            Modifier
-                .align(Alignment.BottomCenter)
+            Modifier.align(Alignment.BottomCenter)
                 .padding(bottom = contentPadding.calculateBottomPadding()),
         )
         pending?.let { (agenda, minutes) ->
@@ -186,14 +218,21 @@ fun CalendarScreen(viewModel: CalendarViewModel, contentPadding: PaddingValues, 
                 onDismissRequest = { pending = null },
                 title = stringResource(R.string.move_recurring_title),
             ) {
-                PvotDialogAction(stringResource(R.string.move_this_event), onClick = {
-                    pending = null
-                    move(agenda, minutes, EventMover.Scope.THIS)
-                }, style = PvotDialogActionStyle.Primary)
-                PvotDialogAction(stringResource(R.string.move_all_events), onClick = {
-                    pending = null
-                    move(agenda, minutes, EventMover.Scope.ALL)
-                })
+                PvotDialogAction(
+                    stringResource(R.string.move_this_event),
+                    onClick = {
+                        pending = null
+                        move(agenda, minutes, EventMover.Scope.THIS)
+                    },
+                    style = PvotDialogActionStyle.Primary,
+                )
+                PvotDialogAction(
+                    stringResource(R.string.move_all_events),
+                    onClick = {
+                        pending = null
+                        move(agenda, minutes, EventMover.Scope.ALL)
+                    },
+                )
             }
         }
     }
@@ -213,9 +252,7 @@ fun Navigator(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 12.dp),
+        modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -225,9 +262,7 @@ fun Navigator(
             onClick = onPrevious,
         )
         Surface(
-            modifier = Modifier
-                .clip(RoundedCornerShape(50))
-                .clickable(onClick = onLabel),
+            modifier = Modifier.clip(RoundedCornerShape(50)).clickable(onClick = onLabel),
             color = MaterialTheme.colorScheme.surfaceContainerHigh,
             shape = RoundedCornerShape(50),
         ) {

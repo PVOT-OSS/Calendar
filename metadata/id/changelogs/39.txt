@@ -1,2 +1,2 @@
-- Memperbaiki crash pada tampilan bulan dan minggu karena aturan berulang tidak valid.  
+- Memperbaiki crash pada tampilan bulan dan minggu karena aturan berulang tidak valid.
 - Perbaikan bug.

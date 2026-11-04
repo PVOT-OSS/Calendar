@@ -57,7 +57,8 @@ class IcsTimeTest {
     @Test
     fun reportsUnknownZoneAndFallsBack() {
         var unknown: String? = null
-        val t = IcsTime.parse(prop("DTSTART;TZID=Nowhere:20260701T100000"), "UTC") { unknown = it }!!
+        val t =
+            IcsTime.parse(prop("DTSTART;TZID=Nowhere:20260701T100000"), "UTC") { unknown = it }!!
         assertEquals("Nowhere", unknown)
         assertEquals("UTC", t.timeZone)
     }

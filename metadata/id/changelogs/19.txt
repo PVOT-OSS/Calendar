@@ -1,2 +1,2 @@
-- Perbaikan bug notifikasi.  
+- Perbaikan bug notifikasi.
 - Terjemahan baru.

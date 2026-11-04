@@ -24,21 +24,23 @@ import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceDataStore
 
 /**
- * Custom data store for preferences that saves/retrieves settings of an individual calendar
- * from Android's calendar database.
+ * Custom data store for preferences that saves/retrieves settings of an individual calendar from
+ * Android's calendar database.
  */
 class CalendarDataStore(activity: FragmentActivity, calendarId: Long) : PreferenceDataStore() {
     private var contentResolver = activity.contentResolver
-    private var calendarUri = ContentUris.withAppendedId(CalendarContract.Calendars.CONTENT_URI, calendarId)
+    private var calendarUri =
+        ContentUris.withAppendedId(CalendarContract.Calendars.CONTENT_URI, calendarId)
 
     companion object {
-        private val PROJECTION = arrayOf(
+        private val PROJECTION =
+            arrayOf(
                 CalendarContract.Calendars._ID,
                 CalendarContract.Calendars.SYNC_EVENTS,
                 CalendarContract.Calendars.VISIBLE,
                 CalendarContract.Calendars.CALENDAR_COLOR,
-                CalendarContract.Calendars.CALENDAR_DISPLAY_NAME
-        )
+                CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
+            )
     }
 
     private fun mapPreferenceKeyToDatabaseKey(key: String): String {
@@ -109,5 +111,4 @@ class CalendarDataStore(activity: FragmentActivity, calendarId: Long) : Preferen
         }
         return defValue
     }
-
 }

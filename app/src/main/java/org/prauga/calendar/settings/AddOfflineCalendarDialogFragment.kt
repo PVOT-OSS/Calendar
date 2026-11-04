@@ -26,11 +26,10 @@ import android.text.TextWatcher
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import org.prauga.calendar.persistence.CalendarRepository
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 import org.prauga.calendar.R
-
+import org.prauga.calendar.persistence.CalendarRepository
 
 class AddOfflineCalendarDialogFragment : DialogFragment() {
 
@@ -44,30 +43,39 @@ class AddOfflineCalendarDialogFragment : DialogFragment() {
             val view = inflater.inflate(R.layout.add_offline_calendar_dialog, null)
             nameEditText = view.findViewById(R.id.offline_calendar_name)
             nameEditTextLayout = view.findViewById(R.id.offline_calendar_name_layout)
-            nameEditText.addTextChangedListener(object : TextWatcher {
-                override fun afterTextChanged(s: Editable) {
-                    nameEditTextLayout.error = null
-                }
+            nameEditText.addTextChangedListener(
+                object : TextWatcher {
+                    override fun afterTextChanged(s: Editable) {
+                        nameEditTextLayout.error = null
+                    }
 
-                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                }
+                    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
-                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                 }
-            })
+            )
 
-            val builder = MaterialAlertDialogBuilder(it).apply {
-                setView(view)
-                setTitle(R.string.preferences_list_add_offline_title)
-                setMessage(R.string.preferences_list_add_offline_message)
-            }
+            val builder =
+                MaterialAlertDialogBuilder(it).apply {
+                    setView(view)
+                    setTitle(R.string.preferences_list_add_offline_title)
+                    setMessage(R.string.preferences_list_add_offline_message)
+                }
             val dialog = builder.create()
 
             // set listener in onResume to work around auto-dismiss of AlertDialog.Builder
             // https://stackoverflow.com/a/10661281/1600685
             val emptyClickListener: DialogInterface.OnClickListener? = null
-            dialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.preferences_list_add_offline_button), emptyClickListener)
-            dialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.preferences_list_add_offline_cancel), emptyClickListener)
+            dialog.setButton(
+                AlertDialog.BUTTON_POSITIVE,
+                getString(R.string.preferences_list_add_offline_button),
+                emptyClickListener,
+            )
+            dialog.setButton(
+                AlertDialog.BUTTON_NEGATIVE,
+                getString(R.string.preferences_list_add_offline_cancel),
+                emptyClickListener,
+            )
 
             return dialog
         } ?: throw IllegalStateException("Activity cannot be null")
@@ -76,9 +84,7 @@ class AddOfflineCalendarDialogFragment : DialogFragment() {
     override fun onResume() {
         super.onResume()
         val alertDialog = dialog as AlertDialog
-        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-            addCalendar()
-        }
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener { addCalendar() }
         alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener {
             alertDialog.cancel()
         }
