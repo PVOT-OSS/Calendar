@@ -125,4 +125,9 @@
     <string name="import_unknown_zones">Unknown time zones, used yours instead: %s</string>
     <string name="import_result">Added %1$d, updated %2$d, removed %3$d</string>
     <string name="import_result_failed">Added %1$d, updated %2$d, removed %3$d, failed %4$d</string>
+    <string name="month_day_no_events">No events</string>
+    <plurals name="month_day_events">
+        <item quantity="one">%d event</item>
+        <item quantity="other">%d events</item>
+    </plurals>
 </resources>

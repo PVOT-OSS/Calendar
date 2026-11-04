@@ -255,6 +255,7 @@ public class MonthByWeekAdapter extends SimpleWeeksAdapter {
         v.setLayoutParams(params);
         v.setClickable(true);
         v.setOnTouchListener(this);
+        v.setOnDayClickListener(this::onDayTapped);
 
         int selectedDay = -1;
         if (mSelectedWeek == position) {

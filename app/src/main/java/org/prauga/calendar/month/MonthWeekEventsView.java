@@ -26,6 +26,7 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
 import android.graphics.Typeface;
@@ -62,7 +63,8 @@ import java.util.Locale;
 
 import org.prauga.calendar.R;
 
-public class MonthWeekEventsView extends SimpleWeekView {
+public class MonthWeekEventsView extends SimpleWeekView
+        implements org.prauga.calendar.EventTouchHelper.Source {
 
     public static final String VIEW_PARAMS_ORIENTATION = "orientation";
     public static final String VIEW_PARAMS_ANIMATE_TODAY = "animate_today";
@@ -168,6 +170,85 @@ public class MonthWeekEventsView extends SimpleWeekView {
     public MonthWeekEventsView(Context context) {
         super(context);
         this.mContext = context;
+        mTouchHelper = new org.prauga.calendar.EventTouchHelper(this, this);
+        androidx.core.view.ViewCompat.setAccessibilityDelegate(this, mTouchHelper);
+    }
+
+    private final org.prauga.calendar.EventTouchHelper mTouchHelper;
+    private java.util.function.Consumer<Time> mOnDayClick;
+
+    public void setOnDayClickListener(java.util.function.Consumer<Time> listener) {
+        mOnDayClick = listener;
+    }
+
+    @Override
+    protected boolean dispatchHoverEvent(MotionEvent event) {
+        return mTouchHelper.dispatchHoverEvent(event) || super.dispatchHoverEvent(event);
+    }
+
+    @Override
+    public android.view.accessibility.AccessibilityNodeProvider getAccessibilityNodeProvider() {
+        androidx.core.view.accessibility.AccessibilityNodeProviderCompat provider =
+                mTouchHelper.getAccessibilityNodeProvider(this);
+        return provider != null
+                ? (android.view.accessibility.AccessibilityNodeProvider) provider.getProvider()
+                : super.getAccessibilityNodeProvider();
+    }
+
+    @Override
+    public int accessibleEventCount() {
+        return mWidth > 0 ? mNumDays : 0;
+    }
+
+    @Override
+    public void accessibleEventBounds(int index, Rect out) {
+        int width = mWidth - mPadding * 2;
+        out.set(mPadding + index * width / mNumDays, 0,
+                mPadding + (index + 1) * width / mNumDays, mHeight);
+    }
+
+    private Time dayAt(int index) {
+        int width = mWidth - mPadding * 2;
+        return getDayFromLocation(mPadding + (index + 0.5f) * width / mNumDays);
+    }
+
+    @Override
+    public CharSequence describeAccessibleEvent(int index) {
+        Time day = dayAt(index);
+        if (day == null) {
+            return "";
+        }
+        long millis = day.toMillis();
+        StringBuilder b = new StringBuilder(Utils.formatDateRange(mContext, millis, millis,
+                DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY));
+        ArrayList<Event> events = mEvents != null && index < mEvents.size()
+                ? mEvents.get(index) : null;
+        int count = events == null ? 0 : events.size();
+        b.append(". ").append(count == 0
+                ? mContext.getString(R.string.month_day_no_events)
+                : mContext.getResources().getQuantityString(R.plurals.month_day_events, count, count));
+        if (events != null) {
+            for (Event e : events) {
+                b.append(". ").append(e.getTitleAndLocation());
+                if (!e.allDay) {
+                    int flags = DateUtils.FORMAT_SHOW_TIME;
+                    if (DateFormat.is24HourFormat(mContext)) {
+                        flags |= DateUtils.FORMAT_24HOUR;
+                    }
+                    b.append(", ").append(Utils.formatDateRange(mContext, e.startMillis,
+                            e.endMillis, flags));
+                }
+            }
+        }
+        return b;
+    }
+
+    @Override
+    public void openAccessibleEvent(int index) {
+        Time day = dayAt(index);
+        if (day != null && mOnDayClick != null) {
+            mOnDayClick.accept(day);
+        }
     }
 
     // Sets the list of events for this week. Takes a sorted list of arrays
@@ -218,6 +299,7 @@ public class MonthWeekEventsView extends SimpleWeekView {
 
     public void setEvents(List<ArrayList<Event>> sortedEvents) {
         mEvents = sortedEvents;
+        mTouchHelper.invalidateRoot();
         if (sortedEvents == null) {
             return;
         }
