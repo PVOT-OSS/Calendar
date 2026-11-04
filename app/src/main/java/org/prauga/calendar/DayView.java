@@ -4032,6 +4032,10 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
                         getSelectedTimeInMillis(), 0, (int) ev.getRawX(), (int) ev.getRawY(),
                         extraLong, -1);
             }
+        } else if (mSelectedEvent != null
+                && org.prauga.calendar.tasks.TasksRepository.INSTANCE.isTask(mSelectedEvent.id)) {
+            mSelectionMode = SELECTION_HIDDEN;
+            org.prauga.calendar.tasks.TasksRepository.INSTANCE.open(mContext, mSelectedEvent.id);
         } else if (mSelectedEvent != null) {
             // If the tap is on an event, launch the "View event" view
             if (mIsAccessibilityEnabled) {
@@ -4094,6 +4098,21 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
             return;
         }
 
+        if (mSelectedEvent != null
+                && org.prauga.calendar.tasks.TasksRepository.INSTANCE.isTask(mSelectedEvent.id)) {
+            final long taskEventId = mSelectedEvent.id;
+            final Context appContext = mContext.getApplicationContext();
+            performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS);
+            new Thread(() -> {
+                if (org.prauga.calendar.tasks.TasksRepository.INSTANCE.toggleDone(appContext, taskEventId)) {
+                    post(() -> {
+                        mLastReloadMillis = 0;
+                        reloadEvents();
+                    });
+                }
+            }).start();
+            return;
+        }
         if (!mSelectionAllday && mSelectedEvent != null && startDrag(mSelectedEvent, y)) {
             return;
         }

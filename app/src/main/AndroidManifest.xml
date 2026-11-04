@@ -33,8 +33,16 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="org.dmfs.permission.READ_TASKS"/>
+    <uses-permission android:name="org.dmfs.permission.WRITE_TASKS"/>
+    <uses-permission android:name="org.tasks.permission.READ_TASKS"/>
+    <uses-permission android:name="org.tasks.permission.WRITE_TASKS"/>
 
     <queries>
+        <provider android:authorities="org.dmfs.tasks" />
+        <provider android:authorities="org.tasks.opentasks" />
+        <package android:name="at.bitfire.icsdroid" />
+
         <intent>
             <action android:name="android.content.SyncAdapter" />
         </intent>

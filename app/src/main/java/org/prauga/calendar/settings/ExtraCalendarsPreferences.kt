@@ -13,6 +13,7 @@ import androidx.preference.MultiSelectListPreference
 import org.prauga.calendar.AlternateCalendar
 import androidx.preference.PreferenceFragmentCompat
 import org.prauga.calendar.holidays.HolidaySync
+import org.prauga.calendar.tasks.TasksRepository
 import androidx.preference.SwitchPreferenceCompat
 import org.prauga.calendar.birthdays.BirthdaySync
 import org.prauga.calendar.birthdays.BirthdayWorker
@@ -24,6 +25,11 @@ import org.prauga.calendar.R
 class ExtraCalendarsPreferences : PreferenceFragmentCompat() {
 
     private lateinit var birthdays: SwitchPreferenceCompat
+    private lateinit var tasks: SwitchPreferenceCompat
+
+    private val tasksPermission = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
+        if (result.values.any { it }) tasks.isChecked = true
+    }
 
     private val contactsPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         if (granted) {
@@ -97,6 +103,29 @@ class ExtraCalendarsPreferences : PreferenceFragmentCompat() {
             true
         }
         screen.addPreference(alternate)
+
+        tasks = SwitchPreferenceCompat(context).apply {
+            key = TasksRepository.PREF_ENABLED
+            title = getString(R.string.tasks_pref_title)
+            setDefaultValue(false)
+        }
+        val installed = TasksRepository.installedProviders(context)
+        tasks.summary = getString(if (installed.isEmpty()) R.string.tasks_pref_summary_none else R.string.tasks_pref_summary)
+        tasks.isEnabled = installed.isNotEmpty() || tasks.isChecked
+        tasks.setOnPreferenceChangeListener { _, value ->
+            if (value == true) {
+                val missing = installed.flatMap { listOf(it.readPermission, it.writePermission) }.filter {
+                    androidx.core.content.ContextCompat.checkSelfPermission(requireContext(), it) !=
+                        android.content.pm.PackageManager.PERMISSION_GRANTED
+                }
+                if (missing.isNotEmpty()) {
+                    tasksPermission.launch(missing.toTypedArray())
+                    return@setOnPreferenceChangeListener false
+                }
+            }
+            true
+        }
+        screen.addPreference(tasks)
         preferenceScreen = screen
     }
 

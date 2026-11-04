@@ -239,6 +239,7 @@ public class Event implements Cloneable {
 
             buildEventsFromCursor(events, cEvents, context, startDay, endDay);
             buildEventsFromCursor(events, cAllday, context, startDay, endDay);
+            org.prauga.calendar.tasks.TasksRepository.appendTasks(context, events, startDay, endDay);
 
         } finally {
             if (cEvents != null) {
