@@ -53,7 +53,6 @@ public class CalendarApplication extends Application {
                 Utils.getVersionCode(this));
 
         // Initialize the registry mapping some custom behavior.
-        ExtensionsFactory.init(getAssets());
     }
 
     @Override

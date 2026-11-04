@@ -18,7 +18,6 @@ import kotlinx.coroutines.withContext
 import org.prauga.calendar.EventRecurrenceFormatter
 import org.prauga.calendar.calendarcommon2.EventRecurrence
 import org.prauga.calendar.calendarcommon2.Time
-import org.prauga.calendar.event.QuickCreateSheet
 import org.prauga.calendar.event.RepeatPresets
 import org.prauga.calendar.persistence.CalendarTarget
 import org.prauga.calendar.persistence.WritableCalendars
@@ -115,7 +114,7 @@ class EditorViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch {
             val context = getApplication<Application>()
             val calendars = withContext(Dispatchers.IO) { WritableCalendars.list(context.contentResolver) }
-            val last = GeneralPreferences.getSharedPreferences(context).getLong(QuickCreateSheet.PREF_LAST_CALENDAR, -1L)
+            val last = GeneralPreferences.getSharedPreferences(context).getLong(PREF_LAST_CALENDAR, -1L)
             val chosen = calendars.firstOrNull { it.id == prefill.calendarId }
                 ?: calendars.firstOrNull { it.id == last } ?: calendars.firstOrNull()
             _state.update { it.copy(calendars = calendars) }
@@ -174,7 +173,7 @@ class EditorViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch {
             val context = getApplication<Application>()
             GeneralPreferences.getSharedPreferences(context).edit()
-                .putLong(QuickCreateSheet.PREF_LAST_CALENDAR, s.draft.calendarId).apply()
+                .putLong(PREF_LAST_CALENDAR, s.draft.calendarId).apply()
             val ok = withContext(Dispatchers.IO) {
                 runCatching {
                     val before = original
@@ -194,3 +193,5 @@ class EditorViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 }
+
+private const val PREF_LAST_CALENDAR = "quick_create_last_calendar"

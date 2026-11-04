@@ -70,13 +70,6 @@
         android:theme="@style/Theme.Etar">
 
         <activity
-            android:name="org.prauga.calendar.AllInOneActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustPan">
-        </activity>
-
-        <activity
             android:name="org.prauga.calendar.ui.MainActivity"
             android:exported="true"
             android:launchMode="singleTask">
@@ -126,14 +119,6 @@
         </activity-alias>
 
         <activity android:name="org.prauga.calendar.AboutActivity">
-        </activity>
-
-        <activity android:name="org.prauga.calendar.EventInfoActivity"
-            android:exported="false"
-            android:parentActivityName="org.prauga.calendar.ui.MainActivity" />
-
-        <activity android:name="org.prauga.calendar.event.EditEventActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize">
         </activity>
 
         <activity-alias android:name="org.prauga.calendar.EditEventActivity"

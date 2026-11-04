@@ -100,7 +100,7 @@ class OnboardingActivity : AppCompatActivity() {
     private fun finishOnboarding() {
         GeneralPreferences.getSharedPreferences(this).edit()
             .putBoolean(PREF_DONE, true)
-            .putBoolean(AllInOneActivity.PREF_EXACT_ALARM_ASKED, true)
+            .putBoolean(PREF_EXACT_ALARM_ASKED, true)
             .apply()
         startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         finish()
@@ -109,6 +109,7 @@ class OnboardingActivity : AppCompatActivity() {
 
     companion object {
         private const val PREF_DONE = "onboarding_done"
+        private const val PREF_EXACT_ALARM_ASKED = "exact_alarm_asked"
         private const val DAVX5 = "at.bitfire.davdroid"
 
         private fun hasCalendar(context: Context) =

@@ -1789,29 +1789,6 @@ public class Utils {
         return Utils.isValidEmail(email) && !email.equals(syncAccountName);
     }
 
-    /**
-     * Inserts a drawable with today's day into the today's icon in the option menu
-     * @param icon - today's icon from the options menu
-     */
-    public static void setTodayIcon(LayerDrawable icon, Context c, String timezone) {
-        DayOfMonthDrawable today;
-
-        // Reuse current drawable if possible
-        Drawable currentDrawable = icon.findDrawableByLayerId(R.id.today_icon_day);
-        if (currentDrawable instanceof DayOfMonthDrawable) {
-            today = (DayOfMonthDrawable)currentDrawable;
-        } else {
-            today = new DayOfMonthDrawable(c);
-        }
-        // Set the day and update the icon
-        Time now =  new Time(timezone);
-        now.set(System.currentTimeMillis());
-        now.normalize();
-        today.setDayOfMonth(now.getDay());
-        icon.mutate();
-        icon.setDrawableByLayerId(R.id.today_icon_day, today);
-    }
-
     public static BroadcastReceiver setTimeChangesReceiver(Context c, Runnable callback) {
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_TIME_CHANGED);
@@ -2208,48 +2185,6 @@ public class Utils {
         }
 
         return false;
-    }
-
-    /**
-     * @param bundle The incoming bundle that contains the reminder info.
-     * @return ArrayList<ReminderEntry> of the reminder minutes and methods.
-     */
-    public static ArrayList<ReminderEntry> readRemindersFromBundle(Bundle bundle) {
-        ArrayList<ReminderEntry> reminders = null;
-
-        ArrayList<Integer> reminderMinutes = bundle.getIntegerArrayList(
-                        EventInfoFragment.BUNDLE_KEY_REMINDER_MINUTES);
-        ArrayList<Integer> reminderMethods = bundle.getIntegerArrayList(
-                EventInfoFragment.BUNDLE_KEY_REMINDER_METHODS);
-        if (reminderMinutes == null || reminderMethods == null) {
-            if (reminderMinutes != null || reminderMethods != null) {
-                String nullList = (reminderMinutes == null?
-                        "reminderMinutes" : "reminderMethods");
-                Log.d(TAG, String.format("Error resolving reminders: %s was null",
-                        nullList));
-            }
-            return null;
-        }
-
-        int numReminders = reminderMinutes.size();
-        if (numReminders == reminderMethods.size()) {
-            // Only if the size of the reminder minutes we've read in is
-            // the same as the size of the reminder methods. Otherwise,
-            // something went wrong with bundling them.
-            reminders = new ArrayList<ReminderEntry>(numReminders);
-            for (int reminder_i = 0; reminder_i < numReminders;
-                    reminder_i++) {
-                int minutes = reminderMinutes.get(reminder_i);
-                int method = reminderMethods.get(reminder_i);
-                reminders.add(ReminderEntry.valueOf(minutes, method));
-            }
-        } else {
-            Log.d(TAG, String.format("Error resolving reminders." +
-                        " Found %d reminderMinutes, but %d reminderMethods.",
-                    numReminders, reminderMethods.size()));
-        }
-
-        return reminders;
     }
 
     // A single strand represents one color of events. Events are divided up by
