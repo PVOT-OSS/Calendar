@@ -31,13 +31,27 @@
         android:paddingStart="12dip"
         android:paddingEnd="12dip">
 
+        <View
+            android:layout_width="32dip"
+            android:layout_height="1dip" />
+
         <TextView
             android:id="@+id/grid_widget_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
             android:textColor="@android:color/white"
             android:textSize="16sp"
             android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/iv_add"
+            android:layout_width="32dip"
+            android:layout_height="32dip"
+            android:contentDescription="@string/new_event_dialog_label"
+            android:padding="4dip"
+            android:src="@drawable/ic_add_event" />
     </LinearLayout>
 
     <!-- Day-of-week labels row -->

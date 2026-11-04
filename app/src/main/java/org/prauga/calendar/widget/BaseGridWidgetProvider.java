@@ -270,6 +270,12 @@ abstract class BaseGridWidgetProvider extends AppWidgetProvider {
                     context, appWidgetId, launchIntent, PendingIntent.FLAG_IMMUTABLE);
             views.setOnClickPendingIntent(getHeaderViewId(), headerPendingIntent);
 
+            Intent addIntent = new Intent(Intent.ACTION_INSERT)
+                    .setClass(context, org.prauga.calendar.event.EditEventActivity.class)
+                    .setType("vnd.android.cursor.item/event");
+            views.setOnClickPendingIntent(R.id.iv_add, PendingIntent.getActivity(
+                    context, appWidgetId, addIntent, PendingIntent.FLAG_IMMUTABLE));
+
             appWidgetManager.updateAppWidget(appWidgetId, views);
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, getGridViewId());
         }
