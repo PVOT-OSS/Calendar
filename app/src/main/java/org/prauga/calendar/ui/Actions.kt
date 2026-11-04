@@ -48,6 +48,10 @@ object Actions {
         } else {
             LocalTime.of(9, 0)
         }
+        create(context, date, start, zone)
+    }
+
+    fun create(context: Context, date: LocalDate, start: LocalTime, zone: ZoneId) {
         val begin = date.atTime(start).atZone(zone).toInstant().toEpochMilli()
         val intent = CalendarController.getInstance(context)
             .generateCreateEventIntent(begin, begin + 3_600_000L, false, "", -1)

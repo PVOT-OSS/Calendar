@@ -140,6 +140,8 @@
     </string-array>
     <string name="ui_calendar">Calendar</string>
     <string name="ui_add">Add</string>
+    <string name="ui_previous">Previous</string>
+    <string name="ui_next">Next</string>
     <string name="ui_more">More options</string>
     <string name="ui_classic_view">Classic view</string>
     <string name="ui_sync">Sync</string>
