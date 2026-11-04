@@ -39,6 +39,7 @@ import org.dmfs.rfc5545.iterable.RecurrenceSet;
 import org.dmfs.rfc5545.iterable.instanceiterable.RuleInstances;
 import org.dmfs.rfc5545.recur.RecurrenceRule;
 
+import org.prauga.calendar.tasks.TasksRepository;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -239,7 +240,7 @@ public class Event implements Cloneable {
 
             buildEventsFromCursor(events, cEvents, context, startDay, endDay);
             buildEventsFromCursor(events, cAllday, context, startDay, endDay);
-            org.prauga.calendar.tasks.TasksRepository.appendTasks(context, events, startDay, endDay);
+            TasksRepository.appendTasks(context, events, startDay, endDay);
 
         } finally {
             if (cEvents != null) {

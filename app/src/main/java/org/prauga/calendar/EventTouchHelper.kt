@@ -8,6 +8,7 @@ package org.prauga.calendar
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
+import android.view.accessibility.AccessibilityEvent
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.customview.widget.ExploreByTouchHelper
 
@@ -57,7 +58,7 @@ class EventTouchHelper(host: View, private val source: Source) : ExploreByTouchH
         if (virtualViewId >= source.accessibleEventCount()) return false
         source.openAccessibleEvent(virtualViewId)
         invalidateVirtualView(virtualViewId)
-        sendEventForVirtualView(virtualViewId, android.view.accessibility.AccessibilityEvent.TYPE_VIEW_CLICKED)
+        sendEventForVirtualView(virtualViewId, AccessibilityEvent.TYPE_VIEW_CLICKED)
         return true
     }
 }

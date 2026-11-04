@@ -34,6 +34,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.PowerManager;
+import android.provider.CalendarContract;
 import android.provider.CalendarContract.Attendees;
 import android.provider.CalendarContract.Calendars;
 import android.provider.CalendarContract.Events;
@@ -49,6 +50,8 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
+import org.prauga.calendar.MeetingLinks;
+import org.prauga.calendar.event.ExtendedProperty;
 import org.prauga.calendar.theme.DynamicThemeKt;
 import org.prauga.calendar.EventInfoActivity;
 import org.prauga.calendar.Utils;
@@ -322,21 +325,21 @@ public class AlertReceiver extends BroadcastReceiver {
             return null;
         }
         try (Cursor c = context.getContentResolver().query(
-                android.provider.CalendarContract.ExtendedProperties.CONTENT_URI,
-                new String[] { android.provider.CalendarContract.ExtendedProperties.VALUE },
-                android.provider.CalendarContract.ExtendedProperties.EVENT_ID + "=? AND ("
-                        + android.provider.CalendarContract.ExtendedProperties.NAME + "=? OR "
-                        + android.provider.CalendarContract.ExtendedProperties.NAME + "=?)",
+                CalendarContract.ExtendedProperties.CONTENT_URI,
+                new String[] { CalendarContract.ExtendedProperties.VALUE },
+                CalendarContract.ExtendedProperties.EVENT_ID + "=? AND ("
+                        + CalendarContract.ExtendedProperties.NAME + "=? OR "
+                        + CalendarContract.ExtendedProperties.NAME + "=?)",
                 new String[] { Long.toString(eventId),
-                        org.prauga.calendar.event.ExtendedProperty.URL_NAME,
-                        org.prauga.calendar.event.ExtendedProperty.URL_NAME_PRIV }, null)) {
+                        ExtendedProperty.URL_NAME,
+                        ExtendedProperty.URL_NAME_PRIV }, null)) {
             if (c != null && c.moveToFirst()) {
                 url = c.getString(0);
             }
         } catch (SecurityException e) {
         }
-        org.prauga.calendar.MeetingLinks.Link link =
-                org.prauga.calendar.MeetingLinks.INSTANCE.find(url, location, description);
+        MeetingLinks.Link link =
+                MeetingLinks.INSTANCE.find(url, location, description);
         if (link == null) {
             return null;
         }

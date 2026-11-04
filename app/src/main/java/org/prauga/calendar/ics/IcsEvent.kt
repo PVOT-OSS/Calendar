@@ -9,6 +9,9 @@ import android.content.ContentValues
 import android.provider.CalendarContract.Attendees
 import android.provider.CalendarContract.Events
 import android.provider.CalendarContract.Reminders
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZoneOffset
 
 data class IcsAttendee(
     val email: String,
@@ -138,8 +141,8 @@ data class IcsEvent(
         }
 
         private fun toAllDay(time: IcsDateTime): IcsDateTime {
-            val local = java.time.Instant.ofEpochMilli(time.millis).atZone(java.time.ZoneId.of(time.timeZone)).toLocalDate()
-            return IcsDateTime(local.atStartOfDay(java.time.ZoneOffset.UTC).toInstant().toEpochMilli(), true, "UTC")
+            val local = Instant.ofEpochMilli(time.millis).atZone(ZoneId.of(time.timeZone)).toLocalDate()
+            return IcsDateTime(local.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli(), true, "UTC")
         }
 
         private fun dateList(

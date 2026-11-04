@@ -8,12 +8,15 @@ package org.prauga.calendar.event
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.ContentValues
+import android.database.Cursor
 import android.provider.CalendarContract.Calendars
 import android.provider.CalendarContract.Events
 import android.provider.CalendarContract.Reminders
 import org.prauga.calendar.ics.IcsTime
 import java.time.Instant
 import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 class EventMover(private val resolver: ContentResolver) {
 
@@ -121,7 +124,7 @@ class EventMover(private val resolver: ContentResolver) {
             if (!it.moveToFirst()) return null
             for ((i, column) in COPY_COLUMNS.withIndex()) {
                 if (!it.isNull(i)) {
-                    if (it.getType(i) == android.database.Cursor.FIELD_TYPE_INTEGER) master.put(column, it.getLong(i))
+                    if (it.getType(i) == Cursor.FIELD_TYPE_INTEGER) master.put(column, it.getLong(i))
                     else master.put(column, it.getString(i))
                 }
             }
@@ -178,7 +181,7 @@ class EventMover(private val resolver: ContentResolver) {
 
         private val MOVE_COLUMNS = arrayOf(Events.DTSTART, Events.DTEND, Events.ALL_DAY, Events.EVENT_TIMEZONE)
 
-        private fun putMoveColumns(cursor: android.database.Cursor, values: ContentValues, offset: Int = 0) {
+        private fun putMoveColumns(cursor: Cursor, values: ContentValues, offset: Int = 0) {
             values.put(Events.DTSTART, cursor.getLong(offset))
             values.put(Events.DTEND, cursor.getLong(offset + 1))
             values.put(Events.ALL_DAY, cursor.getInt(offset + 2))
@@ -188,8 +191,8 @@ class EventMover(private val resolver: ContentResolver) {
 
         fun shiftExdates(exdate: String?, delta: Long): String? {
             if (exdate.isNullOrEmpty() || delta == 0L) return exdate
-            val format = java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'")
-                .withZone(java.time.ZoneOffset.UTC)
+            val format = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'")
+                .withZone(ZoneOffset.UTC)
             return exdate.split(',').joinToString(",") { value ->
                 val v = value.trim()
                 if (v.length == 16 && v.endsWith("Z")) {

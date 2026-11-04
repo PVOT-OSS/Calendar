@@ -49,6 +49,8 @@ import org.prauga.calendar.CalendarController;
 import org.prauga.calendar.CalendarController.EventInfo;
 import org.prauga.calendar.CalendarController.EventType;
 import org.prauga.calendar.CalendarController.ViewType;
+import org.prauga.calendar.event.QuickCreateSheet;
+import org.prauga.calendar.tasks.TasksRepository;
 import org.prauga.calendar.theme.DynamicThemeKt;
 import org.prauga.calendar.Event;
 import org.prauga.calendar.Utils;
@@ -146,7 +148,7 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
             final FragmentManager manager = getParentFragmentManager();
             if (manager != null) {
                 Time day = (Time) msg.obj;
-                org.prauga.calendar.event.QuickCreateSheet.show(manager, requireContext(),
+                QuickCreateSheet.show(manager, requireContext(),
                         day.toMillis(), true);
             }
         }
@@ -396,7 +398,7 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
             ArrayList<Event> events = new ArrayList<Event>();
             Event.buildEventsFromCursor(
                     events, data, mContext, mFirstLoadedJulianDay, mLastLoadedJulianDay);
-            org.prauga.calendar.tasks.TasksRepository.appendTasks(
+            TasksRepository.appendTasks(
                     mContext, events, mFirstLoadedJulianDay, mLastLoadedJulianDay);
             ((MonthByWeekAdapter) mAdapter).setEvents(mFirstLoadedJulianDay,
                     mLastLoadedJulianDay - mFirstLoadedJulianDay + 1, events);

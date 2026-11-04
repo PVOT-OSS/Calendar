@@ -9,6 +9,7 @@ import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.ContentValues
 import android.database.Cursor
+import android.net.Uri
 import android.provider.CalendarContract.Attendees
 import android.provider.CalendarContract.Events
 import android.provider.CalendarContract.ExtendedProperties
@@ -56,7 +57,7 @@ class EventCopier(private val resolver: ContentResolver) {
         return newId
     }
 
-    private fun copyRows(uri: android.net.Uri, eventColumn: String, from: Long, to: Long, columns: Array<String>) {
+    private fun copyRows(uri: Uri, eventColumn: String, from: Long, to: Long, columns: Array<String>) {
         resolver.query(uri, columns, "$eventColumn=?", arrayOf(from.toString()), null)?.use {
             while (it.moveToNext()) {
                 val row = ContentValues().apply { put(eventColumn, to) }

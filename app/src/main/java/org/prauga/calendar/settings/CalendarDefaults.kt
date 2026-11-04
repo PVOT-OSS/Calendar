@@ -7,7 +7,10 @@ package org.prauga.calendar.settings
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.text.format.DateFormat
 import androidx.preference.PreferenceDataStore
+import java.util.Calendar
+import java.util.TimeZone
 
 object CalendarDefaults {
     const val INHERIT = -2
@@ -49,11 +52,11 @@ object CalendarDefaults {
 fun allDayReminderLabel(context: Context, minutes: Int): String {
     val days = if (minutes <= 0) 0 else (minutes + 24 * 60 - 1) / (24 * 60)
     val minuteOfDay = days * 24 * 60 - minutes
-    val time = java.util.Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC")).apply {
+    val time = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
         timeInMillis = minuteOfDay * 60_000L
     }
-    val format = android.text.format.DateFormat.getTimeFormat(context).apply {
-        timeZone = java.util.TimeZone.getTimeZone("UTC")
+    val format = DateFormat.getTimeFormat(context).apply {
+        timeZone = TimeZone.getTimeZone("UTC")
     }
     val at = format.format(time.time)
     return when {

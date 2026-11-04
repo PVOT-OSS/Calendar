@@ -10,12 +10,23 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.database.Cursor
+import android.database.MatrixCursor
 import android.net.Uri
+import android.provider.CalendarContract
 import android.util.Log
 import androidx.core.content.ContextCompat
+import org.dmfs.rfc5545.DateTime
+import org.dmfs.rfc5545.iterable.RecurrenceSet
+import org.dmfs.rfc5545.iterable.instanceiterable.RuleInstances
+import org.dmfs.rfc5545.recur.RecurrenceRule
 import org.prauga.calendar.Event
+import org.prauga.calendar.Utils
 import org.prauga.calendar.calendarcommon2.Time
 import org.prauga.calendar.settings.GeneralPreferences
+import java.util.Calendar
+import java.util.Collections
+import java.util.TimeZone
 import java.util.concurrent.ConcurrentHashMap
 
 object TasksRepository {
@@ -51,7 +62,7 @@ object TasksRepository {
     @JvmStatic
     fun appendTasks(context: Context, events: MutableList<Event>, startDay: Int, endDay: Int) {
         if (!isEnabled(context)) return
-        val tz = org.prauga.calendar.Utils.getTimeZone(context, null)
+        val tz = Utils.getTimeZone(context, null)
         val time = Time(tz)
         val from = time.setJulianDay(startDay)
         val to = time.setJulianDay(endDay + 1)
@@ -115,14 +126,14 @@ object TasksRepository {
     fun occurrences(rrule: String, start: Long, allDay: Boolean, zone: String, until: Long): List<Long> {
         val result = mutableListOf<Long>()
         try {
-            val rule = org.dmfs.rfc5545.recur.RecurrenceRule(rrule)
+            val rule = RecurrenceRule(rrule)
             val first = if (allDay) {
-                val utc = java.util.Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC")).apply { timeInMillis = start }
-                org.dmfs.rfc5545.DateTime(utc.get(java.util.Calendar.YEAR), utc.get(java.util.Calendar.MONTH), utc.get(java.util.Calendar.DAY_OF_MONTH))
+                val utc = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply { timeInMillis = start }
+                DateTime(utc.get(Calendar.YEAR), utc.get(Calendar.MONTH), utc.get(Calendar.DAY_OF_MONTH))
             } else {
-                org.dmfs.rfc5545.DateTime(java.util.TimeZone.getTimeZone(zone), start)
+                DateTime(TimeZone.getTimeZone(zone), start)
             }
-            val set = org.dmfs.rfc5545.iterable.RecurrenceSet(first, org.dmfs.rfc5545.iterable.instanceiterable.RuleInstances(rule))
+            val set = RecurrenceSet(first, RuleInstances(rule))
             for (instance in set) {
                 val t = instance.timestamp
                 if (t >= until || result.size >= 1000) break
@@ -134,7 +145,7 @@ object TasksRepository {
         return result
     }
 
-    private val futureOccurrences = java.util.Collections.newSetFromMap(ConcurrentHashMap<Long, Boolean>())
+    private val futureOccurrences = Collections.newSetFromMap(ConcurrentHashMap<Long, Boolean>())
 
     fun canToggle(eventId: Long) = isTask(eventId) && eventId !in futureOccurrences
 
@@ -188,7 +199,7 @@ object TasksRepository {
     }
 
     @JvmStatic
-    fun mergeIntoAgenda(context: Context, cursor: android.database.Cursor, startDay: Int, endDay: Int): android.database.Cursor {
+    fun mergeIntoAgenda(context: Context, cursor: Cursor, startDay: Int, endDay: Int): Cursor {
         if (!isEnabled(context)) return cursor
         val tasks = mutableListOf<Event>()
         appendTasks(context, tasks, startDay, endDay)
@@ -198,9 +209,9 @@ object TasksRepository {
         while (cursor.moveToNext()) {
             rows += Array(columns.size) { i ->
                 when (cursor.getType(i)) {
-                    android.database.Cursor.FIELD_TYPE_NULL -> null
-                    android.database.Cursor.FIELD_TYPE_INTEGER -> cursor.getLong(i)
-                    android.database.Cursor.FIELD_TYPE_FLOAT -> cursor.getDouble(i)
+                    Cursor.FIELD_TYPE_NULL -> null
+                    Cursor.FIELD_TYPE_INTEGER -> cursor.getLong(i)
+                    Cursor.FIELD_TYPE_FLOAT -> cursor.getDouble(i)
                     else -> cursor.getString(i)
                 }
             }
@@ -212,32 +223,32 @@ object TasksRepository {
             val end = if (task.allDay) begin + DAY else task.endMillis
             rows += Array(columns.size) { i ->
                 when (columns[i]) {
-                    android.provider.CalendarContract.Instances._ID, android.provider.CalendarContract.Instances.EVENT_ID -> task.id
-                    android.provider.CalendarContract.Instances.TITLE -> task.title.toString()
-                    android.provider.CalendarContract.Instances.EVENT_LOCATION -> ""
-                    android.provider.CalendarContract.Instances.ALL_DAY -> if (task.allDay) 1L else 0L
-                    android.provider.CalendarContract.Instances.HAS_ALARM -> 0L
-                    android.provider.CalendarContract.Instances.DISPLAY_COLOR -> task.color.toLong()
-                    android.provider.CalendarContract.Instances.BEGIN -> begin
-                    android.provider.CalendarContract.Instances.END -> end
-                    android.provider.CalendarContract.Instances.START_DAY -> task.startDay.toLong()
-                    android.provider.CalendarContract.Instances.END_DAY -> task.endDay.toLong()
-                    android.provider.CalendarContract.Instances.STATUS -> 1L
-                    android.provider.CalendarContract.Instances.SELF_ATTENDEE_STATUS -> 0L
-                    android.provider.CalendarContract.Instances.CAN_ORGANIZER_RESPOND -> 1L
-                    android.provider.CalendarContract.Instances.OWNER_ACCOUNT,
-                    android.provider.CalendarContract.Instances.ORGANIZER -> ""
-                    android.provider.CalendarContract.Instances.EVENT_TIMEZONE -> if (task.allDay) "UTC" else org.prauga.calendar.Utils.getTimeZone(context, null)
+                    CalendarContract.Instances._ID, CalendarContract.Instances.EVENT_ID -> task.id
+                    CalendarContract.Instances.TITLE -> task.title.toString()
+                    CalendarContract.Instances.EVENT_LOCATION -> ""
+                    CalendarContract.Instances.ALL_DAY -> if (task.allDay) 1L else 0L
+                    CalendarContract.Instances.HAS_ALARM -> 0L
+                    CalendarContract.Instances.DISPLAY_COLOR -> task.color.toLong()
+                    CalendarContract.Instances.BEGIN -> begin
+                    CalendarContract.Instances.END -> end
+                    CalendarContract.Instances.START_DAY -> task.startDay.toLong()
+                    CalendarContract.Instances.END_DAY -> task.endDay.toLong()
+                    CalendarContract.Instances.STATUS -> 1L
+                    CalendarContract.Instances.SELF_ATTENDEE_STATUS -> 0L
+                    CalendarContract.Instances.CAN_ORGANIZER_RESPOND -> 1L
+                    CalendarContract.Instances.OWNER_ACCOUNT,
+                    CalendarContract.Instances.ORGANIZER -> ""
+                    CalendarContract.Instances.EVENT_TIMEZONE -> if (task.allDay) "UTC" else Utils.getTimeZone(context, null)
                     else -> null
                 }
             }
         }
-        val dayIndex = columns.indexOf(android.provider.CalendarContract.Instances.START_DAY)
-        val beginIndex = columns.indexOf(android.provider.CalendarContract.Instances.BEGIN)
-        val titleIndex = columns.indexOf(android.provider.CalendarContract.Instances.TITLE)
+        val dayIndex = columns.indexOf(CalendarContract.Instances.START_DAY)
+        val beginIndex = columns.indexOf(CalendarContract.Instances.BEGIN)
+        val titleIndex = columns.indexOf(CalendarContract.Instances.TITLE)
         rows.sortWith(compareBy<Array<Any?>>({ (it[dayIndex] as? Number)?.toLong() ?: 0L },
             { (it[beginIndex] as? Number)?.toLong() ?: 0L }, { it[titleIndex]?.toString() ?: "" }))
-        val merged = android.database.MatrixCursor(columns, rows.size)
+        val merged = MatrixCursor(columns, rows.size)
         rows.forEach { merged.addRow(it) }
         return merged
     }

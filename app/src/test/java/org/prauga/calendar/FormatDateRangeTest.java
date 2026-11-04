@@ -16,6 +16,7 @@
 
 package org.prauga.calendar;
 
+import android.content.Context;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +42,7 @@ import java.util.Calendar;
 @RunWith(RobolectricTestRunner.class)
 public class FormatDateRangeTest extends TestCase {
 
-    private android.content.Context getContext() {
+    private Context getContext() {
         return RuntimeEnvironment.getApplication();
     }
 

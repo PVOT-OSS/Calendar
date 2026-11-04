@@ -8,6 +8,7 @@ package org.prauga.calendar.event
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.ContentValues
+import android.database.Cursor
 import android.net.Uri
 import android.provider.CalendarContract
 import android.provider.CalendarContract.Calendars
@@ -75,7 +76,7 @@ object SeriesWriter {
         Events.DTSTART, Events.DURATION, Events.RRULE, Events.RDATE, Events.EVENT_TIMEZONE, Events.ALL_DAY
     )
 
-    fun putTimeColumns(cursor: android.database.Cursor, values: ContentValues) {
+    fun putTimeColumns(cursor: Cursor, values: ContentValues) {
         values.put(Events.DTSTART, cursor.getLong(0))
         values.put(Events.DURATION, cursor.getString(1))
         values.put(Events.RRULE, cursor.getString(2))

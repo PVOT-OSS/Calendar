@@ -36,9 +36,11 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceScreen
 import androidx.preference.SwitchPreference
 import org.prauga.calendar.Utils
 import org.prauga.calendar.alerts.channelId
+import org.prauga.calendar.event.EventViewUtils
 import org.prauga.calendar.icalendar.IcalExporter
 import org.prauga.calendar.icalendar.IcalendarUtils
 import org.prauga.calendar.icalendar.VCalendar
@@ -216,7 +218,7 @@ class CalendarPreferences : PreferenceFragmentCompat() {
         preferenceScreen = screen
     }
 
-    private fun addDefaultReminderPreferences(screen: androidx.preference.PreferenceScreen) {
+    private fun addDefaultReminderPreferences(screen: PreferenceScreen) {
         val context = preferenceManager.context
         val store = CalendarDefaults.Store(context)
         val category = PreferenceCategory(context).apply {
@@ -256,9 +258,9 @@ class CalendarPreferences : PreferenceFragmentCompat() {
         minutes == CalendarDefaults.INHERIT ->
             getString(if (allDay) R.string.calendar_default_reminder_same else R.string.calendar_default_reminder_inherit)
         minutes == GeneralPreferences.NO_REMINDER ->
-            org.prauga.calendar.event.EventViewUtils.constructReminderLabel(requireActivity(), minutes, false)
+            EventViewUtils.constructReminderLabel(requireActivity(), minutes, false)
         allDay -> allDayReminderLabel(requireContext(), minutes)
-        else -> org.prauga.calendar.event.EventViewUtils.constructReminderLabel(requireActivity(), minutes, false)
+        else -> EventViewUtils.constructReminderLabel(requireActivity(), minutes, false)
     }
 
     private fun getColorIcon(color: Int): Drawable {

@@ -11,6 +11,7 @@ import android.icu.util.Calendar
 import android.icu.util.TimeZone
 import android.icu.util.ULocale
 import org.prauga.calendar.settings.GeneralPreferences
+import java.util.GregorianCalendar
 import java.util.Locale
 
 object AlternateCalendar {
@@ -49,7 +50,7 @@ object AlternateCalendar {
 
     fun label(type: String, year: Int, month: Int, day: Int, short: Boolean): String {
         val calendar = Calendar.getInstance(TimeZone.GMT_ZONE, ULocale("${ULocale.getDefault()}@calendar=$type"))
-        val gregorian = java.util.GregorianCalendar(java.util.TimeZone.getTimeZone("GMT")).apply {
+        val gregorian = GregorianCalendar(java.util.TimeZone.getTimeZone("GMT")).apply {
             clear()
             set(year, month, day, 12, 0)
         }

@@ -33,8 +33,10 @@ import android.provider.CalendarContract.Attendees;
 import android.provider.CalendarContract.Calendars;
 import android.provider.CalendarContract.Events;
 import android.provider.CalendarContract.Reminders;
+import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.text.util.Rfc822Tokenizer;
@@ -53,6 +55,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
+import android.widget.PopupMenu;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ResourceCursorAdapter;
@@ -77,6 +80,8 @@ import org.prauga.calendar.RecipientAdapter;
 import org.prauga.calendar.Utils;
 import org.prauga.calendar.event.EditEventHelper.EditDoneRunnable;
 import org.prauga.calendar.recurrencepicker.RecurrencePickerDialog;
+import org.prauga.calendar.settings.CalendarDefaults;
+import org.prauga.calendar.settings.CalendarDefaultsKt;
 import org.prauga.calendar.settings.GeneralPreferences;
 import org.prauga.calendar.settings.SettingsActivity;
 import org.prauga.calendar.calendarcommon2.EventRecurrence;
@@ -104,7 +109,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.TimeZone;
 
 import org.prauga.calendar.R;
@@ -306,7 +314,7 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
         mGuestsCanSee = view.findViewById(R.id.guests_can_see);
         mGuestPermissionsRow = view.findViewById(R.id.guest_permissions_row);
         mOptionalAttendeesList = view.findViewById(R.id.optional_attendees);
-        mAttendeesList.addTextChangedListener(new android.text.TextWatcher() {
+        mAttendeesList.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -316,7 +324,7 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
             }
 
             @Override
-            public void afterTextChanged(android.text.Editable s) {
+            public void afterTextChanged(Editable s) {
                 updateGuestPermissionsVisibility();
             }
         });
@@ -615,8 +623,8 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
     }
 
     private void showRepeatPresets() {
-        android.widget.PopupMenu menu = new android.widget.PopupMenu(mActivity, mRruleButton);
-        java.util.List<RepeatPresets.Preset> presets = RepeatPresets.INSTANCE.presets(
+        PopupMenu menu = new PopupMenu(mActivity, mRruleButton);
+        List<RepeatPresets.Preset> presets = RepeatPresets.INSTANCE.presets(
                 mActivity, mStartTime.toMillis(), mStartTime.getTimezone());
         for (int i = 0; i < presets.size(); i++) {
             menu.getMenu().add(0, i, i, presets.get(i).getLabel());
@@ -741,7 +749,7 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
             mModel.addAttendees(mAttendeesList.getText().toString(), mEmailValidator);
             if (mOptionalAttendeesList != null) {
                 mOptionalAttendeesList.performValidation();
-                java.util.Set<String> required = new java.util.HashSet<>(mModel.mAttendeesList.keySet());
+                Set<String> required = new HashSet<>(mModel.mAttendeesList.keySet());
                 mModel.addAttendees(mOptionalAttendeesList.getText().toString(), mEmailValidator);
                 for (Attendee attendee : mModel.mAttendeesList.values()) {
                     if (!required.contains(attendee.identifierKey())) {
@@ -904,10 +912,10 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
         if (mAllDayCheckBox != null && mAllDayCheckBox.isChecked()) {
             mReminderMinuteValues = new ArrayList<>();
             mReminderMinuteLabels = new ArrayList<>();
-            for (int minutes : org.prauga.calendar.settings.CalendarDefaults.INSTANCE.getALL_DAY_REMINDERS()) {
+            for (int minutes : CalendarDefaults.INSTANCE.getALL_DAY_REMINDERS()) {
                 if (minutes != GeneralPreferences.NO_REMINDER) {
                     mReminderMinuteValues.add(minutes);
-                    mReminderMinuteLabels.add(org.prauga.calendar.settings.CalendarDefaultsKt
+                    mReminderMinuteLabels.add(CalendarDefaultsKt
                             .allDayReminderLabel(mActivity, minutes));
                 }
             }
@@ -965,8 +973,8 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
     public void setModel(CalendarEventModel model) {
         mModel = model;
         mRemindersFromIntent = model != null && model.mUri == null
-                && !new java.util.HashSet<>(model.mReminders)
-                        .equals(new java.util.HashSet<>(model.mDefaultReminders));
+                && !new HashSet<>(model.mReminders)
+                        .equals(new HashSet<>(model.mDefaultReminders));
 
         // Need to close the autocomplete adapter to prevent leaking cursors.
         if (mAddressAdapter != null && mAddressAdapter instanceof EmailAddressAdapter) {
@@ -1690,8 +1698,8 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
         prepareAccess();
     }
 
-    private static java.util.Set<Integer> reminderMinutes(java.util.List<ReminderEntry> reminders) {
-        java.util.Set<Integer> minutes = new java.util.HashSet<>();
+    private static Set<Integer> reminderMinutes(List<ReminderEntry> reminders) {
+        Set<Integer> minutes = new HashSet<>();
         for (ReminderEntry reminder : reminders) {
             minutes.add(reminder.getMinutes());
         }
@@ -1709,7 +1717,7 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
                 && !reminderMinutes(mModel.mReminders).equals(reminderMinutes(mAppliedDefaultReminders))) {
             return false;
         }
-        int minutes = org.prauga.calendar.settings.CalendarDefaults.INSTANCE.reminderMinutes(
+        int minutes = CalendarDefaults.INSTANCE.reminderMinutes(
                 mActivity, mModel.mCalendarId, mAllDayCheckBox.isChecked());
         ArrayList<ReminderEntry> defaults = new ArrayList<>();
         if (minutes != GeneralPreferences.NO_REMINDER) {

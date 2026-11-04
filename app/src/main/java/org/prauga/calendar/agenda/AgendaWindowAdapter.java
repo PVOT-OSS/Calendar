@@ -47,6 +47,7 @@ import org.prauga.calendar.StickyHeaderListView;
 import org.prauga.calendar.Utils;
 import org.prauga.calendar.calendarcommon2.Time;
 
+import org.prauga.calendar.tasks.TasksRepository;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.Iterator;
@@ -1099,7 +1100,7 @@ public class AgendaWindowAdapter extends BaseAdapter
             }
 
             if (data.searchQuery == null) {
-                cursor = org.prauga.calendar.tasks.TasksRepository.mergeIntoAgenda(
+                cursor = TasksRepository.mergeIntoAgenda(
                         mContext, cursor, data.start, data.end);
             }
 

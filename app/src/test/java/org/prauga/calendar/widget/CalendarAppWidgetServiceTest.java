@@ -46,7 +46,7 @@ import java.util.TimeZone;
 @RunWith(RobolectricTestRunner.class)
 public class CalendarAppWidgetServiceTest extends TestCase {
 
-    private android.content.Context getContext() {
+    private Context getContext() {
         return RuntimeEnvironment.getApplication();
     }
     private static final String TAG = "CalendarAppWidgetService";

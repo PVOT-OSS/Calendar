@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.text.format.DateFormat
 import androidx.preference.ListPreference
 import androidx.preference.MultiSelectListPreference
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import org.prauga.calendar.R
@@ -76,7 +77,7 @@ class WorkingHoursPreferences : PreferenceFragmentCompat() {
             entryValues = order.map { it.toString() }.toTypedArray()
             setDefaultValue(WorkingHours.DEFAULT_DAYS)
         }
-        days.summaryProvider = androidx.preference.Preference.SummaryProvider<MultiSelectListPreference> { pref ->
+        days.summaryProvider = Preference.SummaryProvider<MultiSelectListPreference> { pref ->
             order.filter { it.toString() in pref.values }.joinToString(", ") { DateFormatSymbols.getInstance().shortWeekdays[it] }
         }
         for (pref in listOf(start, end, days)) screen.addPreference(pref)

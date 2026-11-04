@@ -16,6 +16,7 @@
 
 package org.prauga.calendar;
 
+import android.content.Context;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +37,7 @@ import org.prauga.calendar.calendarcommon2.Time;
 @RunWith(RobolectricTestRunner.class)
 public class WeekNumberTest extends TestCase {
 
-    private android.content.Context getContext() {
+    private Context getContext() {
         return RuntimeEnvironment.getApplication();
     }
 

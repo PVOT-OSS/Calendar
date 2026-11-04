@@ -5,7 +5,9 @@
 
 package org.prauga.calendar.event
 
+import android.content.ContentUris
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.CalendarContract
@@ -35,8 +37,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.prauga.calendar.R
+import java.util.Calendar
 import java.util.Formatter
 import java.util.Locale
+import java.util.TimeZone
 
 class QuickCreateSheet : BottomSheetDialogFragment() {
 
@@ -104,11 +108,11 @@ class QuickCreateSheet : BottomSheetDialogFragment() {
 
     private fun times(): Pair<Long, Long> {
         if (!allDay) return startMillis to endMillis
-        val tz = java.util.TimeZone.getTimeZone(Utils.getTimeZone(requireContext(), null))
-        val local = java.util.Calendar.getInstance(tz).apply { timeInMillis = startMillis }
-        val utc = java.util.Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC")).apply {
+        val tz = TimeZone.getTimeZone(Utils.getTimeZone(requireContext(), null))
+        val local = Calendar.getInstance(tz).apply { timeInMillis = startMillis }
+        val utc = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
             clear()
-            set(local.get(java.util.Calendar.YEAR), local.get(java.util.Calendar.MONTH), local.get(java.util.Calendar.DAY_OF_MONTH))
+            set(local.get(Calendar.YEAR), local.get(Calendar.MONTH), local.get(Calendar.DAY_OF_MONTH))
         }
         return utc.timeInMillis to utc.timeInMillis + DateUtils.DAY_IN_MILLIS
     }
@@ -144,7 +148,7 @@ class QuickCreateSheet : BottomSheetDialogFragment() {
                 }) ?: return@withContext false
                 if (reminder != GeneralPreferences.NO_REMINDER) {
                     context.contentResolver.insert(Reminders.CONTENT_URI, ContentValues().apply {
-                        put(Reminders.EVENT_ID, android.content.ContentUris.parseId(uri))
+                        put(Reminders.EVENT_ID, ContentUris.parseId(uri))
                         put(Reminders.MINUTES, reminder)
                         put(Reminders.METHOD, Reminders.METHOD_ALERT)
                     })
@@ -180,7 +184,7 @@ class QuickCreateSheet : BottomSheetDialogFragment() {
         private const val PREF_LAST_CALENDAR = "quick_create_last_calendar"
 
         @JvmStatic
-        fun show(manager: FragmentManager, context: android.content.Context, startMillis: Long, allDay: Boolean) {
+        fun show(manager: FragmentManager, context: Context, startMillis: Long, allDay: Boolean) {
             if (manager.isStateSaved || manager.findFragmentByTag(TAG) != null) return
             QuickCreateSheet().apply {
                 arguments = Bundle().apply {

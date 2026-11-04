@@ -69,6 +69,7 @@ import android.text.style.ForegroundColorSpan;
 import android.text.util.Rfc822Token;
 import android.util.Log;
 import android.util.SparseArray;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -101,10 +102,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.google.android.material.button.MaterialButton;
 import org.prauga.calendar.CalendarController.EventInfo;
 import org.prauga.calendar.CalendarController.EventType;
 import org.prauga.calendar.CalendarEventModel.Attendee;
@@ -122,6 +125,8 @@ import org.prauga.calendar.icalendar.IcalendarUtils;
 import org.prauga.calendar.icalendar.Organizer;
 import org.prauga.calendar.icalendar.VCalendar;
 import org.prauga.calendar.icalendar.VEvent;
+import org.prauga.calendar.persistence.CalendarTarget;
+import org.prauga.calendar.persistence.WritableCalendars;
 import org.prauga.calendar.settings.GeneralPreferences;
 import org.prauga.calendar.calendarcommon2.DateException;
 import org.prauga.calendar.calendarcommon2.Duration;
@@ -418,7 +423,7 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     private TextView mCalendarName;
     private ExpandableTextView mDesc;
     private ExpandableTextView mUrl;
-    private com.google.android.material.button.MaterialButton mJoinMeeting;
+    private MaterialButton mJoinMeeting;
     private String mEventLocation;
     private String mEventDescription;
     private AttendeesView mLongAttendees;
@@ -1185,11 +1190,11 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         final long eventId = mEventId;
         final long sourceCalendar = mEventCursor != null
                 ? mEventCursor.getLong(EVENT_INDEX_CALENDAR_ID) : -1;
-        final android.content.ContentResolver resolver = mContext.getContentResolver();
+        final ContentResolver resolver = mContext.getContentResolver();
         new Thread(() -> {
-            java.util.List<org.prauga.calendar.persistence.CalendarTarget> targets = new java.util.ArrayList<>();
-            for (org.prauga.calendar.persistence.CalendarTarget t
-                    : org.prauga.calendar.persistence.WritableCalendars.INSTANCE.list(resolver)) {
+            List<CalendarTarget> targets = new ArrayList<>();
+            for (CalendarTarget t
+                    : WritableCalendars.INSTANCE.list(resolver)) {
                 if (t.getId() != sourceCalendar) {
                     targets.add(t);
                 }
@@ -1207,14 +1212,14 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
                 }
                 String[] names = new String[targets.size()];
                 for (int i = 0; i < names.length; i++) {
-                    org.prauga.calendar.persistence.CalendarTarget t = targets.get(i);
+                    CalendarTarget t = targets.get(i);
                     names[i] = t.getDisplayName().equals(t.getAccountName())
                             ? t.getDisplayName() : t.getDisplayName() + " (" + t.getAccountName() + ")";
                 }
                 new MaterialAlertDialogBuilder(mActivity)
                         .setTitle(R.string.copy_to_calendar)
                         .setItems(names, (dialog, which) -> {
-                            org.prauga.calendar.persistence.CalendarTarget target = targets.get(which);
+                            CalendarTarget target = targets.get(which);
                             new Thread(() -> {
                                 Long copied = new EventCopier(resolver).copy(eventId, target);
                                 if (mActivity != null) {
@@ -1755,13 +1760,13 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         if (text == null) {
             return;
         }
-        android.graphics.drawable.Drawable icon = androidx.core.content.ContextCompat.getDrawable(
+        Drawable icon = ContextCompat.getDrawable(
                 row.getContext(), iconRes);
         if (icon == null) {
             return;
         }
         icon = icon.mutate();
-        android.util.TypedValue tv = new android.util.TypedValue();
+        TypedValue tv = new TypedValue();
         if (row.getContext().getTheme().resolveAttribute(
                 com.google.android.material.R.attr.colorOnSurfaceVariant, tv, true)) {
             icon.setTint(tv.data);

@@ -5,6 +5,7 @@
 
 package org.prauga.calendar.data
 
+import android.provider.CalendarContract
 import org.prauga.calendar.Event
 import java.time.LocalDate
 
@@ -39,7 +40,7 @@ data class Agenda(
             startMinute = e.startTime,
             endMinute = e.endTime,
             isTask = isTask,
-            declined = e.selfAttendeeStatus == android.provider.CalendarContract.Attendees.ATTENDEE_STATUS_DECLINED,
+            declined = e.selfAttendeeStatus == CalendarContract.Attendees.ATTENDEE_STATUS_DECLINED,
         )
     }
 }

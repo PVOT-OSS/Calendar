@@ -11,6 +11,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.CalendarContract
+import android.text.format.DateFormat
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.Menu
@@ -20,6 +21,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.CheckBox
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -125,7 +127,7 @@ class ImportActivity : AppCompatActivity() {
                 .show()
             return
         }
-        val spinner = findViewById<android.widget.Spinner>(R.id.calendar_spinner)
+        val spinner = findViewById<Spinner>(R.id.calendar_spinner)
         spinner.adapter = ArrayAdapter(
             this, android.R.layout.simple_spinner_dropdown_item,
             writable.map { if (it.displayName == it.accountName) it.displayName else "${it.displayName} (${it.accountName})" }
@@ -242,7 +244,7 @@ class ImportActivity : AppCompatActivity() {
             if (end > event.start.millis) end -= 1
         } else {
             flags = flags or DateUtils.FORMAT_SHOW_TIME
-            if (android.text.format.DateFormat.is24HourFormat(this)) flags = flags or DateUtils.FORMAT_24HOUR
+            if (DateFormat.is24HourFormat(this)) flags = flags or DateUtils.FORMAT_24HOUR
             tz = Utils.getTimeZone(this, null)
         }
         val text = DateUtils.formatDateRange(this, Formatter(StringBuilder(50), Locale.getDefault()), event.start.millis, end, flags, tz).toString()

@@ -11,12 +11,15 @@ import android.content.ContentUris
 import android.content.Intent
 import android.graphics.drawable.Icon
 import android.os.Build
+import android.os.Handler
 import android.provider.CalendarContract
 import android.provider.CalendarContract.Instances
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import android.text.format.DateUtils
 import org.prauga.calendar.R
+import java.util.Formatter
+import java.util.Locale
 import java.util.concurrent.Executors
 
 class NextEventTileService : TileService() {
@@ -30,7 +33,7 @@ class NextEventTileService : TileService() {
         super.onStartListening()
         executor.execute {
             next = if (Utils.isCalendarPermissionGranted(this, false)) query() else null
-            qsTile?.let { tile -> android.os.Handler(mainLooper).post { update(tile) } }
+            qsTile?.let { tile -> Handler(mainLooper).post { update(tile) } }
         }
     }
 
@@ -72,7 +75,7 @@ class NextEventTileService : TileService() {
             val flags = if (n.allDay) DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_WEEKDAY or DateUtils.FORMAT_ABBREV_ALL
             else DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_WEEKDAY or DateUtils.FORMAT_ABBREV_ALL
             val tz = if (n.allDay) "UTC" else Utils.getTimeZone(this, null)
-            val whenText = DateUtils.formatDateRange(this, java.util.Formatter(StringBuilder(), java.util.Locale.getDefault()),
+            val whenText = DateUtils.formatDateRange(this, Formatter(StringBuilder(), Locale.getDefault()),
                 n.begin, n.begin, flags, tz).toString()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) tile.subtitle = whenText else tile.label = "${tile.label} · $whenText"
         }

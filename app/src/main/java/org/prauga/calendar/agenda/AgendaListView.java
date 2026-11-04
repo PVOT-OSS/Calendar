@@ -38,6 +38,7 @@ import org.prauga.calendar.agenda.AgendaWindowAdapter.DayAdapterInfo;
 import org.prauga.calendar.calendarcommon2.Time;
 
 import org.prauga.calendar.R;
+import org.prauga.calendar.tasks.TasksRepository;
 
 public class AgendaListView extends ListView implements OnItemClickListener {
 
@@ -172,8 +173,8 @@ public class AgendaListView extends ListView implements OnItemClickListener {
         if (id != -1) {
             // Switch to the EventInfo view
             AgendaItem item = mWindowAdapter.getAgendaItemByPosition(position);
-            if (item != null && org.prauga.calendar.tasks.TasksRepository.INSTANCE.isTask(item.id)) {
-                org.prauga.calendar.tasks.TasksRepository.INSTANCE.open(mContext, item.id);
+            if (item != null && TasksRepository.INSTANCE.isTask(item.id)) {
+                TasksRepository.INSTANCE.open(mContext, item.id);
                 return;
             }
             long oldInstanceId = mWindowAdapter.getSelectedInstanceId();

@@ -17,6 +17,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.View
 import android.widget.Button
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -51,7 +52,7 @@ class OnboardingActivity : AppCompatActivity() {
         }
         findViewById<Button>(R.id.onboarding_davx5).setOnClickListener { openDavx5() }
         findViewById<Button>(R.id.onboarding_done).setOnClickListener { finishOnboarding() }
-        onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() = finishOnboarding()
         })
     }

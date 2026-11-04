@@ -42,7 +42,7 @@ import androidx.test.filters.SmallTest;
 @RunWith(RobolectricTestRunner.class)
 public class CompositeCursorAdapterTest extends TestCase {
 
-    private android.content.Context getContext() {
+    private Context getContext() {
         return RuntimeEnvironment.getApplication();
     }
 

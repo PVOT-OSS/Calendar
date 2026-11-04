@@ -16,6 +16,8 @@
 
 package org.prauga.calendar.event;
 
+import android.provider.CalendarContract;
+
  import android.content.AsyncQueryHandler;
  import android.content.ContentResolver;
  import android.content.ContentUris;
@@ -173,7 +175,7 @@ public class AttendeesView extends LinearLayout implements View.OnClickListener 
         final View view = item.mView;
         final TextView nameView = (TextView) view.findViewById(R.id.name);
         String shownName = TextUtils.isEmpty(attendee.mName) ? attendee.mEmail : attendee.mName;
-        if (attendee.mType == android.provider.CalendarContract.Attendees.TYPE_OPTIONAL) {
+        if (attendee.mType == CalendarContract.Attendees.TYPE_OPTIONAL) {
             shownName = mContext.getString(R.string.optional_guest_label, shownName);
         }
         nameView.setText(shownName);

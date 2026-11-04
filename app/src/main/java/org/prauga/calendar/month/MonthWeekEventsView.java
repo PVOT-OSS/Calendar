@@ -44,9 +44,13 @@ import android.view.MotionEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 
+import android.view.accessibility.AccessibilityNodeProvider;
 import androidx.core.content.ContextCompat;
 
+import androidx.core.view.ViewCompat;
+import androidx.core.view.accessibility.AccessibilityNodeProviderCompat;
 import org.prauga.calendar.Event;
+import org.prauga.calendar.EventTouchHelper;
 import org.prauga.calendar.LunarUtils;
 import org.prauga.calendar.Utils;
 import org.prauga.calendar.settings.ViewDetailsPreferences;
@@ -62,9 +66,10 @@ import java.util.ListIterator;
 import java.util.Locale;
 
 import org.prauga.calendar.R;
+import java.util.function.Consumer;
 
 public class MonthWeekEventsView extends SimpleWeekView
-        implements org.prauga.calendar.EventTouchHelper.Source {
+        implements EventTouchHelper.Source {
 
     public static final String VIEW_PARAMS_ORIENTATION = "orientation";
     public static final String VIEW_PARAMS_ANIMATE_TODAY = "animate_today";
@@ -170,14 +175,14 @@ public class MonthWeekEventsView extends SimpleWeekView
     public MonthWeekEventsView(Context context) {
         super(context);
         this.mContext = context;
-        mTouchHelper = new org.prauga.calendar.EventTouchHelper(this, this);
-        androidx.core.view.ViewCompat.setAccessibilityDelegate(this, mTouchHelper);
+        mTouchHelper = new EventTouchHelper(this, this);
+        ViewCompat.setAccessibilityDelegate(this, mTouchHelper);
     }
 
-    private final org.prauga.calendar.EventTouchHelper mTouchHelper;
-    private java.util.function.Consumer<Time> mOnDayClick;
+    private final EventTouchHelper mTouchHelper;
+    private Consumer<Time> mOnDayClick;
 
-    public void setOnDayClickListener(java.util.function.Consumer<Time> listener) {
+    public void setOnDayClickListener(Consumer<Time> listener) {
         mOnDayClick = listener;
     }
 
@@ -187,11 +192,11 @@ public class MonthWeekEventsView extends SimpleWeekView
     }
 
     @Override
-    public android.view.accessibility.AccessibilityNodeProvider getAccessibilityNodeProvider() {
-        androidx.core.view.accessibility.AccessibilityNodeProviderCompat provider =
+    public AccessibilityNodeProvider getAccessibilityNodeProvider() {
+        AccessibilityNodeProviderCompat provider =
                 mTouchHelper.getAccessibilityNodeProvider(this);
         return provider != null
-                ? (android.view.accessibility.AccessibilityNodeProvider) provider.getProvider()
+                ? (AccessibilityNodeProvider) provider.getProvider()
                 : super.getAccessibilityNodeProvider();
     }
 

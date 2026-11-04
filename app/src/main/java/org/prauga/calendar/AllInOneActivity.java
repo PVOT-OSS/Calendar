@@ -81,6 +81,8 @@ import org.prauga.calendar.CalendarController.EventType;
 import org.prauga.calendar.CalendarController.ViewType;
 import org.prauga.calendar.agenda.AgendaFragment;
 import org.prauga.calendar.alerts.AlertService;
+import org.prauga.calendar.birthdays.BirthdayWorker;
+import org.prauga.calendar.holidays.HolidaySync;
 import org.prauga.calendar.month.MonthByWeekFragment;
 import org.prauga.calendar.selectcalendars.SelectVisibleCalendarsFragment;
 import org.prauga.calendar.settings.GeneralPreferences;
@@ -298,9 +300,9 @@ public class AllInOneActivity extends AbstractCalendarActivity implements EventH
         // Create notification channels
         AlertService.createChannels(this);
         AppShortcuts.INSTANCE.publish(this);
-        org.prauga.calendar.birthdays.BirthdayWorker.Companion.schedule(this);
+        BirthdayWorker.Companion.schedule(this);
         final Context appContext = getApplicationContext();
-        new Thread(() -> org.prauga.calendar.holidays.HolidaySync.INSTANCE.refreshIfNeeded(appContext)).start();
+        new Thread(() -> HolidaySync.INSTANCE.refreshIfNeeded(appContext)).start();
 
         // Get time from intent or icicle
         long timeMillis = -1;
@@ -426,8 +428,8 @@ public class AllInOneActivity extends AbstractCalendarActivity implements EventH
 
                     // If the current view is the default one, quit app. If not, go back to default view.
                     if (mCurrentView == defaultStartView
-                            || defaultStartView == org.prauga.calendar.CalendarController.ViewType.AGENDA
-                            || defaultStartView == org.prauga.calendar.CalendarController.ViewType.DAY ) {
+                            || defaultStartView == CalendarController.ViewType.AGENDA
+                            || defaultStartView == CalendarController.ViewType.DAY ) {
                        finish();
                     } else {
                         mController.sendEvent(this, EventType.GO_TO, null, null, -1, defaultStartView);

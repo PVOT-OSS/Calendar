@@ -30,6 +30,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
@@ -54,6 +55,7 @@ import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.GestureDetector;
 import android.view.Gravity;
+import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -78,10 +80,17 @@ import android.widget.ViewSwitcher;
 
 import androidx.core.content.res.ResourcesCompat;
 
+import androidx.core.view.ViewCompat;
+import androidx.fragment.app.FragmentActivity;
 import org.prauga.calendar.CalendarController.EventType;
 import org.prauga.calendar.CalendarController.ViewType;
+import org.prauga.calendar.event.EventMoveUi;
+import org.prauga.calendar.event.EventMover;
+import org.prauga.calendar.event.QuickCreateSheet;
 import org.prauga.calendar.settings.GeneralPreferences;
 import org.prauga.calendar.calendarcommon2.Time;
+import org.prauga.calendar.settings.WorkingHours;
+import org.prauga.calendar.tasks.TasksRepository;
 import org.prauga.calendar.theme.DynamicThemeKt;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -92,6 +101,7 @@ import java.util.Comparator;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -844,7 +854,7 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
         setClickable(true);
         setOnCreateContextMenuListener(this);
         mTouchHelper = new EventTouchHelper(this, this);
-        androidx.core.view.ViewCompat.setAccessibilityDelegate(this, mTouchHelper);
+        ViewCompat.setAccessibilityDelegate(this, mTouchHelper);
 
         mFirstDayOfWeek = Utils.getFirstDayOfWeek(context);
 
@@ -1735,8 +1745,8 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
     @Override
     public void openAccessibleEvent(int index) {
         Event e = mAccessibleEvents.get(index).event;
-        if (org.prauga.calendar.tasks.TasksRepository.INSTANCE.isTask(e.id)) {
-            org.prauga.calendar.tasks.TasksRepository.INSTANCE.open(mContext, e.id);
+        if (TasksRepository.INSTANCE.isTask(e.id)) {
+            TasksRepository.INSTANCE.open(mContext, e.id);
             return;
         }
         mController.sendEventRelatedEvent(this, EventType.VIEW_EVENT, e.id, e.startMillis,
@@ -2588,8 +2598,8 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
     }
 
     private void drawNonWorkingHours(Canvas canvas, Paint p) {
-        org.prauga.calendar.settings.WorkingHours.Hours hours =
-                org.prauga.calendar.settings.WorkingHours.INSTANCE.get(mContext);
+        WorkingHours.Hours hours =
+                WorkingHours.INSTANCE.get(mContext);
         if (hours == null) {
             return;
         }
@@ -4135,9 +4145,9 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
                 extraLong = CalendarController.EXTRA_CREATE_ALL_DAY;
             }
             mSelectionMode = SELECTION_SELECTED;
-            if (mContext instanceof androidx.fragment.app.FragmentActivity) {
-                org.prauga.calendar.event.QuickCreateSheet.show(
-                        ((androidx.fragment.app.FragmentActivity) mContext).getSupportFragmentManager(),
+            if (mContext instanceof FragmentActivity) {
+                QuickCreateSheet.show(
+                        ((FragmentActivity) mContext).getSupportFragmentManager(),
                         mContext, getSelectedTimeInMillis(), mSelectionAllday);
             } else {
                 mController.sendEventRelatedEventWithExtra(this, EventType.CREATE_EVENT, -1,
@@ -4145,9 +4155,9 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
                         extraLong, -1);
             }
         } else if (mSelectedEvent != null
-                && org.prauga.calendar.tasks.TasksRepository.INSTANCE.isTask(mSelectedEvent.id)) {
+                && TasksRepository.INSTANCE.isTask(mSelectedEvent.id)) {
             mSelectionMode = SELECTION_HIDDEN;
-            org.prauga.calendar.tasks.TasksRepository.INSTANCE.open(mContext, mSelectedEvent.id);
+            TasksRepository.INSTANCE.open(mContext, mSelectedEvent.id);
         } else if (mSelectedEvent != null) {
             // If the tap is on an event, launch the "View event" view
             if (mIsAccessibilityEnabled) {
@@ -4211,18 +4221,18 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
         }
 
         if (mSelectedEvent != null
-                && org.prauga.calendar.tasks.TasksRepository.INSTANCE.isTask(mSelectedEvent.id)) {
+                && TasksRepository.INSTANCE.isTask(mSelectedEvent.id)) {
             final long taskEventId = mSelectedEvent.id;
             final Context appContext = mContext.getApplicationContext();
-            performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS);
+            performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
             new Thread(() -> {
-                if (org.prauga.calendar.tasks.TasksRepository.INSTANCE.toggleDone(appContext, taskEventId)) {
+                if (TasksRepository.INSTANCE.toggleDone(appContext, taskEventId)) {
                     post(() -> {
                         mLastReloadMillis = 0;
                         reloadEvents();
                     });
                 } else {
-                    post(() -> org.prauga.calendar.tasks.TasksRepository.INSTANCE.open(
+                    post(() -> TasksRepository.INSTANCE.open(
                             mContext, taskEventId));
                 }
             }).start();
@@ -4258,8 +4268,8 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
         if (event.drawAsAllday() || event.startDay != event.endDay || event.endTime <= event.startTime) {
             return false;
         }
-        org.prauga.calendar.event.EventMover.Info info =
-                new org.prauga.calendar.event.EventMover(mContext.getContentResolver()).info(event.id);
+        EventMover.Info info =
+                new EventMover(mContext.getContentResolver()).info(event.id);
         if (info == null || !info.getCanModify()) {
             return false;
         }
@@ -4271,7 +4281,7 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
         mDragDayIndex = event.startDay - mFirstJulianDay;
         mDragStartMinute = event.startTime;
         mDragEndMinute = event.endTime;
-        performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS);
+        performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
         if (getParent() != null) {
             getParent().requestDisallowInterceptTouchEvent(true);
         }
@@ -4286,18 +4296,18 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
 
     private boolean startAllDayDrag(Event event, int x) {
         if (!event.drawAsAllday()
-                || org.prauga.calendar.tasks.TasksRepository.INSTANCE.isTask(event.id)) {
+                || TasksRepository.INSTANCE.isTask(event.id)) {
             return false;
         }
-        org.prauga.calendar.event.EventMover.Info info =
-                new org.prauga.calendar.event.EventMover(mContext.getContentResolver()).info(event.id);
+        EventMover.Info info =
+                new EventMover(mContext.getContentResolver()).info(event.id);
         if (info == null || !info.getCanModify()) {
             return false;
         }
         mDragAllDayEvent = event;
         mDragAllDayGrab = dayIndexAt(x) - (event.startDay - mFirstJulianDay);
         mDragAllDayIndex = event.startDay - mFirstJulianDay;
-        performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS);
+        performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
         if (getParent() != null) {
             getParent().requestDisallowInterceptTouchEvent(true);
         }
@@ -4322,16 +4332,16 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
             newBegin = event.startMillis + days * DateUtils.DAY_IN_MILLIS;
             newEnd = event.endMillis + days * DateUtils.DAY_IN_MILLIS;
         } else {
-            java.util.Calendar c = java.util.Calendar.getInstance(
-                    java.util.TimeZone.getTimeZone(Utils.getTimeZone(mContext, mTZUpdater)));
+            Calendar c = Calendar.getInstance(
+                    TimeZone.getTimeZone(Utils.getTimeZone(mContext, mTZUpdater)));
             c.setTimeInMillis(event.startMillis);
-            c.add(java.util.Calendar.DAY_OF_MONTH, days);
+            c.add(Calendar.DAY_OF_MONTH, days);
             newBegin = c.getTimeInMillis();
             c.setTimeInMillis(event.endMillis);
-            c.add(java.util.Calendar.DAY_OF_MONTH, days);
+            c.add(Calendar.DAY_OF_MONTH, days);
             newEnd = c.getTimeInMillis();
         }
-        org.prauga.calendar.event.EventMoveUi.INSTANCE.move(this, event.id, event.startMillis,
+        EventMoveUi.INSTANCE.move(this, event.id, event.startMillis,
                 event.endMillis, newBegin, newEnd, event.isRepeating);
     }
 
@@ -4355,11 +4365,11 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
         canvas.drawRoundRect(left, top, right, bottom, radius, radius, p);
         p.setStyle(Style.STROKE);
         p.setStrokeWidth(2 * mScale);
-        p.setColor(Utils.getAdaptiveTextColor(mContext, android.graphics.Color.WHITE, event.color));
+        p.setColor(Utils.getAdaptiveTextColor(mContext, Color.WHITE, event.color));
         canvas.drawRoundRect(left, top, right, bottom, radius, radius, p);
         Paint text = mEventTextPaint;
         int textColor = text.getColor();
-        text.setColor(Utils.getAdaptiveTextColor(mContext, android.graphics.Color.WHITE, event.color));
+        text.setColor(Utils.getAdaptiveTextColor(mContext, Color.WHITE, event.color));
         canvas.save();
         canvas.clipRect(left, top, right, bottom);
         canvas.drawText(event.title == null ? "" : event.title.toString(), left + 4 * mScale,
@@ -4413,7 +4423,7 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
         if (newBegin == event.startMillis && newEnd == event.endMillis) {
             return;
         }
-        org.prauga.calendar.event.EventMoveUi.INSTANCE.move(this, event.id, event.startMillis,
+        EventMoveUi.INSTANCE.move(this, event.id, event.startMillis,
                 event.endMillis, newBegin, newEnd, event.isRepeating);
     }
 
@@ -4435,7 +4445,7 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
         canvas.drawRoundRect(left, top, right, bottom, radius, radius, p);
         p.setStyle(Style.STROKE);
         p.setStrokeWidth(2 * mScale);
-        p.setColor(Utils.getAdaptiveTextColor(mContext, android.graphics.Color.WHITE, mDragEvent.color));
+        p.setColor(Utils.getAdaptiveTextColor(mContext, Color.WHITE, mDragEvent.color));
         canvas.drawRoundRect(left, top, right, bottom, radius, radius, p);
         int flags = DateUtils.FORMAT_SHOW_TIME;
         if (DateFormat.is24HourFormat(mContext)) {
@@ -4445,7 +4455,7 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
                 dragMillis(mDragEndMinute), flags);
         Paint text = mEventTextPaint;
         int textColor = text.getColor();
-        text.setColor(Utils.getAdaptiveTextColor(mContext, android.graphics.Color.WHITE, mDragEvent.color));
+        text.setColor(Utils.getAdaptiveTextColor(mContext, Color.WHITE, mDragEvent.color));
         canvas.drawText(label, left + 4 * mScale, top + text.getTextSize() + 2 * mScale, text);
         text.setColor(textColor);
         p.setStyle(style);

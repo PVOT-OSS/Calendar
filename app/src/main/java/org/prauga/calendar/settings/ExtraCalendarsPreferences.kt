@@ -6,10 +6,13 @@
 package org.prauga.calendar.settings
 
 import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.preference.ListPreference
 import androidx.preference.MultiSelectListPreference
+import androidx.preference.Preference
 import org.prauga.calendar.AlternateCalendar
 import androidx.preference.PreferenceFragmentCompat
 import org.prauga.calendar.holidays.HolidaySync
@@ -74,7 +77,7 @@ class ExtraCalendarsPreferences : PreferenceFragmentCompat() {
             entryValues = codes.toTypedArray()
             setDefaultValue(emptySet<String>())
         }
-        holidays.summaryProvider = androidx.preference.Preference.SummaryProvider<MultiSelectListPreference> { pref ->
+        holidays.summaryProvider = Preference.SummaryProvider<MultiSelectListPreference> { pref ->
             pref.values.map { HolidaySync.countryName(it) }.sorted().joinToString(", ")
                 .ifEmpty { getString(R.string.holidays_pref_summary) }
         }
@@ -115,8 +118,8 @@ class ExtraCalendarsPreferences : PreferenceFragmentCompat() {
         tasks.setOnPreferenceChangeListener { _, value ->
             if (value == true) {
                 val missing = installed.flatMap { listOf(it.readPermission, it.writePermission) }.filter {
-                    androidx.core.content.ContextCompat.checkSelfPermission(requireContext(), it) !=
-                        android.content.pm.PackageManager.PERMISSION_GRANTED
+                    ContextCompat.checkSelfPermission(requireContext(), it) !=
+                        PackageManager.PERMISSION_GRANTED
                 }
                 if (missing.isNotEmpty()) {
                     tasksPermission.launch(missing.toTypedArray())
