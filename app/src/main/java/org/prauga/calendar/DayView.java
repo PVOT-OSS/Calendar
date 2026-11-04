@@ -2570,7 +2570,7 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
         if (mNumDays > 1) {
             float y = -1;
             if (LunarUtils.showLunar(mContext)) {
-                y = DAY_HEADER_HEIGHT - DAY_HEADER_BOTTOM_MARGIN - DATE_HEADER_FONT_SIZE - 2;
+                y = DAY_HEADER_HEIGHT - DAY_HEADER_BOTTOM_MARGIN - DAY_HEADER_FONT_SIZE - 2;
             } else {
                 y = DAY_HEADER_HEIGHT - DAY_HEADER_BOTTOM_MARGIN;
             }
@@ -2606,7 +2606,7 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
                         LunarUtils.FORMAT_LUNAR_SHORT | LunarUtils.FORMAT_ONE_FESTIVAL,
                         false, null);
                 if (!TextUtils.isEmpty(lunarInfo)) {
-                    canvas.drawText(lunarInfo, x, y + DAY_HEADER_FONT_SIZE + 2, p);
+                    canvas.drawText(lunarInfo, x, DAY_HEADER_HEIGHT - DAY_HEADER_BOTTOM_MARGIN, p);
                 }
             }
         } else {
