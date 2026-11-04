@@ -22,12 +22,17 @@ class EditorActivity : PvotBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.start(
-            beginMillis = intent.getLongExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, 0L),
-            endMillis = intent.getLongExtra(CalendarContract.EXTRA_EVENT_END_TIME, 0L),
-            allDay = intent.getBooleanExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, false),
-            title = intent.getStringExtra(Events.TITLE),
-        )
+        val eventId = intent.getLongExtra(EXTRA_EVENT_ID, -1L)
+        if (eventId >= 0) {
+            viewModel.startEdit(eventId)
+        } else {
+            viewModel.start(
+                beginMillis = intent.getLongExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, 0L),
+                endMillis = intent.getLongExtra(CalendarContract.EXTRA_EVENT_END_TIME, 0L),
+                allDay = intent.getBooleanExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, false),
+                title = intent.getStringExtra(Events.TITLE),
+            )
+        }
         setPvotContent {
             PvotAppTheme {
                 val state by viewModel.state.collectAsStateWithLifecycle()
@@ -44,5 +49,9 @@ class EditorActivity : PvotBaseActivity() {
                 )
             }
         }
+    }
+
+    companion object {
+        const val EXTRA_EVENT_ID = "event_id"
     }
 }

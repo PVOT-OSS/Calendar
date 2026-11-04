@@ -120,7 +120,7 @@ fun EditorScreen(state: EditorState, viewModel: EditorViewModel, onBack: () -> U
                 onClick = onBack,
             )
             Text(
-                text = stringResource(R.string.ui_new_event),
+                text = stringResource(if (state.editing) R.string.ui_edit_event else R.string.ui_new_event),
                 modifier = Modifier.padding(start = 8.dp),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold,
@@ -218,6 +218,7 @@ fun EditorScreen(state: EditorState, viewModel: EditorViewModel, onBack: () -> U
                         title = stringResource(R.string.ui_calendar),
                         value = state.calendar?.label ?: stringResource(R.string.ui_no_calendar),
                         onClick = { sheet = Sheet.Calendar },
+                        enabled = !state.editing,
                         icon = { Icon(painterResource(R.drawable.ic_ui_calendar), null) },
                         iconStyle = PvotRowIconStyle.Plain,
                     )
@@ -248,7 +249,7 @@ fun EditorScreen(state: EditorState, viewModel: EditorViewModel, onBack: () -> U
             Spacer(Modifier.height(8.dp))
         }
         PvotButton(
-            text = stringResource(R.string.ui_create_event),
+            text = stringResource(if (state.editing) R.string.ui_save else R.string.ui_create_event),
             onClick = onSave,
             enabled = draft.valid && !state.saving,
             modifier = Modifier

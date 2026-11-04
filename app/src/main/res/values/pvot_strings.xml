@@ -175,6 +175,8 @@
     <string name="ui_permission_allow">Allow access</string>
     <string name="ui_new_event">New event</string>
     <string name="ui_create_event">Create event</string>
+    <string name="ui_edit_event">Edit event</string>
+    <string name="ui_save">Save</string>
     <string name="ui_title_hint">Title</string>
     <string name="ui_starts">Starts</string>
     <string name="ui_ends">Ends</string>

@@ -23,6 +23,7 @@ import org.prauga.calendar.DeleteEventHelper
 import org.prauga.calendar.R
 import org.prauga.calendar.event.EditEventActivity
 import org.prauga.calendar.ui.Actions
+import org.prauga.calendar.ui.edit.EditorActivity
 
 class DetailsActivity : PvotBaseActivity() {
 
@@ -77,6 +78,10 @@ class DetailsActivity : PvotBaseActivity() {
     }
 
     private fun edit() {
+        if (viewModel.state.value.details?.rrule == null) {
+            startActivity(Intent(this, EditorActivity::class.java).putExtra(EditorActivity.EXTRA_EVENT_ID, eventId))
+            return
+        }
         startActivity(
             Intent(Intent.ACTION_EDIT, ContentUris.withAppendedId(Events.CONTENT_URI, eventId))
                 .setClass(this, EditEventActivity::class.java)

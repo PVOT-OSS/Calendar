@@ -31,6 +31,7 @@ data class EditorState(
     val repeats: List<RepeatPresets.Preset> = emptyList(),
     val saving: Boolean = false,
     val reminderTouched: Boolean = false,
+    val editing: Boolean = false,
 ) {
     val calendar: CalendarTarget? get() = calendars.firstOrNull { it.id == draft.calendarId }
 }
@@ -46,6 +47,24 @@ class EditorViewModel(application: Application) : AndroidViewModel(application) 
     val state: StateFlow<EditorState> = _state.asStateFlow()
 
     private var initialized = false
+    private var editingId = -1L
+    private var original: EventDraft? = null
+
+    fun startEdit(eventId: Long) {
+        if (initialized) return
+        initialized = true
+        editingId = eventId
+        viewModelScope.launch {
+            val context = getApplication<Application>()
+            val (draft, calendars) = withContext(Dispatchers.IO) {
+                EventWriter.load(context.contentResolver, eventId, zone) to WritableCalendars.list(context.contentResolver)
+            }
+            if (draft == null) return@launch
+            original = draft
+            _state.update { it.copy(draft = draft, calendars = calendars, editing = true, reminderTouched = true) }
+            refreshRepeats()
+        }
+    }
 
     fun start(beginMillis: Long, endMillis: Long, allDay: Boolean, title: String?) {
         if (initialized) return
@@ -107,12 +126,18 @@ class EditorViewModel(application: Application) : AndroidViewModel(application) 
             val context = getApplication<Application>()
             GeneralPreferences.getSharedPreferences(context).edit()
                 .putLong(QuickCreateSheet.PREF_LAST_CALENDAR, s.draft.calendarId).apply()
-            val id = withContext(Dispatchers.IO) {
-                runCatching { EventWriter.insert(context.contentResolver, s.draft, zone, s.calendar?.accountName) }
-                    .getOrNull()
+            val ok = withContext(Dispatchers.IO) {
+                runCatching {
+                    val before = original
+                    if (editingId >= 0 && before != null) {
+                        EventWriter.update(context.contentResolver, editingId, s.draft, before, zone)
+                    } else {
+                        EventWriter.insert(context.contentResolver, s.draft, zone, s.calendar?.accountName) != null
+                    }
+                }.getOrDefault(false)
             }
             _state.update { it.copy(saving = false) }
-            onDone(id != null)
+            onDone(ok)
         }
     }
 }
