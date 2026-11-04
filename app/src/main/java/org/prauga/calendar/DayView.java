@@ -583,6 +583,10 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
     private int mDragDayIndex;
     private int mDragStartMinute;
     private int mDragEndMinute;
+
+    private Event mDragAllDayEvent;
+    private int mDragAllDayGrab;
+    private int mDragAllDayIndex;
     private Event mPrevSelectedEvent;
     private final Rect mPrevBox = new Rect();
     protected final Resources mResources;
@@ -2285,6 +2289,7 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
 
         drawScrollLine(r, canvas, p);
         drawDayHeaderLoop(r, canvas, p);
+        drawAllDayDrag(canvas, p);
 
     }
 
@@ -4116,6 +4121,10 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
         if (!mSelectionAllday && mSelectedEvent != null && startDrag(mSelectedEvent, y)) {
             return;
         }
+        if (mSelectionAllday && mSelectedEvent != null && mNumDays > 1
+                && startAllDayDrag(mSelectedEvent, x)) {
+            return;
+        }
 
         mSelectionMode = SELECTION_LONGPRESS;
         invalidate();
@@ -4158,6 +4167,97 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
         }
         invalidate();
         return true;
+    }
+
+    private int dayIndexAt(float x) {
+        int px = Math.max(mHoursWidth, (int) x);
+        return Math.max(0, Math.min(mNumDays - 1, (px - mHoursWidth) / (mCellWidth + DAY_GAP)));
+    }
+
+    private boolean startAllDayDrag(Event event, int x) {
+        if (!event.drawAsAllday()
+                || org.prauga.calendar.tasks.TasksRepository.INSTANCE.isTask(event.id)) {
+            return false;
+        }
+        org.prauga.calendar.event.EventMover.Info info =
+                new org.prauga.calendar.event.EventMover(mContext.getContentResolver()).info(event.id);
+        if (info == null || !info.getCanModify()) {
+            return false;
+        }
+        mDragAllDayEvent = event;
+        mDragAllDayGrab = dayIndexAt(x) - (event.startDay - mFirstJulianDay);
+        mDragAllDayIndex = event.startDay - mFirstJulianDay;
+        performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS);
+        if (getParent() != null) {
+            getParent().requestDisallowInterceptTouchEvent(true);
+        }
+        invalidate();
+        return true;
+    }
+
+    private void finishAllDayDrag(boolean commit) {
+        Event event = mDragAllDayEvent;
+        mDragAllDayEvent = null;
+        invalidate();
+        if (!commit || event == null) {
+            return;
+        }
+        int days = mDragAllDayIndex - (event.startDay - mFirstJulianDay);
+        if (days == 0) {
+            return;
+        }
+        long newBegin;
+        long newEnd;
+        if (event.allDay) {
+            newBegin = event.startMillis + days * DateUtils.DAY_IN_MILLIS;
+            newEnd = event.endMillis + days * DateUtils.DAY_IN_MILLIS;
+        } else {
+            java.util.Calendar c = java.util.Calendar.getInstance(
+                    java.util.TimeZone.getTimeZone(Utils.getTimeZone(mContext, mTZUpdater)));
+            c.setTimeInMillis(event.startMillis);
+            c.add(java.util.Calendar.DAY_OF_MONTH, days);
+            newBegin = c.getTimeInMillis();
+            c.setTimeInMillis(event.endMillis);
+            c.add(java.util.Calendar.DAY_OF_MONTH, days);
+            newEnd = c.getTimeInMillis();
+        }
+        org.prauga.calendar.event.EventMoveUi.INSTANCE.move(this, event.id, event.startMillis,
+                event.endMillis, newBegin, newEnd, event.isRepeating);
+    }
+
+    private void drawAllDayDrag(Canvas canvas, Paint p) {
+        Event event = mDragAllDayEvent;
+        if (event == null) {
+            return;
+        }
+        int span = Math.max(1, event.endDay - event.startDay + 1);
+        float left = computeDayLeftPosition(Math.max(0, mDragAllDayIndex)) + 1;
+        float right = computeDayLeftPosition(Math.min(mNumDays, mDragAllDayIndex + span)) - 1;
+        float top = DAY_HEADER_HEIGHT + ALLDAY_TOP_MARGIN;
+        float bottom = top + Math.max(MIN_UNEXPANDED_ALLDAY_EVENT_HEIGHT, 24 * mScale);
+        float radius = 6 * mScale;
+        Style style = p.getStyle();
+        int color = p.getColor();
+        p.setAntiAlias(true);
+        p.setStyle(Style.FILL);
+        p.setColor(event.color);
+        p.setAlpha(220);
+        canvas.drawRoundRect(left, top, right, bottom, radius, radius, p);
+        p.setStyle(Style.STROKE);
+        p.setStrokeWidth(2 * mScale);
+        p.setColor(Utils.getAdaptiveTextColor(mContext, android.graphics.Color.WHITE, event.color));
+        canvas.drawRoundRect(left, top, right, bottom, radius, radius, p);
+        Paint text = mEventTextPaint;
+        int textColor = text.getColor();
+        text.setColor(Utils.getAdaptiveTextColor(mContext, android.graphics.Color.WHITE, event.color));
+        canvas.save();
+        canvas.clipRect(left, top, right, bottom);
+        canvas.drawText(event.title == null ? "" : event.title.toString(), left + 4 * mScale,
+                top + text.getTextSize() + 2 * mScale, text);
+        canvas.restore();
+        text.setColor(textColor);
+        p.setStyle(style);
+        p.setColor(color);
     }
 
     private void updateDrag(MotionEvent ev) {
@@ -4529,6 +4629,24 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
             mRecalCenterHour = true;
         }
 
+        if (mDragAllDayEvent != null) {
+            switch (ev.getActionMasked()) {
+                case MotionEvent.ACTION_MOVE:
+                    int span = Math.max(1, mDragAllDayEvent.endDay - mDragAllDayEvent.startDay + 1);
+                    mDragAllDayIndex = Math.max(1 - span,
+                            Math.min(mNumDays - 1, dayIndexAt(ev.getX()) - mDragAllDayGrab));
+                    invalidate();
+                    break;
+                case MotionEvent.ACTION_UP:
+                    mHandleActionUp = false;
+                    finishAllDayDrag(true);
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    finishAllDayDrag(false);
+                    break;
+            }
+            return true;
+        }
         if (mDragEvent != null) {
             switch (ev.getActionMasked()) {
                 case MotionEvent.ACTION_MOVE:
