@@ -1,2 +1,0 @@
-- Add missing permission
-- Fix build failure

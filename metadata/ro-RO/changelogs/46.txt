@@ -1,3 +1,0 @@
-- Permiteți editarea calendarului evenimentelor existente
-- Corectarea funcției go-to date
-- Mici corecturi de erori

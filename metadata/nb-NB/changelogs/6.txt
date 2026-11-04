@@ -1,3 +1,0 @@
-- Fjerning av Internett-tillatelse mens du beholder samme funksjonalitet.
-- Legg til 'Gå til...'.
-- Fix: Agenda-sidebar oppdateres ikke daglig.

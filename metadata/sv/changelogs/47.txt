@@ -1,2 +1,0 @@
-- Tryck på aktuell månad för att öppna gå till datum
-- Små buggfixar

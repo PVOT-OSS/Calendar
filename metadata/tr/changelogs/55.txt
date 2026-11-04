@@ -1,3 +1,0 @@
-- Geri al: Ay görünümünde kaydırma yapıldığında etkinlikler yüklenir
-- Geri al: Üst üste binen etkinlikler eklendi
-- Hata düzeltmeleri

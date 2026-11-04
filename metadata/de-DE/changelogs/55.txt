@@ -1,3 +1,0 @@
-- Laden von Ereignissen beim Scrollen in der Monatsansicht rückgängig gemacht
-- Gestapelte Ereignissen rückgängig gemacht
-- Fehlerbehebungen

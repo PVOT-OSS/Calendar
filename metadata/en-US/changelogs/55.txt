@@ -1,3 +1,0 @@
-- Revert Load events when scrolling in month view
-- Revert Add stacked events
-- Bugfixes

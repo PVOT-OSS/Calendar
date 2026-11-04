@@ -1,3 +1,0 @@
-– Corrections de bogues dans l’affichage du mois.
-– Correction de thème sombre sur les tablettes.
-– Nouvelles traductions.

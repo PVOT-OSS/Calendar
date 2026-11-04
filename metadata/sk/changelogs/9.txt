@@ -1,3 +1,0 @@
-- Niektoré lepšie zmeny UI.
-- Aktualizácia švédskeho prekladu.
-- Opravy chýb.

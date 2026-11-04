@@ -1,2 +1,0 @@
-- Eksik izin eklendi
-- Derleme hatası düzeltildi

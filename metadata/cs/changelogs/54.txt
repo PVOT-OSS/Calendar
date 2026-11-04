@@ -1,5 +1,0 @@
-- Opravena UTC chyba v goto
-- Načtení událostí při posouvání v režimu měsíce
-- Přidány hromadné události
-- Přidáno oprávnění WRITE_SYNC_SETTINGS pro zabránění duplikaci kalendáře při přepnutí synchronizace
-- Opravy chyb

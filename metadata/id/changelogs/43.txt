@@ -1,4 +1,0 @@
-- Menambahkan dialog konfirmasi saat membatalkan acara.
-- Menambahkan opsi tanpa tunda (no snooze).
-- Meningkatkan geseran kiri/kanan dan atas/bawah di tampilan bulan.
-- Perbaikan bug kecil.

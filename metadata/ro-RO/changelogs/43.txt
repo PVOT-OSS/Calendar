@@ -1,4 +1,0 @@
-- Adăugați un dialog de confirmare a eliminării evenimentului
-- Adăugarea opțiunii fără snooze
-- Îmbunătățirea glisării stânga/dreapta și sus/jos în vizualizarea lunii
-- Corecții erori

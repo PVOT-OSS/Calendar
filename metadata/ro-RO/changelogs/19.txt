@@ -1,2 +1,0 @@
-- Corectarea erorilor de notificare.
-- Traduceri noi.

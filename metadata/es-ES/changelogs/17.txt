@@ -1,4 +1,0 @@
-- Vista mensual mejorada.
-- El permiso para leer contactos es opcional nuevamente.
-- Cuadros de texto más elegantes durante la creación de eventos.
-- Correcciones de errores menores.

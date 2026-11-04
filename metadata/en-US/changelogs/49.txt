@@ -1,5 +1,0 @@
-- Switch to Material3
-- Fix attendees without e-mail not being displayed
-- Fix parsing of iCalendar attendees
-- Fix event creation from Month view sometimes default to the wrong day
-- Further small bug fixes

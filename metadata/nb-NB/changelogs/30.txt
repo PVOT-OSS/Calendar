@@ -1,2 +1,0 @@
-- Fiks varsler på Android 12
-- Legg DecSync og bursdag adapter til "kjent" program og ikke krasj

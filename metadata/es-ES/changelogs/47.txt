@@ -1,2 +1,0 @@
-- Tocar el mes actual para abrir la fecha
-- Pequeñas correcciones de errores

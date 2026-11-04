@@ -1,1 +1,0 @@
-- Fix havária na opakovaných udalostiach

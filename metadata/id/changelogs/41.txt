@@ -1,1 +1,0 @@
-- Memperbaiki kesalahan kompilasi F-Droid.

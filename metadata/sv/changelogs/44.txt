@@ -1,2 +1,0 @@
-- Lägg till behörighet som saknas
-- Åtgärdade byggfel

@@ -1,4 +1,0 @@
-- Bevestigingsdialoog toegevoegd bij het weggooien van gebeurtenissen
-- Voeg geen snooze-optie toe
-- Verbeter links / rechts vegen en omhoog / omlaag vegen in maandweergave
-- Kleine bugfixes

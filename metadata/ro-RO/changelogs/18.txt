@@ -1,3 +1,0 @@
-- Bug-uri în vizualizarea lunară corectate.
-- Fixată tema întunecată pe tablete.
-- Traduceri noi.

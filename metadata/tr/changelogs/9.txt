@@ -1,3 +1,0 @@
-- Bazı daha iyi kullanıcı arayüzü değişiklikleri.
-- İsveççe çeviri güncellendi.
-- Hata düzeltmeleri.

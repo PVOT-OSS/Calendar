@@ -1,3 +1,0 @@
-- Pridajte možnosť vybrať si dni za týždeň.
-- Pridajte možnosť pre predvolený pohľad ukázať na začiatku.
-- Opravy chýb.

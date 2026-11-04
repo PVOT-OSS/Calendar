@@ -1,3 +1,0 @@
-- Permitir editar el calendario en eventos existentes
-- Arreglar la función de ir a la fecha
-- Pequeñas correcciones de errores

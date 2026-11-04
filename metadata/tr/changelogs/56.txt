@@ -1,4 +1,0 @@
-- Harici depolama izinlerinden kaçınmak için SAF kullanıldı
-- Etar'ın harici takvim eşzamanlama ayarlarını geçersiz kılması önlendi
-- Eksik olan channel_ID eklendi
-- Hata düzeltmeleri

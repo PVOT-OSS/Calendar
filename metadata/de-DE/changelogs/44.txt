@@ -1,2 +1,0 @@
-- Fehlende Berechtigung hinzugefügt
-- Fehler beim Bauen behoben

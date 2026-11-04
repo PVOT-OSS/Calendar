@@ -1,3 +1,0 @@
-- Noņemta atļauja piekļūt internetam, paturot to pašu iespēju klāštu.
-- Pievienots "Doties uz...".
-- Labojums: dienaskārtības logrīks neatjauninās ik dienu.

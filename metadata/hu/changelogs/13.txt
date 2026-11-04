@@ -1,4 +1,0 @@
-- Naptárbejegyzések megosztása ICS-sel, és importálás/exportálás sd kártyáról.
-- Nem használt engedélyek eltávolítása.
-- Hang beállítások javítása Android 6-on.
-- Több Hibajavítás.

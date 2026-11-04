@@ -1,3 +1,0 @@
-- Tidak menutup halaman edit acara ketika ponsel diputar.
-- Notifikasi kalender per kalender.
-- Menambahkan preferensi: Jangan periksa optimasi baterai.

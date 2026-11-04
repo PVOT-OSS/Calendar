@@ -1,2 +1,0 @@
-- Corectarea blocării și a notificărilor pe Android 12
-- Corectarea tipului MIME al evenimentului partajat

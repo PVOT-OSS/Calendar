@@ -1,4 +1,0 @@
-- Uzlabotu viesu atlasīšanas noformējums un lasāmība
-- Salabota sākuma datuma priekšatlasīšana kā beigu datums notikumu datuma atlasītājā
-- Noņemts iestatījums PrimaryColor
-- Kļūdu labojumi

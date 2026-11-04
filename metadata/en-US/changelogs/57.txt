@@ -1,3 +1,0 @@
-- Add option for staggered display of overlapping events
-- Allow any day of the week as the week start day
-- Bugfixes

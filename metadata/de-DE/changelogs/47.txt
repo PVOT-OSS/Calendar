@@ -1,2 +1,0 @@
-- Tippe auf aktuellen Monat, um "Gehe zu..." aufzurufen
-- Fehlerbehebungen

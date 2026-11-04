@@ -1,5 +1,0 @@
-- Extra oznámenia potrebné pre synchronizáciu vnútorného upozornenia. Prosím, bate.
-- Už žiadne požadované povolenia odstránené.
-- Farebná notifikácia ikona.
-- Bugfixy.
-- Nové preklady.

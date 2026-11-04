@@ -1,4 +1,0 @@
-- Zlepšený mesačný pohľad.
-- Povolenie čítať kontakty je opäť voliteľný.
-- Fancier textové boxy počas akcie.
-- Malé opravy chýb.

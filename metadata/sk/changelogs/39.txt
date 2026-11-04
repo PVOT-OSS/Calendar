@@ -1,2 +1,0 @@
-- Fix haváriu na mesiac a týždenný pohľad kvôli neplatným rrule
-- Bugfixes

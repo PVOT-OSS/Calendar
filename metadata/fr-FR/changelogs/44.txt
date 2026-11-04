@@ -1,2 +1,0 @@
-- Ajout d'autorisation manquante
-- Correction de l'échec de compilation

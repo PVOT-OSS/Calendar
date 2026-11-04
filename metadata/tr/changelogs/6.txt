@@ -1,3 +1,0 @@
-- Aynı işlevsellik korunurken İnternet izni kaldırıldı.
-- 'Git...' eklendi.
-- Düzeltme: Ajanda widget'ının günlük olarak güncellenmemesi.

@@ -1,3 +1,0 @@
-- Ay görünümündeki hatalar düzeltildi.
-- Tabletlerdeki koyu tema düzeltildi.
-- Yeni çeviriler.

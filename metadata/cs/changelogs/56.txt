@@ -1,4 +1,0 @@
-- Použití SAF pro vyhnutí se oprávnění k přístupu k externímu úložišti
-- Zabránění Etaru v přepsání nastavení synchronizace externích kalendářů
-- Přidáno chybějící channel_ID
-- Opravy chyb

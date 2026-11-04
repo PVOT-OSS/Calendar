@@ -1,2 +1,0 @@
-- Dúfajme, konečne, opravený pád na mesiac a týždenný pohľad kvôli neplatnej rrule
-- Bugfixes

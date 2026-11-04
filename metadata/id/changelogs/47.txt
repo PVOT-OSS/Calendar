@@ -1,2 +1,0 @@
-- Ketuk pada bulan saat ini untuk membuka fitur "pergi ke tanggal".
-- Perbaikan bug kecil.

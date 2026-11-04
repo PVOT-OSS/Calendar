@@ -1,3 +1,0 @@
-- Legg til et valg for å velge dag per uke.
-- Legg til et valg for standard visning  ved oppstart.
--Feilrettinger.

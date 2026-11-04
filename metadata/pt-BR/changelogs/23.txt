@@ -1,2 +1,0 @@
-- Correção de bug na exibição das opções.
-- Novas traduções.

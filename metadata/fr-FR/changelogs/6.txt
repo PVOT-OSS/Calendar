@@ -1,3 +1,0 @@
-– Suppression de la permission Internet en gardant la même fonctionnalité.
-– Ajout de « Aller à… ».
-– Correction : le widget d’Agenda ne se met pas à jour quotidiennement.

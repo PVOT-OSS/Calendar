@@ -1,3 +1,0 @@
-- Añadida una opción para elegir los días por semana.
-- Añadida una opción para la vista por defecto a mostrar en el arranque.
-- Arreglo de errores.

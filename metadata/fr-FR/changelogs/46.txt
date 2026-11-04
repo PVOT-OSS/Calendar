@@ -1,3 +1,0 @@
-- Autorisation de modifier le calendrier pour des évènements existants
-- Correction de la fonctionnalité Aller à
-- Corrections de bogues mineurs

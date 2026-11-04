@@ -1,3 +1,0 @@
-- Hafta başına gün seçmek için bir seçenek eklendi.
-- Başlangıçta gösterilecek öntanımlı görünüm için bir seçenek eklendi.
-- Hata düzeltmeleri.

@@ -1,4 +1,0 @@
-- Rework editácia udalostí
-- Podpora Drop pre Android 4.4
-- Všeobecné opravy chýb
-- Nové preklady

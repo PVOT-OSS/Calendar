@@ -1,3 +1,0 @@
-- Algunos mejores cambios en la interfaz de usuario.
-- Actualización de la traducción al sueco.
-- Corrección de errores.

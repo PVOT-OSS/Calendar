@@ -1,2 +1,0 @@
-- Bugfix pre zobrazenie možností.
-- Nové preklady.

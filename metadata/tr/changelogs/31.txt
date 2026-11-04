@@ -1,2 +1,0 @@
-- Android 12'de çökme ve bildirimler düzeltildi
-- Paylaşılan etkinliğin MIME türü düzeltildi

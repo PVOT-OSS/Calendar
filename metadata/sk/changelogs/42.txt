@@ -1,3 +1,0 @@
-- Nezatvárajte stránku editácie, keď je telefón otáčaný
-- Kalendár notifikácie v kalendári
-- Pridať prednosť: Nekontrolujte optimalizáciu batérie

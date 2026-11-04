@@ -1,4 +1,0 @@
-- Gjenarbeide redigering av handling grafisk design
-- Dropp støtte for Android 4.4
-- Generelle feilrettinger
-- Nye oversettelser

@@ -1,3 +1,0 @@
-- Reverter os eventos de carregamento ao rolar na visualização mensal
-- Reverter a adição de eventos sobrepostos
-- Correções de bugs

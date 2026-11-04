@@ -1,3 +1,0 @@
-- Eliminación del permiso de Internet manteniendo la misma funcionalidad.
-- Añadir 'Ir a...'.
-- Corrección: el widget de agenda no se actualiza a diario.

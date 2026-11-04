@@ -1,5 +1,0 @@
-- Notifikasi tambahan diperlukan untuk sinkronisasi peringatan internal. Harap nonaktifkan suara.
-- Menghapus izin yang tidak lagi diperlukan.
-- Ikon notifikasi berwarna.
-- Perbaikan bug.
-- Terjemahan baru.

@@ -1,2 +1,0 @@
-- Fixa aviseringar i Android 12
-- Lägg till DeSync och Birthday Adapter till "kända" appar och krascha inte

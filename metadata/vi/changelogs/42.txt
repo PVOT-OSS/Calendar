@@ -1,3 +1,0 @@
-- Không đóng trang chỉnh sửa khi xoay chiều điện thoại
-- Thông báo cho từng bộ lịch
-- Thêm tùy chọn: Không kiểm tra tối ưu pin

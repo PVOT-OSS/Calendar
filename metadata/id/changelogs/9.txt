@@ -1,3 +1,0 @@
-- Beberapa perubahan antarmuka yang lebih baik.
-- Memperbarui terjemahan bahasa Swedia.
-- Perbaikan bug.

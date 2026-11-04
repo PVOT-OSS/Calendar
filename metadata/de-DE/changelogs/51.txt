@@ -1,4 +1,0 @@
-- Lesbarkeit der Gästeauswahl verbessert
-- Vorauswähltes Enddatum bleibt erhalten
-- Option für Primärfarbe entfernt
-- Weitere kleine Fehlerbehebungen

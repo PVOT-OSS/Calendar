@@ -1,2 +1,0 @@
-- Toque no mês atual para abrir "ir para a data"
-- Pequenas correções de bugs

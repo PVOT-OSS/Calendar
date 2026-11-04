@@ -1,3 +1,0 @@
-- Var olan etkinliklerde takvimi düzenlemeye izin verildi
-- Tarihe git işlevi düzeltildi
-- Küçük hata düzeltmeleri

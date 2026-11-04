@@ -1,4 +1,0 @@
-- Zlepšen styl a čitelnost výběru hosta
-- Opraven vždy předem vybraný začátek u výběru data konce
-- Odstraněna preference PrimaryColor
-- Opravy chyb

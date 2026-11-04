@@ -1,2 +1,0 @@
-- Bugfix voor crashes en meldingen op Android 12
-- Bugfix voor MIME-type bij het delen van agenda-gebeurtenis

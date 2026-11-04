@@ -1,2 +1,0 @@
-- Oprava havárie a oznamování na Android 12
-- Oprava MIME typu sdílené události

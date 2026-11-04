@@ -1,3 +1,0 @@
-- Lägg till ett alternativ att välja dagar per vecka.
-- Lägg till ett alternativ för standardvyn att visa vid uppstart.
-- Buggfixar.

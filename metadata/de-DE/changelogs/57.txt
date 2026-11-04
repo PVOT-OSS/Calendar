@@ -1,3 +1,0 @@
-- Option für die gestaffelte Anzeige überlappender Termine hinzugefügt
-- Beliebigen Wochentag als Start der Woche auswählbar
-- Fehlerbehebungen

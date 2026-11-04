@@ -1,3 +1,0 @@
-- Dodanie opcji do wyboru dni na Tydzień.
-- Dodanie opcji wyświetlania domyślnego widoku na starcie.
-- Poprawki błędów.

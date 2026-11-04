@@ -1,4 +1,0 @@
-- Per-app taalondersteuning toegevoegd (android 13 +)
-- Links / rechts vegen toegevoegd aan het maandoverzicht
-- Bugfixes
-- Nieuwe vertalingen

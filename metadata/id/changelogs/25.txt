@@ -1,4 +1,0 @@
-- Memulihkan basis data zona waktu.
-- Ikon aplikasi SVG.
-- Mengerjakan ulang dan mengaktifkan kembali widget.
-- Terjemahan baru.

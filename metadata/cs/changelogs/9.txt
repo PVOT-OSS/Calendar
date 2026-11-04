@@ -1,3 +1,0 @@
-- Různá vylepšení uživatelského rozhraní.
-- Aktualizace překladu do Švédštiny.
-- Opravy chyb.

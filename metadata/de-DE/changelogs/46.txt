@@ -1,3 +1,0 @@
-- Kalender eines bestehenden Termins ist nun änderbar
-- Fehler in der Gehe zu Funktion behoben
-- Fehlerbehebungen

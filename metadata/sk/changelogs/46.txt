@@ -1,3 +1,0 @@
-- Umožniť editačný kalendár na existujúcich udalostiach
-- Funkcia Fix go-to
-- Malé opravy chýb

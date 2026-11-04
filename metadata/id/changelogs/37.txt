@@ -1,4 +1,0 @@
-- Menambahkan dukungan bahasa per aplikasi (Android 13+).
-- Menambahkan geser kiri/kanan di tampilan bulan.
-- Perbaikan bug.
-- Terjemahan baru.

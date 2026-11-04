@@ -1,2 +1,0 @@
-- Hopelijk is eindelijk een crash op maand- en weekweergave verholpen vanwege ongeldige rrule
-- Bugfixes

@@ -1,4 +1,0 @@
-- Mengubah tata letak pengeditan acara.
-- Menghapus dukungan untuk Android 4.4.
-- Perbaikan bug umum.
-- Terjemahan baru.
