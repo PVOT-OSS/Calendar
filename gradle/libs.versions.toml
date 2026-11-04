@@ -16,6 +16,9 @@ workRuntime = "2.12.0"
 androidxConcurrent = "1.3.0"
 androidxTest = "1.7.0"
 robolectric = "4.17"
+activityCompose = "1.12.2"
+composeBom = "2026.02.01"
+kotlin = "2.4.21"
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "compat" }
@@ -32,9 +35,18 @@ androidx-work-runtime = { module = "androidx.work:work-runtime", version.ref = "
 androidx-concurrent-futures = { module = "androidx.concurrent:concurrent-futures", version.ref = "androidxConcurrent" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxTest" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
+androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
+pvot-design-system = { module = "com.prauga.pvot:design-system" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 jetbrains-idea-ext = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "ideaExt" }
 ec4j-editorconfig = { id = "org.ec4j.editorconfig", version.ref = "editorconfig" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+pvot-android-compose = { id = "pvot.android.compose" }

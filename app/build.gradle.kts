@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.ec4j.editorconfig)
+    alias(libs.plugins.pvot.android.compose)
 }
 
 editorconfig {
@@ -14,7 +15,7 @@ kotlin {
 android {
 	namespace = "org.prauga.calendar"
 	testNamespace = "org.prauga.calendar.tests"
-	compileSdk = 37
+	compileSdk { version = release(37) { minorApiLevel = 1 } }
 
 	defaultConfig {
 		minSdk = 27
@@ -149,4 +150,9 @@ dependencies {
 
 	// lifecycle
 	implementation(libs.androidx.lifecycle.livedata)
+
+	implementation(libs.pvot.design.system)
+	implementation(libs.androidx.activity.compose)
+	implementation(libs.androidx.lifecycle.viewmodel.compose)
+	implementation(libs.androidx.lifecycle.runtime.compose)
 }
