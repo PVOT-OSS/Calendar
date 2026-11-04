@@ -62,6 +62,7 @@ import androidx.compose.ui.zIndex
 import kotlinx.coroutines.delay
 import org.prauga.calendar.data.Agenda
 import org.prauga.calendar.data.JulianDay
+import org.prauga.calendar.settings.WorkingHours
 import org.prauga.calendar.ui.Formats
 import java.time.LocalDate
 import java.time.LocalTime
@@ -83,6 +84,7 @@ fun Timeline(
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
     onMove: ((Agenda, minutes: Int) -> Unit)? = null,
+    workingHours: WorkingHours.Hours? = null,
 ) {
     val julianDay = JulianDay.of(date)
     val allDay = remember(items, julianDay) { items.filter { it.allDay && it.occursOn(julianDay) } }
@@ -139,6 +141,7 @@ fun Timeline(
                     .height(HourHeight * 24)
             ) {
                 val width = maxWidth
+                if (workingHours != null) OffHours(date, workingHours)
                 slots.forEach { slot ->
                     val columnWidth = width / slot.columns
                     TimelineCard(
@@ -156,6 +159,23 @@ fun Timeline(
                 if (date == today) NowLine(formats)
             }
         }
+    }
+}
+
+@Composable
+private fun OffHours(date: LocalDate, hours: WorkingHours.Hours) {
+    val shade = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.04f)
+    val calendarDay = date.dayOfWeek.value % 7 + 1
+    val spans = if (calendarDay !in hours.days) listOf(0 to TimelineLayout.MINUTES_PER_DAY)
+    else listOf(0 to hours.startMinute, hours.endMinute to TimelineLayout.MINUTES_PER_DAY)
+    spans.filter { it.second > it.first }.forEach { (from, to) ->
+        Box(
+            Modifier
+                .offset(y = HourHeight * (from / 60f))
+                .fillMaxWidth()
+                .height(HourHeight * ((to - from) / 60f))
+                .background(shade, RoundedCornerShape(8.dp))
+        )
     }
 }
 

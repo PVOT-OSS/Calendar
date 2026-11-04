@@ -48,6 +48,7 @@ import kotlinx.coroutines.withContext
 import org.prauga.calendar.R
 import org.prauga.calendar.data.Agenda
 import org.prauga.calendar.event.EventMover
+import org.prauga.calendar.settings.WorkingHours
 import org.prauga.calendar.ui.Actions
 import org.prauga.calendar.ui.Formats
 import org.prauga.calendar.ui.components.Panel
@@ -61,6 +62,7 @@ fun CalendarScreen(viewModel: CalendarViewModel, contentPadding: PaddingValues, 
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val formats = remember { Formats(context) }
+    val workingHours = remember { WorkingHours.get(context) }
     val scope = rememberCoroutineScope()
     val snackbar = remember { SnackbarHostState() }
     var pending by remember { mutableStateOf<Pair<Agenda, Int>?>(null) }
@@ -145,6 +147,7 @@ fun CalendarScreen(viewModel: CalendarViewModel, contentPadding: PaddingValues, 
                             onSwipe = { forward -> viewModel.select(state.selected.plusDays(if (forward) 1 else -1)) },
                             contentPadding = contentPadding,
                             onMove = { agenda, minutes -> move(agenda, minutes, null) },
+                        workingHours = workingHours,
                         )
                         CalendarMode.Month -> MonthGrid(
                             month = YearMonth.from(state.selected),
