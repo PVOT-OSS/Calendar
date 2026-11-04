@@ -30,7 +30,7 @@
             android:id="@+id/timezone_button_row"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="timezone_icon,timezone_button" />
+            app:constraint_referenced_ids="timezone_icon,timezone_button,end_timezone_button" />
 
         <!-- CALENDARS SELECTOR for new events -->
         <com.google.android.material.textfield.TextInputEditText
@@ -240,13 +240,26 @@
             app:layout_constraintStart_toEndOf="@+id/timezone_icon"
             app:layout_constraintTop_toBottomOf="@+id/end_date" />
 
+        <Button
+            android:id="@+id/end_timezone_button"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="24dp"
+            android:gravity="start|center_vertical"
+            android:text="@string/end_timezone_add"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/timezone_icon"
+            app:layout_constraintTop_toBottomOf="@+id/timezone_button" />
+
         <View
             android:id="@+id/view7"
             style="@style/EditEventSeparator"
             android:layout_marginTop="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/timezone_button" />
+            app:layout_constraintTop_toBottomOf="@+id/end_timezone_button" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/response_group"

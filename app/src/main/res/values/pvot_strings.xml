@@ -88,6 +88,9 @@
     <string name="onboarding_davx5">Sync with DAVx⁵</string>
     <string name="onboarding_done">Done</string>
 
+    <string name="end_timezone_add">Use a different end time zone</string>
+    <string name="end_timezone_label">Ends in %s</string>
+
     <string name="shortcut_today">Today</string>
 
     <string name="join_meeting">Join meeting</string>

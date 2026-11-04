@@ -224,6 +224,9 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
     private ArrayList<ReminderEntry> mUnsupportedReminders = new ArrayList<ReminderEntry>();
     private ArrayList<ReminderEntry> mAppliedDefaultReminders;
     private CompoundButton mGuestsCanModify;
+    private Button mEndTimezoneButton;
+    private String mEndTimezone;
+    private boolean mPickingEndTimezone;
     private CompoundButton mGuestsCanInvite;
     private CompoundButton mGuestsCanSee;
     private View mGuestPermissionsRow;
@@ -271,6 +274,11 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
             }
         });
         mTimezoneRow = view.findViewById(R.id.timezone_button_row);
+        mEndTimezoneButton = view.findViewById(R.id.end_timezone_button);
+        mEndTimezoneButton.setOnClickListener(v -> {
+            mPickingEndTimezone = true;
+            showTimezoneDialog();
+        });
         mStartTimeHome = (TextView) view.findViewById(R.id.start_time_home_tz);
         mStartDateHome = (TextView) view.findViewById(R.id.start_date_home_tz);
         mEndTimeHome = (TextView) view.findViewById(R.id.end_time_home_tz);
@@ -449,18 +457,39 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
     // Implements OnTimeZoneSetListener
     @Override
     public void onTimeZoneSet(TimeZoneInfo tzi) {
-        setTimezone(tzi.mTzId);
+        if (mPickingEndTimezone) {
+            mPickingEndTimezone = false;
+            setEndTimezone(tzi.mTzId);
+        } else {
+            setTimezone(tzi.mTzId);
+        }
         updateHomeTime();
     }
 
     private void setTimezone(String timeZone) {
         mTimezone = timeZone;
+        if (mEndTimezone != null && mEndTimezone.equals(mTimezone)) {
+            mEndTimezone = null;
+        }
         Utils.changeTimezoneOnly(mStartTime, mTimezone);
-        Utils.changeTimezoneOnly(mEndTime, mTimezone);
+        Utils.changeTimezoneOnly(mEndTime, endZone());
         long startMillis = mStartTime.normalize();
         mEndTime.normalize();
 
         populateTimezone(startMillis);
+    }
+
+    private void setEndTimezone(String timeZone) {
+        mEndTimezone = timeZone == null || timeZone.equals(mTimezone) ? null : timeZone;
+        Utils.changeTimezoneOnly(mEndTime, endZone());
+        mEndTime.normalize();
+        setDate(mEndDateButton, mEndTime.toMillis());
+        setTime(mEndTimeButton, mEndTime.toMillis());
+        populateTimezone(mStartTime.toMillis());
+    }
+
+    private String endZone() {
+        return mEndTimezone != null ? mEndTimezone : mTimezone;
     }
 
     private void populateTimezone(long eventStartTime) {
@@ -472,12 +501,18 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
 
         mTimezoneTextView.setText(displayName);
         mTimezoneButton.setText(displayName);
+        if (mEndTimezoneButton != null) {
+            mEndTimezoneButton.setText(mEndTimezone == null
+                    ? mActivity.getString(R.string.end_timezone_add)
+                    : mActivity.getString(R.string.end_timezone_label,
+                            mTzPickerUtils.getGmtDisplayName(mActivity, mEndTimezone, eventStartTime, true)));
+        }
     }
 
     private void showTimezoneDialog() {
         Bundle b = new Bundle();
         b.putLong(TimeZonePickerDialog.BUNDLE_START_TIME_MILLIS, mStartTime.toMillis());
-        b.putString(TimeZonePickerDialog.BUNDLE_TIME_ZONE, mTimezone);
+        b.putString(TimeZonePickerDialog.BUNDLE_TIME_ZONE, mPickingEndTimezone ? endZone() : mTimezone);
 
         FragmentManager fm = mActivity.getSupportFragmentManager();
         TimeZonePickerDialog tzpd = (TimeZonePickerDialog) fm
@@ -759,10 +794,11 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
             setTime(mEndTimeButton, mEndTime.toMillis());
         } else {
             mStartTime.setTimezone(mTimezone);
-            mEndTime.setTimezone(mTimezone);
+            mEndTime.setTimezone(endZone());
             mModel.mStart = mStartTime.toMillis();
             mModel.mEnd = mEndTime.toMillis();
             mModel.mTimezone = mTimezone;
+            mModel.mTimezone2 = mEndTimezone;
         }
         mModel.mAccessLevel = mAccessLevelSpinner.getSelectedItemPosition();
         if (mGuestsCanModify != null) {
@@ -934,6 +970,7 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
             long begin = model.mStart;
             long end = model.mEnd;
             mTimezone = model.mTimezone; // this will be UTC for all day events
+            mEndTimezone = model.mAllDay ? null : model.mTimezone2;
 
             // Set up the starting times
             if (begin > 0) {
@@ -942,7 +979,7 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
                 mStartTime.normalize();
             }
             if (end > 0) {
-                mEndTime.setTimezone(mTimezone);
+                mEndTime.setTimezone(endZone());
                 mEndTime.set(end);
                 mEndTime.normalize();
             }
@@ -1472,7 +1509,7 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
         // TODO fix this if/when DateUtils allows for passing in a timezone
         String dateString;
         synchronized (TimeZone.class) {
-            TimeZone.setDefault(TimeZone.getTimeZone(mTimezone));
+            TimeZone.setDefault(TimeZone.getTimeZone(view == mEndDateButton ? endZone() : mTimezone));
             dateString = DateUtils.formatDateTime(mActivity, millis, flags);
             // setting the default back to null restores the correct behavior
             TimeZone.setDefault(null);
@@ -1496,7 +1533,7 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
         // TODO fix this if/when DateUtils allows for passing in a timezone
         String timeString;
         synchronized (TimeZone.class) {
-            TimeZone.setDefault(TimeZone.getTimeZone(mTimezone));
+            TimeZone.setDefault(TimeZone.getTimeZone(view == mEndTimeButton ? endZone() : mTimezone));
             timeString = DateUtils.formatDateTime(mActivity, millis, flags);
             TimeZone.setDefault(null);
         }

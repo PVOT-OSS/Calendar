@@ -101,7 +101,8 @@ public class EditEventHelper {
             Events.EXDATE, // 27
             Events.ORIGINAL_INSTANCE_TIME,
             Events.GUESTS_CAN_INVITE_OTHERS,
-            Events.GUESTS_CAN_SEE_GUESTS
+            Events.GUESTS_CAN_SEE_GUESTS,
+            Events.EVENT_END_TIMEZONE
     };
     protected static final int EVENT_INDEX_ID = 0;
     protected static final int EVENT_INDEX_TITLE = 1;
@@ -134,6 +135,7 @@ public class EditEventHelper {
     protected static final int EVENT_INDEX_ORIGINAL_INSTANCE_TIME = 28;
     protected static final int EVENT_INDEX_GUESTS_CAN_INVITE_OTHERS = 29;
     protected static final int EVENT_INDEX_GUESTS_CAN_SEE_GUESTS = 30;
+    protected static final int EVENT_INDEX_EVENT_END_TIMEZONE = 31;
 
     public static final String[] REMINDERS_PROJECTION = new String[] {
             Reminders._ID, // 0
@@ -1237,6 +1239,9 @@ public class EditEventHelper {
         model.mGuestsCanModify = cursor.getInt(EVENT_INDEX_GUESTS_CAN_MODIFY) != 0;
         model.mGuestsCanInviteOthers = cursor.getInt(EVENT_INDEX_GUESTS_CAN_INVITE_OTHERS) != 0;
         model.mGuestsCanSeeGuests = cursor.getInt(EVENT_INDEX_GUESTS_CAN_SEE_GUESTS) != 0;
+        String endTimezone = cursor.getString(EVENT_INDEX_EVENT_END_TIMEZONE);
+        model.mTimezone2 = TextUtils.isEmpty(endTimezone) || endTimezone.equals(model.mTimezone)
+                ? null : endTimezone;
 
         int rawEventColor;
         if (cursor.isNull(EVENT_INDEX_EVENT_COLOR)) {
@@ -1436,6 +1441,11 @@ public class EditEventHelper {
         values.put(Events.GUESTS_CAN_MODIFY, model.mGuestsCanModify ? 1 : 0);
         values.put(Events.GUESTS_CAN_INVITE_OTHERS, model.mGuestsCanInviteOthers ? 1 : 0);
         values.put(Events.GUESTS_CAN_SEE_GUESTS, model.mGuestsCanSeeGuests ? 1 : 0);
+        if (!model.mAllDay && model.mTimezone2 != null && !model.mTimezone2.equals(model.mTimezone)) {
+            values.put(Events.EVENT_END_TIMEZONE, model.mTimezone2);
+        } else {
+            values.putNull(Events.EVENT_END_TIMEZONE);
+        }
 
         int accessLevel = model.mAccessLevel;
         values.put(Events.ACCESS_LEVEL, accessLevel);
