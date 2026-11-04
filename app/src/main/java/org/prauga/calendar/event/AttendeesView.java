@@ -174,7 +174,11 @@ public class AttendeesView extends LinearLayout implements View.OnClickListener 
         final Attendee attendee = item.mAttendee;
         final View view = item.mView;
         final TextView nameView = (TextView) view.findViewById(R.id.name);
-        nameView.setText(TextUtils.isEmpty(attendee.mName) ? attendee.mEmail : attendee.mName);
+        String shownName = TextUtils.isEmpty(attendee.mName) ? attendee.mEmail : attendee.mName;
+        if (attendee.mType == android.provider.CalendarContract.Attendees.TYPE_OPTIONAL) {
+            shownName = mContext.getString(R.string.optional_guest_label, shownName);
+        }
+        nameView.setText(shownName);
         if (item.mRemoved) {
             nameView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG | nameView.getPaintFlags());
         } else {

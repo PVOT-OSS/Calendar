@@ -317,7 +317,8 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         Attendees.ATTENDEE_RELATIONSHIP,    // 3
         Attendees.ATTENDEE_STATUS,          // 4
         Attendees.ATTENDEE_IDENTITY,        // 5
-        Attendees.ATTENDEE_ID_NAMESPACE     // 6
+        Attendees.ATTENDEE_ID_NAMESPACE,
+        Attendees.ATTENDEE_TYPE
     };
     private static final int ATTENDEES_INDEX_ID = 0;
     private static final int ATTENDEES_INDEX_NAME = 1;
@@ -326,6 +327,7 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     private static final int ATTENDEES_INDEX_STATUS = 4;
     private static final int ATTENDEES_INDEX_IDENTITY = 5;
     private static final int ATTENDEES_INDEX_ID_NAMESPACE = 6;
+    private static final int ATTENDEES_INDEX_TYPE = 7;
     private static final String ATTENDEES_WHERE = Attendees.EVENT_ID + "=?";
     private static final String ATTENDEES_SORT_ORDER = Attendees.ATTENDEE_NAME + " ASC, "
             + Attendees.ATTENDEE_EMAIL + " ASC";
@@ -1030,30 +1032,31 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
                     } else {
                         String identity = mAttendeesCursor.getString(ATTENDEES_INDEX_IDENTITY);
                         String idNamespace = mAttendeesCursor.getString(ATTENDEES_INDEX_ID_NAMESPACE);
+                        int type = mAttendeesCursor.getInt(ATTENDEES_INDEX_TYPE);
 
                         // Don't show your own status in the list because:
                         //  1) it doesn't make sense for event without other guests.
                         //  2) there's a spinner for that for events with guests.
                         switch(status) {
                             case Attendees.ATTENDEE_STATUS_ACCEPTED:
-                                mAcceptedAttendees.add(new Attendee(name, email,
+                                mAcceptedAttendees.add(withType(new Attendee(name, email,
                                         Attendees.ATTENDEE_STATUS_ACCEPTED, identity,
-                                        idNamespace));
+                                        idNamespace), type));
                                 break;
                             case Attendees.ATTENDEE_STATUS_DECLINED:
-                                mDeclinedAttendees.add(new Attendee(name, email,
+                                mDeclinedAttendees.add(withType(new Attendee(name, email,
                                         Attendees.ATTENDEE_STATUS_DECLINED, identity,
-                                        idNamespace));
+                                        idNamespace), type));
                                 break;
                             case Attendees.ATTENDEE_STATUS_TENTATIVE:
-                                mTentativeAttendees.add(new Attendee(name, email,
+                                mTentativeAttendees.add(withType(new Attendee(name, email,
                                         Attendees.ATTENDEE_STATUS_TENTATIVE, identity,
-                                        idNamespace));
+                                        idNamespace), type));
                                 break;
                             default:
-                                mNoResponseAttendees.add(new Attendee(name, email,
+                                mNoResponseAttendees.add(withType(new Attendee(name, email,
                                         Attendees.ATTENDEE_STATUS_NONE, identity,
-                                        idNamespace));
+                                        idNamespace), type));
                         }
                     }
                 } while (mAttendeesCursor.moveToNext());
@@ -1364,6 +1367,11 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
             Log.e(TAG, "Couldn't generate ics file");
             Toast.makeText(mActivity, R.string.error_generating_ics, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private static Attendee withType(Attendee attendee, int type) {
+        attendee.mType = type;
+        return attendee;
     }
 
     private void duplicateEvent() {
