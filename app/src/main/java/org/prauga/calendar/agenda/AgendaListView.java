@@ -172,6 +172,10 @@ public class AgendaListView extends ListView implements OnItemClickListener {
         if (id != -1) {
             // Switch to the EventInfo view
             AgendaItem item = mWindowAdapter.getAgendaItemByPosition(position);
+            if (item != null && org.prauga.calendar.tasks.TasksRepository.INSTANCE.isTask(item.id)) {
+                org.prauga.calendar.tasks.TasksRepository.INSTANCE.open(mContext, item.id);
+                return;
+            }
             long oldInstanceId = mWindowAdapter.getSelectedInstanceId();
             mWindowAdapter.setSelectedView(v);
 

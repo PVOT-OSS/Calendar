@@ -128,6 +128,61 @@ object TasksRepository {
         return e
     }
 
+    @JvmStatic
+    fun mergeIntoAgenda(context: Context, cursor: android.database.Cursor, startDay: Int, endDay: Int): android.database.Cursor {
+        if (!isEnabled(context)) return cursor
+        val tasks = mutableListOf<Event>()
+        appendTasks(context, tasks, startDay, endDay)
+        if (tasks.isEmpty()) return cursor
+        val columns = cursor.columnNames
+        val rows = ArrayList<Array<Any?>>()
+        while (cursor.moveToNext()) {
+            rows += Array(columns.size) { i ->
+                when (cursor.getType(i)) {
+                    android.database.Cursor.FIELD_TYPE_NULL -> null
+                    android.database.Cursor.FIELD_TYPE_INTEGER -> cursor.getLong(i)
+                    android.database.Cursor.FIELD_TYPE_FLOAT -> cursor.getDouble(i)
+                    else -> cursor.getString(i)
+                }
+            }
+        }
+        cursor.close()
+        val utc = Time(Time.TIMEZONE_UTC)
+        for (task in tasks) {
+            val begin = if (task.allDay) utc.setJulianDay(task.startDay) else task.startMillis
+            val end = if (task.allDay) begin + DAY else task.endMillis
+            rows += Array(columns.size) { i ->
+                when (columns[i]) {
+                    android.provider.CalendarContract.Instances._ID, android.provider.CalendarContract.Instances.EVENT_ID -> task.id
+                    android.provider.CalendarContract.Instances.TITLE -> task.title.toString()
+                    android.provider.CalendarContract.Instances.EVENT_LOCATION -> ""
+                    android.provider.CalendarContract.Instances.ALL_DAY -> if (task.allDay) 1L else 0L
+                    android.provider.CalendarContract.Instances.HAS_ALARM -> 0L
+                    android.provider.CalendarContract.Instances.DISPLAY_COLOR -> task.color.toLong()
+                    android.provider.CalendarContract.Instances.BEGIN -> begin
+                    android.provider.CalendarContract.Instances.END -> end
+                    android.provider.CalendarContract.Instances.START_DAY -> task.startDay.toLong()
+                    android.provider.CalendarContract.Instances.END_DAY -> task.endDay.toLong()
+                    android.provider.CalendarContract.Instances.STATUS -> 1L
+                    android.provider.CalendarContract.Instances.SELF_ATTENDEE_STATUS -> 0L
+                    android.provider.CalendarContract.Instances.CAN_ORGANIZER_RESPOND -> 1L
+                    android.provider.CalendarContract.Instances.OWNER_ACCOUNT,
+                    android.provider.CalendarContract.Instances.ORGANIZER -> ""
+                    android.provider.CalendarContract.Instances.EVENT_TIMEZONE -> if (task.allDay) "UTC" else org.prauga.calendar.Utils.getTimeZone(context, null)
+                    else -> null
+                }
+            }
+        }
+        val dayIndex = columns.indexOf(android.provider.CalendarContract.Instances.START_DAY)
+        val beginIndex = columns.indexOf(android.provider.CalendarContract.Instances.BEGIN)
+        val titleIndex = columns.indexOf(android.provider.CalendarContract.Instances.TITLE)
+        rows.sortWith(compareBy<Array<Any?>>({ (it[dayIndex] as? Number)?.toLong() ?: 0L },
+            { (it[beginIndex] as? Number)?.toLong() ?: 0L }, { it[titleIndex]?.toString() ?: "" }))
+        val merged = android.database.MatrixCursor(columns, rows.size)
+        rows.forEach { merged.addRow(it) }
+        return merged
+    }
+
     fun open(context: Context, eventId: Long): Boolean {
         val (provider, taskId) = tasksByEventId[eventId] ?: return false
         val uri = ContentUris.withAppendedId(Uri.parse("content://${provider.authority}/tasks"), taskId)

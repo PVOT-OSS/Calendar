@@ -1098,6 +1098,11 @@ public class AgendaWindowAdapter extends BaseAdapter
                 mCleanQueryInitiated = false;
             }
 
+            if (data.searchQuery == null) {
+                cursor = org.prauga.calendar.tasks.TasksRepository.mergeIntoAgenda(
+                        mContext, cursor, data.start, data.end);
+            }
+
             if (mShuttingDown) {
                 cursor.close();
                 return;
