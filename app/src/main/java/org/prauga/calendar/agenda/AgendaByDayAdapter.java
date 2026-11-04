@@ -194,6 +194,7 @@ public class AgendaByDayAdapter extends BaseAdapter {
                 agendaDayView = mInflater.inflate(R.layout.agenda_day, parent, false);
                 holder.dayView = (TextView) agendaDayView.findViewById(R.id.day);
                 holder.dateView = (TextView) agendaDayView.findViewById(R.id.date);
+                holder.monthBanner = (TextView) agendaDayView.findViewById(R.id.month_banner);
                 holder.julianDay = row.mDay;
                 holder.grayed = false;
                 agendaDayView.setTag(holder);
@@ -234,6 +235,32 @@ public class AgendaByDayAdapter extends BaseAdapter {
             }
             holder.dayView.setText(dayViewText);
             holder.dateView.setText(dateViewText);
+
+            if (holder.monthBanner != null) {
+                int previousDay = -1;
+                for (int i = position - 1; i >= 0; i--) {
+                    if (mRowInfo.get(i).mType == TYPE_DAY) {
+                        previousDay = mRowInfo.get(i).mDay;
+                        break;
+                    }
+                }
+                int month = date.getMonth();
+                int year = date.getYear();
+                boolean newMonth = false;
+                if (previousDay != -1) {
+                    Time previous = new Time(mTimeZone);
+                    previous.setJulianDay(previousDay);
+                    newMonth = previous.getMonth() != month || previous.getYear() != year;
+                }
+                if (newMonth) {
+                    holder.monthBanner.setText(DateUtils.formatDateRange(mContext, millis, millis,
+                            DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_MONTH_DAY
+                                    | DateUtils.FORMAT_SHOW_YEAR));
+                    holder.monthBanner.setVisibility(View.VISIBLE);
+                } else {
+                    holder.monthBanner.setVisibility(View.GONE);
+                }
+            }
 
             // Set the background of the view, it is grayed for day that are in the past and today
             if (row.mDay > mTodayJulianDay) {
@@ -626,6 +653,7 @@ public class AgendaByDayAdapter extends BaseAdapter {
     static class ViewHolder {
         TextView dayView;
         TextView dateView;
+        TextView monthBanner;
         int julianDay;
         boolean grayed;
     }
