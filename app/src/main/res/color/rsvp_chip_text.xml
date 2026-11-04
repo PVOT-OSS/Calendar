@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2026 Saalim Quadri <danascape@gmail.com>
+     SPDX-License-Identifier: GPL-3.0-or-later
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true" android:color="?attr/colorOnSecondaryContainer" />
+    <item android:color="?attr/colorOnSurfaceVariant" />
+</selector>

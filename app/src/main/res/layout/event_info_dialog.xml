@@ -278,30 +278,15 @@
                     android:paddingStart="9dip">
                     <RadioButton
                         android:id="@+id/response_yes"
-                        style="?android:attr/textAppearanceMedium"
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_weight="1"
-                        android:minWidth="96dip"
+                        style="@style/RsvpChip"
                         android:text="@string/response_yes" />
                     <RadioButton
                         android:id="@+id/response_maybe"
-                        style="?android:attr/textAppearanceMedium"
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_weight="1"
-                        android:minWidth="96dip"
+                        style="@style/RsvpChip"
                         android:text="@string/response_maybe" />
                     <RadioButton
                         android:id="@+id/response_no"
-                        style="?android:attr/textAppearanceMedium"
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_weight="1"
-                        android:minWidth="96dip"
+                        style="@style/RsvpChip"
                         android:text="@string/response_no" />
                 </RadioGroup>
             </LinearLayout>
