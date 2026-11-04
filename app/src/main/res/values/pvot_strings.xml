@@ -146,10 +146,6 @@
         <item quantity="one">%d task</item>
         <item quantity="other">%d tasks</item>
     </plurals>
-    <plurals name="ui_more_guests">
-        <item quantity="one">and %d more guest</item>
-        <item quantity="other">and %d more guests</item>
-    </plurals>
     <string name="ui_permission_title">Calendar access needed</string>
     <string name="ui_permission_body">Calendar shows and edits the events stored on this phone. Allow access to continue.</string>
     <string name="ui_permission_allow">Allow access</string>

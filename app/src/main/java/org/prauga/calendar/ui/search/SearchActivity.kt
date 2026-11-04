@@ -49,6 +49,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.prauga.pvot.designsystem.components.button.PvotIconButton
+import com.prauga.pvot.designsystem.components.calendar.PvotEventCard
 import com.prauga.pvot.designsystem.components.textfield.PvotTextField
 import com.prauga.pvot.designsystem.platform.PvotBaseActivity
 import com.prauga.pvot.designsystem.theme.PvotAppTheme
@@ -68,7 +69,6 @@ import org.prauga.calendar.data.AgendaRepository
 import org.prauga.calendar.data.JulianDay
 import org.prauga.calendar.ui.Actions
 import org.prauga.calendar.ui.Formats
-import org.prauga.calendar.ui.components.EventCard
 
 class SearchViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -183,14 +183,14 @@ private fun SearchScreen(viewModel: SearchViewModel, onBack: () -> Unit, onSubmi
                     )
                 }
                 items(items, key = { "${it.eventId}-${it.begin}" }) { agenda ->
-                    EventCard(
+                    PvotEventCard(
                         title = agenda.title,
-                        time = formats.timeRange(agenda),
-                        color = Color(agenda.color),
                         onClick = {
                             onSubmit(query)
                             Actions.open(context, agenda)
                         },
+                        accent = Color(agenda.color),
+                        supportingText = formats.timeRange(agenda),
                     )
                 }
             }

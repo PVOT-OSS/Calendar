@@ -39,10 +39,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.prauga.pvot.designsystem.components.button.PvotButton
 import com.prauga.pvot.designsystem.components.button.PvotButtonStyle
+import com.prauga.pvot.designsystem.components.calendar.PvotEventCard
 import org.prauga.calendar.R
 import org.prauga.calendar.ui.Actions
 import org.prauga.calendar.ui.Formats
-import org.prauga.calendar.ui.components.EventCard
 import org.prauga.calendar.ui.components.Panel
 import java.time.LocalTime
 
@@ -104,13 +104,22 @@ private fun LazyListScope.upcoming(
         }
         items(day.items, key = { "${day.date}-${it.eventId}-${it.begin}" }) { agenda ->
             val details = state.details[agenda.eventId]
-            EventCard(
+            PvotEventCard(
                 title = agenda.title,
-                time = formats.timeRange(agenda),
-                color = Color(agenda.color),
                 onClick = { Actions.open(context, agenda) },
+                accent = Color(agenda.color),
+                supportingText = formats.timeRange(agenda),
                 guests = details?.guests.orEmpty(),
-                onJoin = details?.meetingUrl?.let { url -> { Actions.join(context, url) } },
+                action = details?.meetingUrl?.let { url ->
+                    {
+                        PvotButton(
+                            text = stringResource(R.string.ui_join),
+                            onClick = { Actions.join(context, url) },
+                            style = PvotButtonStyle.Tonal,
+                            icon = painterResource(R.drawable.ic_ui_video),
+                        )
+                    }
+                },
             )
         }
     }

@@ -42,6 +42,7 @@ import com.prauga.pvot.designsystem.components.PvotDialogActionStyle
 import com.prauga.pvot.designsystem.components.PvotSegmentedControl
 import com.prauga.pvot.designsystem.components.PvotSnackbarHost
 import com.prauga.pvot.designsystem.components.button.PvotIconButton
+import com.prauga.pvot.designsystem.components.calendar.PvotDayStrip
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -107,15 +108,14 @@ fun CalendarScreen(viewModel: CalendarViewModel, contentPadding: PaddingValues, 
             Panel {
                 Column {
                     when (state.mode) {
-                        CalendarMode.Week -> DayStrip(
+                        CalendarMode.Week -> PvotDayStrip(
                             days = (0L until 7L).map { state.span.first.plusDays(it) },
                             selected = state.selected,
                             today = state.today,
-                            agendas = state.agendas,
-                            formats = formats,
                             onSelect = viewModel::select,
+                            modifier = Modifier.padding(start = 12.dp, end = 12.dp, top = 16.dp, bottom = 8.dp),
+                            marked = { date -> state.on(date).isNotEmpty() },
                             onSwipe = viewModel::step,
-                            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
                         )
                         CalendarMode.Day -> Navigator(
                             label = formats.dayLabel(state.selected, state.today),
