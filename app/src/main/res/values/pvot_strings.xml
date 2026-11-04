@@ -174,4 +174,24 @@
     <string name="ui_permission_title">Calendar access needed</string>
     <string name="ui_permission_body">Calendar shows and edits the events stored on this phone. Allow access to continue.</string>
     <string name="ui_permission_allow">Allow access</string>
+    <string name="ui_new_event">New event</string>
+    <string name="ui_create_event">Create event</string>
+    <string name="ui_title_hint">Title</string>
+    <string name="ui_starts">Starts</string>
+    <string name="ui_ends">Ends</string>
+    <string name="ui_repeat">Repeat</string>
+    <string name="ui_reminder">Reminder</string>
+    <string name="ui_no_reminder">No reminder</string>
+    <string name="ui_guests">Guests</string>
+    <string name="ui_add_guest">Add guest</string>
+    <string name="ui_guest_email">Email address</string>
+    <string name="ui_remove_guest">Remove %1$s</string>
+    <string name="ui_color">Colour</string>
+    <string name="ui_calendar_color">Calendar colour</string>
+    <string name="ui_back">Back</string>
+    <string name="ui_done">Done</string>
+    <string name="ui_cancel">Cancel</string>
+    <string name="ui_no_calendar">Add a calendar in Settings first.</string>
+    <string name="ui_saved">Event saved</string>
+    <string name="ui_save_failed">Couldn\'t save the event</string>
 </resources>

@@ -181,7 +181,7 @@ class QuickCreateSheet : BottomSheetDialogFragment() {
         private const val ARG_END = "end"
         private const val ARG_ALL_DAY = "all_day"
         private const val TAG = "QuickCreateSheet"
-        private const val PREF_LAST_CALENDAR = "quick_create_last_calendar"
+        const val PREF_LAST_CALENDAR = "quick_create_last_calendar"
 
         @JvmStatic
         fun show(manager: FragmentManager, context: Context, startMillis: Long, allDay: Boolean) {

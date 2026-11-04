@@ -20,6 +20,7 @@ import org.prauga.calendar.SearchActivity
 import org.prauga.calendar.data.Agenda
 import org.prauga.calendar.settings.SettingsActivity
 import org.prauga.calendar.tasks.TasksRepository
+import org.prauga.calendar.ui.edit.EditorActivity
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
@@ -53,9 +54,11 @@ object Actions {
 
     fun create(context: Context, date: LocalDate, start: LocalTime, zone: ZoneId) {
         val begin = date.atTime(start).atZone(zone).toInstant().toEpochMilli()
-        val intent = CalendarController.getInstance(context)
-            .generateCreateEventIntent(begin, begin + 3_600_000L, false, "", -1)
-        context.startActivity(intent)
+        context.startActivity(
+            Intent(context, EditorActivity::class.java)
+                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, begin)
+                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, begin + 3_600_000L)
+        )
     }
 
     fun join(context: Context, url: String) {

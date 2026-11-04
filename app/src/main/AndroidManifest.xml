@@ -102,6 +102,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="org.prauga.calendar.ui.edit.EditorActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
         <activity-alias android:name="org.prauga.calendar.LaunchActivity"
             android:exported="true"
             android:targetActivity="org.prauga.calendar.ui.MainActivity">
