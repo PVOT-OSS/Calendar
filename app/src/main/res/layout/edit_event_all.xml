@@ -379,7 +379,7 @@
             app:layout_constraintStart_toEndOf="@+id/attendees_icon"
             app:layout_constraintTop_toTopOf="@+id/view2">
 
-            <com.android.calendar.chips.RecipientEditTextView
+            <org.prauga.calendar.chips.RecipientEditTextView
                 android:id="@+id/attendees"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -270,7 +270,7 @@
             </LinearLayout>
 
             <!-- GUEST LIST -->
-            <com.android.calendar.event.AttendeesView
+            <org.prauga.calendar.event.AttendeesView
                 android:id="@+id/long_attendee_list"
                 android:orientation="vertical"
                 android:layout_height="wrap_content"

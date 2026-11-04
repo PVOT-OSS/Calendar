@@ -20,7 +20,7 @@
     android:layout_height="48dip"
     android:minHeight="?android:attr/listPreferredItemHeight" >
 
-    <com.android.calendar.selectcalendars.CalendarColorSquare
+    <org.prauga.calendar.selectcalendars.CalendarColorSquare
         android:id="@+id/color"
         style="?android:attr/quickContactBadgeStyleWindowMedium"
         android:layout_width="20dip"

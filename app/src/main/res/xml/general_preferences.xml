@@ -45,7 +45,7 @@
         <Preference
             app:key="pref_view_details"
             app:title="@string/display_options"
-            app:fragment="com.android.calendar.settings.ViewDetailsPreferences" />
+            app:fragment="org.prauga.calendar.settings.ViewDetailsPreferences" />
         <SwitchPreference
             app:key="preferences_hide_declined"
             app:defaultValue="false"
@@ -137,7 +137,7 @@
 
         <Preference
             app:key="preferences_quick_responses"
-            app:fragment="com.android.calendar.settings.QuickResponsePreferences"
+            app:fragment="org.prauga.calendar.settings.QuickResponsePreferences"
             app:title="@string/quick_response_settings"
             app:summary="@string/quick_response_settings_summary" />
     </PreferenceCategory>

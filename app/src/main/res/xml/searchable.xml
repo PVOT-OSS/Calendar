@@ -15,7 +15,7 @@
 -->
 
 <searchable xmlns:android="http://schemas.android.com/apk/res/android"
-    android:value="com.android.calendar.SearchActivity"
+    android:value="org.prauga.calendar.SearchActivity"
     android:label="@string/app_label"
     android:searchMode="showSearchLabelAsBadge"
 

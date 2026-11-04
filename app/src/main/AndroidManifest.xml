@@ -52,7 +52,7 @@
         </intent>
     </queries>
 
-    <application android:name="com.android.calendar.CalendarApplication"
+    <application android:name="org.prauga.calendar.CalendarApplication"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/standalone_app_label"
@@ -62,7 +62,7 @@
         android:theme="@style/Theme.Etar">
 
         <activity
-            android:name="com.android.calendar.AllInOneActivity"
+            android:name="org.prauga.calendar.AllInOneActivity"
             android:exported="true"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustPan">
@@ -90,17 +90,17 @@
 
         </activity>
 
-        <activity-alias android:name="com.android.calendar.LaunchActivity"
+        <activity-alias android:name="org.prauga.calendar.LaunchActivity"
             android:exported="true"
-            android:targetActivity="com.android.calendar.AllInOneActivity">
+            android:targetActivity="org.prauga.calendar.AllInOneActivity">
         </activity-alias>
 
-        <activity android:name="com.android.calendar.AboutActivity">
+        <activity android:name="org.prauga.calendar.AboutActivity">
         </activity>
 
-        <activity android:name="com.android.calendar.EventInfoActivity"
+        <activity android:name="org.prauga.calendar.EventInfoActivity"
             android:exported="true"
-            android:parentActivityName="com.android.calendar.AllInOneActivity">
+            android:parentActivityName="org.prauga.calendar.AllInOneActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -112,13 +112,13 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.android.calendar.event.EditEventActivity"
+        <activity android:name="org.prauga.calendar.event.EditEventActivity"
             android:configChanges="keyboardHidden|orientation|screenSize">
         </activity>
 
-        <activity-alias android:name="com.android.calendar.EditEventActivity"
+        <activity-alias android:name="org.prauga.calendar.EditEventActivity"
             android:exported="true"
-            android:targetActivity="com.android.calendar.event.EditEventActivity">
+            android:targetActivity="org.prauga.calendar.event.EditEventActivity">
             <intent-filter>
                 <action android:name="android.intent.action.EDIT" />
                 <action android:name="android.intent.action.INSERT" />
@@ -134,7 +134,7 @@
         </activity-alias>
 
         <activity
-            android:name="com.android.calendar.GoogleCalendarUriIntentFilter"
+            android:name="org.prauga.calendar.GoogleCalendarUriIntentFilter"
             android:exported="true"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_label"
@@ -166,17 +166,17 @@
         </activity>
 
         <activity
-            android:name="com.android.calendar.settings.SettingsActivity"
+            android:name="org.prauga.calendar.settings.SettingsActivity"
             android:label="@string/preferences_title"
-            android:parentActivityName="com.android.calendar.AllInOneActivity" />
+            android:parentActivityName="org.prauga.calendar.AllInOneActivity" />
 
         <!-- Declarations for search -->
         <!-- Make all activities a searchable context -->
         <meta-data android:name="android.app.default_searchable"
-            android:value="com.android.calendar.SearchActivity"/>
+            android:value="org.prauga.calendar.SearchActivity"/>
 
         <activity
-            android:name="com.android.calendar.SearchActivity"
+            android:name="org.prauga.calendar.SearchActivity"
             android:exported="true"
             android:label="@string/search_title"
             android:launchMode="singleTop"
@@ -187,7 +187,7 @@
             <meta-data android:name="android.app.searchable" android:resource="@xml/searchable"/>
         </activity>
 
-        <activity android:name="com.android.calendar.ImportActivity"
+        <activity android:name="org.prauga.calendar.ImportActivity"
             android:exported="true"
             android:theme="@android:style/Theme.NoDisplay"
             android:launchMode="singleTop">
@@ -212,31 +212,31 @@
                 android:resource="@xml/provider_paths"/>
         </provider>
 
-        <provider android:name="com.android.calendar.CalendarRecentSuggestionsProvider"
+        <provider android:name="org.prauga.calendar.CalendarRecentSuggestionsProvider"
             android:exported="false"
             android:authorities="${applicationId}.CalendarRecentSuggestionsProvider" />
 
         <!-- Declarations for alerts/reminders -->
         <activity
-            android:name="com.android.calendar.alerts.AlertActivity"
+            android:name="org.prauga.calendar.alerts.AlertActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
             android:theme="@android:style/Theme.Holo.Dialog" />
 
         <activity
-            android:name="com.android.calendar.alerts.QuickResponseActivity"
+            android:name="org.prauga.calendar.alerts.QuickResponseActivity"
             android:excludeFromRecents="true"
             android:label="@string/quick_response_dialog_title"
             android:launchMode="singleInstance"
             android:theme="@android:style/Theme.Holo.Dialog" />
 
         <activity
-            android:name="com.android.calendar.alerts.SnoozeDelayActivity"
+            android:name="org.prauga.calendar.alerts.SnoozeDelayActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
             android:theme="@android:style/Theme.Holo.Dialog" />
 
-        <receiver android:name="com.android.calendar.alerts.AlertReceiver"
+        <receiver android:name="org.prauga.calendar.alerts.AlertReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.EVENT_REMINDER" />
@@ -253,7 +253,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="com.android.calendar.UpgradeReceiver"
+        <receiver android:name="org.prauga.calendar.UpgradeReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -270,12 +270,12 @@
             android:exported="false"
             tools:node="merge" />
 
-        <service android:name="com.android.calendar.alerts.DismissAlarmsService" />
+        <service android:name="org.prauga.calendar.alerts.DismissAlarmsService" />
 
-        <service android:name="com.android.calendar.alerts.SnoozeAlarmsService" />
+        <service android:name="org.prauga.calendar.alerts.SnoozeAlarmsService" />
 
         <!-- Declarations for the widget -->
-        <receiver android:name="com.android.calendar.widget.CalendarAppWidgetProvider"
+        <receiver android:name="org.prauga.calendar.widget.CalendarAppWidgetProvider"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -284,7 +284,7 @@
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/appwidget_info" />
         </receiver>
 
-        <receiver android:name="com.android.calendar.widget.CalendarAppWidgetService$CalendarFactory"
+        <receiver android:name="org.prauga.calendar.widget.CalendarAppWidgetService$CalendarFactory"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
@@ -305,13 +305,13 @@
             </intent-filter>
         </receiver>
 
-        <service android:name="com.android.calendar.widget.CalendarAppWidgetService"
+        <service android:name="org.prauga.calendar.widget.CalendarAppWidgetService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS">
         </service>
 
         <!-- Month view widget -->
-        <receiver android:name="com.android.calendar.widget.MonthAppWidgetProvider"
+        <receiver android:name="org.prauga.calendar.widget.MonthAppWidgetProvider"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -338,12 +338,12 @@
                 android:resource="@xml/month_appwidget_info" />
         </receiver>
 
-        <service android:name="com.android.calendar.widget.MonthAppWidgetService"
+        <service android:name="org.prauga.calendar.widget.MonthAppWidgetService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <!-- Week view widget -->
-        <receiver android:name="com.android.calendar.widget.WeekAppWidgetProvider"
+        <receiver android:name="org.prauga.calendar.widget.WeekAppWidgetProvider"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -370,11 +370,11 @@
                 android:resource="@xml/week_appwidget_info" />
         </receiver>
 
-        <service android:name="com.android.calendar.widget.WeekAppWidgetService"
+        <service android:name="org.prauga.calendar.widget.WeekAppWidgetService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
-        <service android:name="com.android.calendar.AsyncQueryServiceHelper" />
+        <service android:name="org.prauga.calendar.AsyncQueryServiceHelper" />
 
     </application>
 </manifest>

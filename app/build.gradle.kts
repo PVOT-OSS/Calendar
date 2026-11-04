@@ -13,7 +13,7 @@ kotlin {
 
 android {
 	namespace = "org.prauga.calendar"
-	testNamespace = "com.android.calendar.tests"
+	testNamespace = "org.prauga.calendar.tests"
 	compileSdk = 37
 
 	defaultConfig {

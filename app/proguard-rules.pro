@@ -20,27 +20,27 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class com.android.calendar.selectcalendars.SelectCalendarsSyncFragment
+-keep class org.prauga.calendar.selectcalendars.SelectCalendarsSyncFragment
 -keep class com.android.calendar.OtherPreferences
 -keep class com.android.calendar.AboutPreferences
--keep class com.android.calendar.settings.QuickResponsePreferences
--keepclassmembers class com.android.calendar.AllInOneActivity {
+-keep class org.prauga.calendar.settings.QuickResponsePreferences
+-keepclassmembers class org.prauga.calendar.AllInOneActivity {
   *** setControlsOffset(...);
 }
--keepclassmembers class com.android.calendar.selectcalendars.SelectVisibleCalendarsActivity {
+-keepclassmembers class org.prauga.calendar.selectcalendars.SelectVisibleCalendarsActivity {
   *** handleSelectSyncedCalendarsClicked(...);
 }
--keepclassmembers class com.android.calendar.AllInOneActivity {
+-keepclassmembers class org.prauga.calendar.AllInOneActivity {
   *** handleSelectSyncedCalendarsClicked(...);
 }
--keepclassmembers class com.android.calendar.AsyncQueryService {
+-keepclassmembers class org.prauga.calendar.AsyncQueryService {
   *** setTestHandler(...);
   *** getLastCancelableOperation(...);
 }
--keepclassmembers class com.android.calendar.AsyncQueryServiceHelper$OperationInfo {
+-keepclassmembers class org.prauga.calendar.AsyncQueryServiceHelper$OperationInfo {
   *** equivalent(...);
 }
--keepclassmembers class com.android.calendar.DayView {
+-keepclassmembers class org.prauga.calendar.DayView {
   *** setAnimateDayHeight(...);
   *** setAnimateDayEventHeight(...);
   *** setMoreAllDayEventsTextAlpha(...);
@@ -50,10 +50,10 @@
   *** setEventsAlpha(...);
   *** getEventsAlpha(...);
 }
--keepclassmembers class com.android.calendar.month.MonthWeekEventsView {
+-keepclassmembers class org.prauga.calendar.month.MonthWeekEventsView {
   *** setAnimateTodayAlpha(...);
 }
--keepclassmembers class com.android.calendar.event.EditEventHelper {
+-keepclassmembers class org.prauga.calendar.event.EditEventHelper {
  *** updateRecurrenceRule(...);
  *** extractDomain(...);
 }

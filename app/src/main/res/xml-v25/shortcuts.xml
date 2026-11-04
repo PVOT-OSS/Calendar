@@ -7,7 +7,7 @@
         android:shortcutShortLabel="@string/new_event_dialog_label">
         <intent
             android:action="android.intent.action.INSERT"
-            android:targetClass="com.android.calendar.EditEventActivity"
+            android:targetClass="org.prauga.calendar.EditEventActivity"
             android:targetPackage="org.prauga.calendar" />
     </shortcut>
 </shortcuts>
