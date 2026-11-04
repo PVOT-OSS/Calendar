@@ -1,0 +1,154 @@
+# SPDX-FileCopyrightText: 2026 Saalim Quadri <danascape@gmail.com>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+version = 1
+
+[[annotations]]
+path = [
+    "app/src/main/assets/backward",
+    "app/src/main/assets/zone.tab",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["NONE"]
+SPDX-License-Identifier = "LicenseRef-PublicDomain"
+
+[[annotations]]
+path = [
+    "app/src/main/assets/holidays/AE.json",
+    "app/src/main/assets/holidays/AR.json",
+    "app/src/main/assets/holidays/AT.json",
+    "app/src/main/assets/holidays/AU.json",
+    "app/src/main/assets/holidays/BD.json",
+    "app/src/main/assets/holidays/BE.json",
+    "app/src/main/assets/holidays/BR.json",
+    "app/src/main/assets/holidays/CA.json",
+    "app/src/main/assets/holidays/CH.json",
+    "app/src/main/assets/holidays/CL.json",
+    "app/src/main/assets/holidays/CN.json",
+    "app/src/main/assets/holidays/CO.json",
+    "app/src/main/assets/holidays/CZ.json",
+    "app/src/main/assets/holidays/DE.json",
+    "app/src/main/assets/holidays/DK.json",
+    "app/src/main/assets/holidays/EG.json",
+    "app/src/main/assets/holidays/ES.json",
+    "app/src/main/assets/holidays/FI.json",
+    "app/src/main/assets/holidays/FR.json",
+    "app/src/main/assets/holidays/GB.json",
+    "app/src/main/assets/holidays/GR.json",
+    "app/src/main/assets/holidays/HK.json",
+    "app/src/main/assets/holidays/ID.json",
+    "app/src/main/assets/holidays/IE.json",
+    "app/src/main/assets/holidays/IL.json",
+    "app/src/main/assets/holidays/IN.json",
+    "app/src/main/assets/holidays/IT.json",
+    "app/src/main/assets/holidays/JP.json",
+    "app/src/main/assets/holidays/KE.json",
+    "app/src/main/assets/holidays/KR.json",
+    "app/src/main/assets/holidays/MX.json",
+    "app/src/main/assets/holidays/MY.json",
+    "app/src/main/assets/holidays/NG.json",
+    "app/src/main/assets/holidays/NL.json",
+    "app/src/main/assets/holidays/NO.json",
+    "app/src/main/assets/holidays/NZ.json",
+    "app/src/main/assets/holidays/PE.json",
+    "app/src/main/assets/holidays/PH.json",
+    "app/src/main/assets/holidays/PK.json",
+    "app/src/main/assets/holidays/PL.json",
+    "app/src/main/assets/holidays/PT.json",
+    "app/src/main/assets/holidays/RU.json",
+    "app/src/main/assets/holidays/SA.json",
+    "app/src/main/assets/holidays/SE.json",
+    "app/src/main/assets/holidays/SG.json",
+    "app/src/main/assets/holidays/TR.json",
+    "app/src/main/assets/holidays/TW.json",
+    "app/src/main/assets/holidays/US.json",
+    "app/src/main/assets/holidays/ZA.json",
+    "app/src/main/assets/holidays/index.json",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2017-2026 Vacanza Team and individual contributors (python-holidays)", "2026 Saalim Quadri <danascape@gmail.com>"]
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = [
+    "app/src/main/ic_launcher-playstore.png",
+    "app/src/main/res/mipmap-hdpi/ic_launcher_round.png",
+    "app/src/main/res/mipmap-mdpi/ic_launcher_round.png",
+    "app/src/main/res/mipmap-xhdpi/ic_launcher_round.png",
+    "app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png",
+    "app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2020 Felix Nüsse", "2022 Aayush Gupta"]
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = [
+    "app/src/main/res/drawable-hdpi/calendar_widget_preview.webp",
+    "app/src/main/res/drawable-hdpi/ic_alarm_holo_dark.webp",
+    "app/src/main/res/drawable-hdpi/ic_call.webp",
+    "app/src/main/res/drawable-hdpi/ic_map.webp",
+    "app/src/main/res/drawable-hdpi/ic_menu_email_holo_dark.webp",
+    "app/src/main/res/drawable-hdpi/ic_repeat_dark.webp",
+    "app/src/main/res/drawable-hdpi/stat_notify_calendar_multiple.webp",
+    "app/src/main/res/drawable-mdpi/calendar_widget_preview.webp",
+    "app/src/main/res/drawable-mdpi/ic_alarm_holo_dark.webp",
+    "app/src/main/res/drawable-mdpi/ic_call.webp",
+    "app/src/main/res/drawable-mdpi/ic_map.webp",
+    "app/src/main/res/drawable-mdpi/ic_menu_email_holo_dark.webp",
+    "app/src/main/res/drawable-mdpi/ic_repeat_dark.webp",
+    "app/src/main/res/drawable-mdpi/stat_notify_calendar_multiple.webp",
+    "app/src/main/res/drawable-xhdpi/calendar_widget_preview.webp",
+    "app/src/main/res/drawable-xhdpi/ic_alarm_holo_dark.webp",
+    "app/src/main/res/drawable-xhdpi/ic_call.webp",
+    "app/src/main/res/drawable-xhdpi/ic_map.webp",
+    "app/src/main/res/drawable-xhdpi/ic_menu_email_holo_dark.webp",
+    "app/src/main/res/drawable-xhdpi/ic_repeat_dark.webp",
+    "app/src/main/res/drawable-xhdpi/stat_notify_calendar_multiple.webp",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2019 Gitsaibot", "2022 Aayush Gupta"]
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = [
+    "app/src/main/res/drawable-hdpi/ic_colorpicker_swatch_selected.png",
+    "app/src/main/res/drawable-mdpi/ic_colorpicker_swatch_selected.png",
+    "app/src/main/res/drawable-xhdpi/ic_clear_search_holo_light.png",
+    "app/src/main/res/drawable-xhdpi/ic_colorpicker_swatch_selected.png",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2025 Jochen Sprickerhof"]
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = [
+    "app/src/main/res/drawable-hdpi/widget_chip_not_responded_bg.9.png",
+    "app/src/main/res/drawable-hdpi/widget_chip_responded_bg.9.png",
+    "app/src/main/res/drawable-mdpi/widget_chip_not_responded_bg.9.png",
+    "app/src/main/res/drawable-mdpi/widget_chip_responded_bg.9.png",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2011 The Android Open Source Project"]
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = [
+    "app/src/main/res/mipmap-hdpi/ic_launcher.png",
+    "app/src/main/res/mipmap-mdpi/ic_launcher.png",
+    "app/src/main/res/mipmap-xhdpi/ic_launcher.png",
+    "app/src/main/res/mipmap-xxhdpi/ic_launcher.png",
+    "app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2015 Suhail Alkowaileet", "2020 Felix Nüsse", "2022 Aayush Gupta"]
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = [
+    "gradle/wrapper/gradle-wrapper.jar",
+    "gradle/wrapper/gradle-wrapper.properties",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2007-2023 Gradle, Inc."]
+SPDX-License-Identifier = "Apache-2.0"
