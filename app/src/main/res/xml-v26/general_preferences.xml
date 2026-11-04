@@ -31,47 +31,16 @@
             app:key="pref_real_event_colors"
             app:defaultValue="false"
             app:title="@string/preferences_real_event_colors" />
-        <ListPreference
-            app:key="preferences_default_start"
-            app:defaultValue="-2"
-            app:title="@string/default_start_title"
-            app:entries="@array/default_start_entries"
-            app:entryValues="@array/default_start_values" />
-        <SwitchPreference
-            app:key="pref_view_switch_buttons"
-            app:defaultValue="false"
-            app:title="@string/preferences_view_switch_buttons"
-            app:summary="@string/preferences_view_switch_buttons_summary" />
-        <Preference
-            app:key="pref_view_details"
-            app:title="@string/display_options"
-            app:fragment="org.prauga.calendar.settings.ViewDetailsPreferences" />
         <SwitchPreference
             app:key="preferences_hide_declined"
             app:defaultValue="false"
             app:title="@string/preferences_hide_declined_title" />
-        <SwitchPreference
-            app:key="preferences_staggered_display"
-            app:defaultValue="false"
-            app:title="@string/preferences_staggered_display_title"
-            app:summary="@string/preferences_staggered_display_summary" />
-        <SwitchPreference
-            app:key="preferences_show_week_num"
-            app:defaultValue="false"
-            app:title="@string/preferences_show_week_num_title" />
         <ListPreference
             app:key="preferences_week_start_day"
             app:defaultValue="@string/preferences_week_start_day_default"
             app:title="@string/preferences_week_start_day_title"
             app:entryValues="@array/preferences_week_start_day_values"
             app:dialogTitle="@string/preferences_week_start_day_dialog" />
-        <ListPreference
-            app:key="preferences_days_per_week"
-            app:defaultValue="@string/preferences_days_per_week_default"
-            app:title="@string/preferences_days_per_week_title"
-            app:entries="@array/preferences_days_per_week_labels"
-            app:entryValues="@array/preferences_days_per_week_values"
-            app:dialogTitle="@string/preferences_days_per_week_dialog" />
         <ListPreference
             app:key="preferences_default_event_duration"
             app:defaultValue="60"

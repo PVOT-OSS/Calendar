@@ -67,11 +67,8 @@ class GeneralPreferences : PreferenceFragmentCompat(),
     private lateinit var realEventColors: SwitchPreference
     private lateinit var pureBlackNightModePref: SwitchPreference
     private lateinit var doNotCheckBatteryOptimizationPref: SwitchPreference
-    private lateinit var defaultStartPref: ListPreference
     private lateinit var hideDeclinedPref: SwitchPreference
-    private lateinit var staggeredDisplayPref: SwitchPreference
     private lateinit var weekStartPref: ListPreference
-    private lateinit var dayWeekPref: ListPreference
     private lateinit var defaultEventDurationPref: ListPreference
     private lateinit var useHomeTzPref: CheckBoxPreference
     private lateinit var homeTzPref: Preference
@@ -112,11 +109,8 @@ class GeneralPreferences : PreferenceFragmentCompat(),
         realEventColors = preferenceScreen.findPreference(KEY_REAL_EVENT_COLORS)!!
         pureBlackNightModePref = preferenceScreen.findPreference(KEY_PURE_BLACK_NIGHT_MODE)!!
         doNotCheckBatteryOptimizationPref = preferenceScreen.findPreference(KEY_DO_NOT_CHECK_BATTERY_OPTIMIZATION)!!
-        defaultStartPref = preferenceScreen.findPreference(KEY_DEFAULT_START)!!
         hideDeclinedPref = preferenceScreen.findPreference(KEY_HIDE_DECLINED)!!
-        staggeredDisplayPref = preferenceScreen.findPreference(KEY_STAGGERED_DISPLAY)!!
         weekStartPref = preferenceScreen.findPreference(KEY_WEEK_START_DAY)!!
-        dayWeekPref = preferenceScreen.findPreference(KEY_DAYS_PER_WEEK)!!
         defaultEventDurationPref = preferenceScreen.findPreference(KEY_DEFAULT_EVENT_DURATION)!!
         useHomeTzPref = preferenceScreen.findPreference(KEY_HOME_TZ_ENABLED)!!
         homeTzPref = preferenceScreen.findPreference(KEY_HOME_TZ)!!
@@ -163,10 +157,8 @@ class GeneralPreferences : PreferenceFragmentCompat(),
         defaultEventDurationPref.summary = defaultEventDurationPref.entry
         themePref.summary = themePref.entry
         weekStartPref.summary = weekStartPref.entry
-        dayWeekPref.summary = dayWeekPref.entry
         defaultReminderPref.summary = defaultReminderPref.entry
         snoozeDelayPref.summary = snoozeDelayPref.entry
-        defaultStartPref.summary = defaultStartPref.entry
         skipRemindersPref.summary = skipRemindersPref.entry
 
         // This triggers an asynchronous call to the provider to refresh the data in shared pref
@@ -224,11 +216,8 @@ class GeneralPreferences : PreferenceFragmentCompat(),
         themePref.onPreferenceChangeListener = listener
         pureBlackNightModePref.onPreferenceChangeListener = listener
         doNotCheckBatteryOptimizationPref.onPreferenceChangeListener = listener
-        defaultStartPref.onPreferenceChangeListener = listener
         hideDeclinedPref.onPreferenceChangeListener = listener
-        staggeredDisplayPref.onPreferenceChangeListener = listener
         weekStartPref.onPreferenceChangeListener = listener
-        dayWeekPref.onPreferenceChangeListener = listener
         defaultEventDurationPref.onPreferenceChangeListener = listener
         useHomeTzPref.onPreferenceChangeListener = listener
         homeTzPref.onPreferenceChangeListener = listener
@@ -312,17 +301,9 @@ class GeneralPreferences : PreferenceFragmentCompat(),
                 requireActivity().sendBroadcast(intent)
                 return true
             }
-            staggeredDisplayPref -> {
-                staggeredDisplayPref.isChecked = newValue as Boolean
-                return true
-            }
             weekStartPref -> {
                 weekStartPref.value = newValue as String
                 weekStartPref.summary = weekStartPref.entry
-            }
-            dayWeekPref -> {
-                dayWeekPref.value = newValue as String
-                dayWeekPref.summary = dayWeekPref.entry
             }
             defaultEventDurationPref -> {
                 defaultEventDurationPref.value = newValue as String
@@ -336,11 +317,6 @@ class GeneralPreferences : PreferenceFragmentCompat(),
                 snoozeDelayPref.value = newValue as String
                 snoozeDelayPref.summary = snoozeDelayPref.entry
                 handleUseCustomSnoozeDelayVisibility()
-            }
-            defaultStartPref -> {
-                val i = defaultStartPref.findIndexOfValue(newValue as String)
-                defaultStartPref.summary = defaultStartPref.entries[i]
-                return true
             }
             skipRemindersPref -> {
                 skipRemindersPref.value = newValue as String

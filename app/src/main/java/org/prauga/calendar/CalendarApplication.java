@@ -21,7 +21,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 
 import org.prauga.calendar.settings.GeneralPreferences;
-import org.prauga.calendar.settings.ViewDetailsPreferences;
 
 public class CalendarApplication extends Application {
     private int mCurrentNightMode;
@@ -43,7 +42,6 @@ public class CalendarApplication extends Application {
         SharedPreferences preferences = GeneralPreferences.Companion.getSharedPreferences(this);
         if (preferences.getInt(VERSION_KEY, 0) != SHARED_PREFS_VERSION) {
             GeneralPreferences.Companion.setDefaultValues(this);
-            ViewDetailsPreferences.Companion.setDefaultValues(this);
             preferences.edit().putInt(VERSION_KEY, SHARED_PREFS_VERSION).apply();
         }
 
