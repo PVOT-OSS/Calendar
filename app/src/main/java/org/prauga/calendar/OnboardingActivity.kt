@@ -24,6 +24,7 @@ import org.prauga.calendar.settings.GeneralPreferences
 import org.prauga.calendar.settings.SettingsActivity
 import org.prauga.calendar.theme.applyTheme
 import org.prauga.calendar.R
+import org.prauga.calendar.ui.MainActivity
 
 class OnboardingActivity : AppCompatActivity() {
 
@@ -100,7 +101,7 @@ class OnboardingActivity : AppCompatActivity() {
             .putBoolean(PREF_DONE, true)
             .putBoolean(AllInOneActivity.PREF_EXACT_ALARM_ASKED, true)
             .apply()
-        startActivity(Intent(this, AllInOneActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+        startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         finish()
     }
 

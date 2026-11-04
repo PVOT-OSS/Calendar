@@ -75,12 +75,6 @@
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.APP_CALENDAR" />
-            </intent-filter>
-            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="time/epoch" />
@@ -96,9 +90,21 @@
 
         </activity>
 
+        <activity
+            android:name="org.prauga.calendar.ui.MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.APP_CALENDAR" />
+            </intent-filter>
+        </activity>
+
         <activity-alias android:name="org.prauga.calendar.LaunchActivity"
             android:exported="true"
-            android:targetActivity="org.prauga.calendar.AllInOneActivity">
+            android:targetActivity="org.prauga.calendar.ui.MainActivity">
         </activity-alias>
 
         <activity android:name="org.prauga.calendar.AboutActivity">
