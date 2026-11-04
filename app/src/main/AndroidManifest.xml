@@ -199,6 +199,18 @@
             </intent-filter>
         </activity>
 
+        <activity android:name="org.prauga.calendar.WebcalActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Etar.Translucent">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="webcal" />
+                <data android:scheme="webcals" />
+            </intent-filter>
+        </activity>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

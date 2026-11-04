@@ -56,6 +56,10 @@
     <string name="alternate_calendar_pref_title">Alternate calendar</string>
     <string name="alternate_calendar_none">None</string>
 
+    <string name="webcal_title">Subscribe to calendar</string>
+    <string name="webcal_message">Calendar subscriptions are kept up to date by the free app ICSx⁵, and appear here once added.\n\n%s</string>
+    <string name="webcal_get_icsx5">Get ICSx⁵</string>
+
     <string name="shortcut_today">Today</string>
 
     <string name="join_meeting">Join meeting</string>
