@@ -15,11 +15,11 @@ import android.provider.CalendarContract.Events
 import org.prauga.calendar.AboutActivity
 import org.prauga.calendar.AllInOneActivity
 import org.prauga.calendar.CalendarController
-import org.prauga.calendar.EventInfoActivity
 import org.prauga.calendar.SearchActivity
 import org.prauga.calendar.data.Agenda
 import org.prauga.calendar.settings.SettingsActivity
 import org.prauga.calendar.tasks.TasksRepository
+import org.prauga.calendar.ui.details.DetailsActivity
 import org.prauga.calendar.ui.edit.EditorActivity
 import java.time.LocalDate
 import java.time.LocalTime
@@ -34,7 +34,7 @@ object Actions {
             return
         }
         val intent = Intent(Intent.ACTION_VIEW, ContentUris.withAppendedId(Events.CONTENT_URI, agenda.eventId))
-            .setClass(context, EventInfoActivity::class.java)
+            .setClass(context, DetailsActivity::class.java)
             .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, agenda.begin)
             .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, agenda.end)
             .putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, agenda.allDay)

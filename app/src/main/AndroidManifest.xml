@@ -103,6 +103,10 @@
         </activity>
 
         <activity
+            android:name="org.prauga.calendar.ui.details.DetailsActivity"
+            android:exported="false" />
+
+        <activity
             android:name="org.prauga.calendar.ui.edit.EditorActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
