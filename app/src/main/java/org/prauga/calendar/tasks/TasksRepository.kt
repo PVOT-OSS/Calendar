@@ -167,11 +167,10 @@ object TasksRepository {
         val time = Time(if (allDay) Time.TIMEZONE_UTC else tz)
         if (allDay) {
             time.set(due)
-            val local = Time(tz)
-            local.set(0, 0, 0, time.day, time.month, time.year)
-            e.startMillis = local.normalize()
+            time.set(0, 0, 0, time.day, time.month, time.year)
+            e.startMillis = time.normalize()
             e.endMillis = e.startMillis + DAY
-            e.startDay = Time.getJulianDay(e.startMillis, local.gmtOffset)
+            e.startDay = Time.getJulianDay(e.startMillis, 0)
             e.endDay = e.startDay
             e.startTime = 0
             e.endTime = 24 * 60
