@@ -23,9 +23,18 @@
     android:orientation="vertical">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="48dip"
+        android:layout_height="56dip"
         android:orientation="horizontal"
         android:layout_marginEnd="8dip" >
+        <QuickContactBadge
+            android:id="@+id/badge"
+            android:layout_gravity="center_vertical"
+            android:layout_width="40dip"
+            android:layout_height="40dip"
+            android:layout_marginStart="5dip"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            style="?android:attr/quickContactBadgeStyleWindowMedium" />
         <TextView
             android:id="@+id/name"
             android:layout_height="wrap_content"
@@ -36,7 +45,9 @@
             android:gravity="center_vertical"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:focusable="true"
-            style="@style/TextAppearance.EditEvent_Value" />
+            style="@style/TextAppearance.EditEvent_Value"
+            android:layout_marginLeft="16dip"
+            android:paddingLeft="0dip" />
 
         <ImageButton
             android:id="@+id/contact_remove"
@@ -48,13 +59,6 @@
             android:contentDescription="@string/accessibility_remove_attendee"
             style="@style/MinusButton" />
 
-        <QuickContactBadge
-            android:id="@+id/badge"
-            android:layout_gravity="center_vertical"
-            android:layout_width="48dip"
-            android:layout_height="48dip"
-            android:src="@drawable/ic_contact_picture"
-            style="?android:attr/quickContactBadgeStyleWindowMedium" />
     </LinearLayout>
 
     <View

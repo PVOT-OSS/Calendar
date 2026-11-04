@@ -72,7 +72,6 @@ public class AttendeesView extends LinearLayout implements View.OnClickListener 
     private final Context mContext;
     private final LayoutInflater mInflater;
     private final PresenceQueryHandler mPresenceQueryHandler;
-    private final Drawable mDefaultBadge;
     private final ColorMatrixColorFilter mGrayscaleFilter;
 
     // TextView shown at the top of each type of attendees
@@ -103,7 +102,6 @@ public class AttendeesView extends LinearLayout implements View.OnClickListener 
         mPresenceQueryHandler = new PresenceQueryHandler(context.getContentResolver());
 
         final Resources resources = context.getResources();
-        mDefaultBadge = ContextCompat.getDrawable(context, R.drawable.ic_contact_picture);
         mNoResponsePhotoAlpha =
             resources.getInteger(R.integer.noresponse_attendee_photo_alpha_level);
         mDefaultPhotoAlpha = resources.getInteger(R.integer.default_attendee_photo_alpha_level);
@@ -210,8 +208,6 @@ public class AttendeesView extends LinearLayout implements View.OnClickListener 
         if (badge != null) {
             item.mBadge = badge;
         }
-        badgeView.setImageDrawable(item.mBadge);
-
         if (item.mAttendee.mStatus == Attendees.ATTENDEE_STATUS_NONE) {
             item.mBadge.setAlpha(mNoResponsePhotoAlpha);
         } else {
@@ -222,6 +218,9 @@ public class AttendeesView extends LinearLayout implements View.OnClickListener 
         } else {
             item.mBadge.setColorFilter(null);
         }
+        badgeView.setImageDrawable(
+                GuestAvatar.withStatus(mContext, item.mBadge, item.mAttendee.mStatus));
+        badgeView.setOverlay(null);
 
         // If we know the lookup-uri of the contact, it is a good idea to set this here. This
         // allows QuickContact to be started without an extra database lookup. If we don't know
@@ -278,7 +277,8 @@ public class AttendeesView extends LinearLayout implements View.OnClickListener 
         if (contains(attendee)) {
             return;
         }
-        final AttendeeItem item = new AttendeeItem(attendee, mDefaultBadge);
+        final AttendeeItem item = new AttendeeItem(attendee,
+                GuestAvatar.letterTile(attendee.mName, attendee.mEmail));
         final int status = attendee.mStatus;
         final int index;
         boolean firstAttendeeInCategory = false;
