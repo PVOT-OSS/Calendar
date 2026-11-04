@@ -117,43 +117,59 @@ class EventMover(private val resolver: ContentResolver) {
     }
 
     private fun moveOccurrence(masterId: Long, oldBegin: Long, newBegin: Long, newEnd: Long, allDay: Boolean): (() -> Unit)? {
-        val master = ContentValues()
+        val overrides = ContentValues().apply {
+            put(Events.DTSTART, newBegin)
+            put(Events.DTEND, newEnd)
+        }
+        val created = createException(masterId, oldBegin, allDay, overrides) ?: return null
+        return {
+            resolver.delete(ContentUris.withAppendedId(Events.CONTENT_URI, created.id), null, null)
+            if (created.separate) SeriesWriter.removeExdate(resolver, masterId, oldBegin, allDay)
+        }
+    }
+
+    data class Created(val id: Long, val separate: Boolean)
+
+    fun createException(
+        masterId: Long,
+        occurrenceBegin: Long,
+        allDay: Boolean,
+        overrides: ContentValues,
+        withReminders: Boolean = true,
+    ): Created? {
+        val values = ContentValues()
         var accountName = ""
         var accountType = ""
         resolver.query(ContentUris.withAppendedId(Events.CONTENT_URI, masterId), COPY_COLUMNS + ACCOUNT_COLUMNS, null, null, null)?.use {
             if (!it.moveToFirst()) return null
             for ((i, column) in COPY_COLUMNS.withIndex()) {
                 if (!it.isNull(i)) {
-                    if (it.getType(i) == Cursor.FIELD_TYPE_INTEGER) master.put(column, it.getLong(i))
-                    else master.put(column, it.getString(i))
+                    if (it.getType(i) == Cursor.FIELD_TYPE_INTEGER) values.put(column, it.getLong(i))
+                    else values.put(column, it.getString(i))
                 }
             }
             accountName = it.getString(COPY_COLUMNS.size) ?: ""
             accountType = it.getString(COPY_COLUMNS.size + 1) ?: ""
         } ?: return null
-        master.put(Events.DTSTART, newBegin)
-        master.put(Events.DTEND, newEnd)
+        values.putAll(overrides)
 
         val syncId = SeriesWriter.ensureSyncId(resolver, masterId, accountName, accountType)
         if (syncId == null) {
-            SeriesWriter.addExdate(resolver, masterId, oldBegin, allDay)
-            val uri = resolver.insert(Events.CONTENT_URI, master) ?: return null
+            SeriesWriter.addExdate(resolver, masterId, occurrenceBegin, allDay)
+            val uri = resolver.insert(Events.CONTENT_URI, values) ?: return null
             val newId = ContentUris.parseId(uri)
-            copyReminders(masterId, newId)
-            return {
-                resolver.delete(ContentUris.withAppendedId(Events.CONTENT_URI, newId), null, null)
-                SeriesWriter.removeExdate(resolver, masterId, oldBegin, allDay)
-            }
+            if (withReminders) copyReminders(masterId, newId)
+            return Created(newId, separate = true)
         }
-        master.put(Events.ORIGINAL_ID, masterId)
-        master.put(Events.ORIGINAL_SYNC_ID, syncId)
-        master.put(Events.ORIGINAL_INSTANCE_TIME, oldBegin)
-        master.put(Events.ORIGINAL_ALL_DAY, if (allDay) 1 else 0)
-        master.put(Events.ALL_DAY, if (allDay) 1 else 0)
-        val uri = resolver.insert(Events.CONTENT_URI, master) ?: return null
+        values.put(Events.ORIGINAL_ID, masterId)
+        values.put(Events.ORIGINAL_SYNC_ID, syncId)
+        values.put(Events.ORIGINAL_INSTANCE_TIME, occurrenceBegin)
+        values.put(Events.ORIGINAL_ALL_DAY, if (allDay) 1 else 0)
+        if (!values.containsKey(Events.ALL_DAY)) values.put(Events.ALL_DAY, if (allDay) 1 else 0)
+        val uri = resolver.insert(Events.CONTENT_URI, values) ?: return null
         val exceptionId = ContentUris.parseId(uri)
-        copyReminders(masterId, exceptionId)
-        return { resolver.delete(ContentUris.withAppendedId(Events.CONTENT_URI, exceptionId), null, null) }
+        if (withReminders) copyReminders(masterId, exceptionId)
+        return Created(exceptionId, separate = false)
     }
 
     private fun copyReminders(from: Long, to: Long) {
