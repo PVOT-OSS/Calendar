@@ -52,7 +52,6 @@ import org.prauga.calendar.CalendarController.ViewType;
 import org.prauga.calendar.theme.DynamicThemeKt;
 import org.prauga.calendar.Event;
 import org.prauga.calendar.Utils;
-import org.prauga.calendar.event.CreateEventDialogFragment;
 import org.prauga.calendar.calendarcommon2.Time;
 
 import java.util.ArrayList;
@@ -66,7 +65,6 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
         CalendarController.EventHandler, LoaderManager.LoaderCallbacks<Cursor>, OnScrollListener,
         OnTouchListener {
     private static final String TAG = "MonthFragment";
-    private static final String TAG_EVENT_DIALOG = "event_dialog";
     // Selection and selection args for adding event queries
     private static final String WHERE_CALENDARS_VISIBLE = Calendars.VISIBLE + "=1";
     private static final String INSTANCES_SORT_ORDER = Instances.START_DAY + ","
@@ -102,7 +100,6 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
     protected boolean mHideDeclined;
     protected int mFirstLoadedJulianDay;
     protected int mLastLoadedJulianDay;
-    private CreateEventDialogFragment mEventDialog;
     private CursorLoader mLoader;
     private Uri mEventUri;
     private volatile boolean mShouldLoad = true;
