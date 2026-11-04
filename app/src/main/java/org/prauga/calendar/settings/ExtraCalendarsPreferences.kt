@@ -8,7 +8,9 @@ package org.prauga.calendar.settings
 import android.Manifest
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.preference.ListPreference
 import androidx.preference.MultiSelectListPreference
+import org.prauga.calendar.AlternateCalendar
 import androidx.preference.PreferenceFragmentCompat
 import org.prauga.calendar.holidays.HolidaySync
 import androidx.preference.SwitchPreferenceCompat
@@ -76,6 +78,25 @@ class ExtraCalendarsPreferences : PreferenceFragmentCompat() {
             true
         }
         screen.addPreference(holidays)
+
+        val types = listOf(AlternateCalendar.NONE) + AlternateCalendar.TYPES
+        val alternate = ListPreference(context).apply {
+            key = AlternateCalendar.PREF
+            title = getString(R.string.alternate_calendar_pref_title)
+            dialogTitle = title
+            entries = types.map {
+                if (it == AlternateCalendar.NONE) getString(R.string.alternate_calendar_none)
+                else AlternateCalendar.displayName(it)
+            }.toTypedArray()
+            entryValues = types.toTypedArray()
+            setDefaultValue(AlternateCalendar.NONE)
+            summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
+        }
+        alternate.setOnPreferenceChangeListener { _, _ ->
+            requireView().post { AlternateCalendar.invalidate() }
+            true
+        }
+        screen.addPreference(alternate)
         preferenceScreen = screen
     }
 

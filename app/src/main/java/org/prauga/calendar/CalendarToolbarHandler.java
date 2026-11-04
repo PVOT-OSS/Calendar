@@ -82,7 +82,7 @@ public class CalendarToolbarHandler {
     private void updateTitle() {
         switch (mCurrentViewType) {
             case CalendarController.ViewType.DAY:
-                mToolbar.setSubtitle(buildDayOfWeek());
+                mToolbar.setSubtitle(withAlternateDate(buildDayOfWeek()));
                 mToolbar.setTitle(buildFullDate());
                 break;
             case CalendarController.ViewType.WEEK:
@@ -105,6 +105,17 @@ public class CalendarToolbarHandler {
         }
     }
 
+
+    private String withAlternateDate(String dayOfWeek) {
+        if (!AlternateCalendar.INSTANCE.isEnabled(mContext)) {
+            return dayOfWeek;
+        }
+        Time time = new Time(mTimeZone);
+        time.set(mMilliTime);
+        String label = AlternateCalendar.INSTANCE.label(mContext, time.getYear(), time.getMonth(),
+                time.getDay(), false);
+        return label == null ? dayOfWeek : dayOfWeek + " · " + label;
+    }
 
     // Sets a thread to run 1 second after midnight and update the current date
     // This is used to display correctly the date of yesterday/today/tomorrow

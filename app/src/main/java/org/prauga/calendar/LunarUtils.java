@@ -60,6 +60,9 @@ public class LunarUtils {
      * language is zh-cn.
      */
     public static boolean showLunar(Context context) {
+        if (context != null && AlternateCalendar.INSTANCE.isEnabled(context)) {
+            return true;
+        }
         Locale locale = Locale.getDefault();
         String language = locale.getLanguage().toLowerCase();
         String country = locale.getCountry().toLowerCase();
@@ -90,6 +93,15 @@ public class LunarUtils {
     public static String get(Context context, int year, int month, int day, int format,
             boolean showLunarBeforeFestival, ArrayList<String> result) {
         if (context == null || format < FORMAT_LUNAR_LONG) return null;
+
+        if (AlternateCalendar.INSTANCE.isEnabled(context)) {
+            String label = AlternateCalendar.INSTANCE.label(context, year, month, day,
+                    (format & FORMAT_LUNAR_LONG) == 0);
+            if (label != null && result != null) {
+                result.add(label);
+            }
+            return label;
+        }
 
         String res = null;
 
