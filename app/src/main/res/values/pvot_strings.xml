@@ -130,4 +130,46 @@
         <item quantity="one">%d event</item>
         <item quantity="other">%d events</item>
     </plurals>
+
+    <string name="ui_home">Home</string>
+    <string-array name="ui_calendar_modes">
+        <item>Day</item>
+        <item>Week</item>
+        <item>Month</item>
+        <item>Year</item>
+    </string-array>
+    <string name="ui_calendar">Calendar</string>
+    <string name="ui_add">Add</string>
+    <string name="ui_more">More options</string>
+    <string name="ui_classic_view">Classic view</string>
+    <string name="ui_sync">Sync</string>
+    <string name="ui_syncing">Syncing your calendars</string>
+    <string name="ui_join">Join</string>
+    <string name="ui_today">Today</string>
+    <string name="ui_tomorrow">Tomorrow</string>
+    <string name="ui_yesterday">Yesterday</string>
+    <string name="ui_upcoming">Your upcoming events</string>
+    <string name="ui_nothing_upcoming">Nothing coming up in the next two weeks.</string>
+    <string name="ui_good_morning">Good morning</string>
+    <string name="ui_good_afternoon">Good afternoon</string>
+    <string name="ui_good_evening">Good evening</string>
+    <string name="ui_summary_free">Your week is free.</string>
+    <string name="ui_summary_week">You have %1$s and %2$s this week.</string>
+    <string name="ui_summary_week_events">You have %1$s this week.</string>
+    <string name="ui_summary_weekend">You have %1$s planned this weekend.</string>
+    <plurals name="ui_meetings">
+        <item quantity="one">%d event</item>
+        <item quantity="other">%d events</item>
+    </plurals>
+    <plurals name="ui_tasks">
+        <item quantity="one">%d task</item>
+        <item quantity="other">%d tasks</item>
+    </plurals>
+    <plurals name="ui_more_guests">
+        <item quantity="one">and %d more guest</item>
+        <item quantity="other">and %d more guests</item>
+    </plurals>
+    <string name="ui_permission_title">Calendar access needed</string>
+    <string name="ui_permission_body">Calendar shows and edits the events stored on this phone. Allow access to continue.</string>
+    <string name="ui_permission_allow">Allow access</string>
 </resources>
