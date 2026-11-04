@@ -92,12 +92,13 @@ private enum class Sheet { None, Color, Calendar, Repeat, Reminder }
 private enum class Picker { None, StartDate, StartTime, EndDate, EndTime }
 
 @Composable
-fun EditorScreen(state: EditorState, viewModel: EditorViewModel, onBack: () -> Unit, onSave: () -> Unit) {
+fun EditorScreen(state: EditorState, viewModel: EditorViewModel, onBack: () -> Unit, onSave: (EventWriter.Scope?) -> Unit) {
     val context = LocalContext.current
     val draft = state.draft
     var sheet by remember { mutableStateOf(Sheet.None) }
     var picker by remember { mutableStateOf(Picker.None) }
     var guestDialog by remember { mutableStateOf(false) }
+    var scopeDialog by remember { mutableStateOf(false) }
     val locale = Locale.getDefault()
     val dateFormat = remember { DateTimeFormatter.ofPattern("EEE, d MMM yyyy", locale) }
     val timeFormat = remember {
@@ -250,7 +251,7 @@ fun EditorScreen(state: EditorState, viewModel: EditorViewModel, onBack: () -> U
         }
         PvotButton(
             text = stringResource(if (state.editing) R.string.ui_save else R.string.ui_create_event),
-            onClick = onSave,
+            onClick = { if (state.recurring) scopeDialog = true else onSave(null) },
             enabled = draft.valid && !state.saving,
             modifier = Modifier
                 .fillMaxWidth()
@@ -337,6 +338,20 @@ fun EditorScreen(state: EditorState, viewModel: EditorViewModel, onBack: () -> U
             },
         )
         Picker.None -> {}
+    }
+    if (scopeDialog) {
+        PvotDialog(visible = true, onDismissRequest = { scopeDialog = false }, title = stringResource(R.string.move_recurring_title)) {
+            listOf(
+                EventWriter.Scope.THIS to R.string.modify_event,
+                EventWriter.Scope.FOLLOWING to R.string.modify_all_following,
+                EventWriter.Scope.ALL to R.string.modify_all,
+            ).forEachIndexed { index, (scope, label) ->
+                PvotDialogAction(stringResource(label), onClick = {
+                    scopeDialog = false
+                    onSave(scope)
+                }, style = if (index == 0) PvotDialogActionStyle.Primary else PvotDialogActionStyle.Neutral)
+            }
+        }
     }
     if (guestDialog) GuestDialog(
         onDismiss = { guestDialog = false },

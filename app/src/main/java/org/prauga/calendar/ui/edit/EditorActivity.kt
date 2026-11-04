@@ -24,7 +24,11 @@ class EditorActivity : PvotBaseActivity() {
         super.onCreate(savedInstanceState)
         val eventId = intent.getLongExtra(EXTRA_EVENT_ID, -1L)
         if (eventId >= 0) {
-            viewModel.startEdit(eventId)
+            viewModel.startEdit(
+                eventId,
+                intent.getLongExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, 0L),
+                intent.getLongExtra(CalendarContract.EXTRA_EVENT_END_TIME, 0L),
+            )
         } else {
             viewModel.start(
                 beginMillis = intent.getLongExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, 0L),
@@ -40,8 +44,8 @@ class EditorActivity : PvotBaseActivity() {
                     state = state,
                     viewModel = viewModel,
                     onBack = ::finish,
-                    onSave = {
-                        viewModel.save { ok ->
+                    onSave = { scope ->
+                        viewModel.save(scope) { ok ->
                             Toast.makeText(this, if (ok) R.string.ui_saved else R.string.ui_save_failed, Toast.LENGTH_SHORT).show()
                             if (ok) finish()
                         }

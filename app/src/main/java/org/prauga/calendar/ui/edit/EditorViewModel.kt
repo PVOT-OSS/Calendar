@@ -24,6 +24,7 @@ import org.prauga.calendar.settings.GeneralPreferences
 import org.prauga.calendar.ui.Formats
 import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 data class EditorState(
     val draft: EventDraft,
@@ -32,6 +33,7 @@ data class EditorState(
     val saving: Boolean = false,
     val reminderTouched: Boolean = false,
     val editing: Boolean = false,
+    val recurring: Boolean = false,
 ) {
     val calendar: CalendarTarget? get() = calendars.firstOrNull { it.id == draft.calendarId }
 }
@@ -49,8 +51,10 @@ class EditorViewModel(application: Application) : AndroidViewModel(application) 
     private var initialized = false
     private var editingId = -1L
     private var original: EventDraft? = null
+    private var occurrenceBegin = 0L
+    private var occurrenceEnd = 0L
 
-    fun startEdit(eventId: Long) {
+    fun startEdit(eventId: Long, begin: Long, end: Long) {
         if (initialized) return
         initialized = true
         editingId = eventId
@@ -60,8 +64,21 @@ class EditorViewModel(application: Application) : AndroidViewModel(application) 
                 EventWriter.load(context.contentResolver, eventId, zone) to WritableCalendars.list(context.contentResolver)
             }
             if (draft == null) return@launch
-            original = draft
-            _state.update { it.copy(draft = draft, calendars = calendars, editing = true, reminderTouched = true) }
+            val recurring = draft.rrule != null && begin > 0
+            val shown = if (recurring) {
+                val at = if (draft.allDay) ZoneOffset.UTC else zone
+                val start = LocalDateTime.ofInstant(Instant.ofEpochMilli(begin), at)
+                val finish = LocalDateTime.ofInstant(Instant.ofEpochMilli(if (end > begin) end else begin), at)
+                draft.copy(start = start, end = if (draft.allDay) maxOf(start, finish.minusDays(1)) else finish)
+            } else {
+                draft
+            }
+            occurrenceBegin = begin
+            occurrenceEnd = end
+            original = shown
+            _state.update {
+                it.copy(draft = shown, calendars = calendars, editing = true, reminderTouched = true, recurring = recurring)
+            }
             refreshRepeats()
         }
     }
@@ -118,7 +135,7 @@ class EditorViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun save(onDone: (Boolean) -> Unit) {
+    fun save(scope: EventWriter.Scope?, onDone: (Boolean) -> Unit) {
         val s = _state.value
         if (!s.draft.valid || s.saving) return
         _state.update { it.copy(saving = true) }
@@ -129,7 +146,11 @@ class EditorViewModel(application: Application) : AndroidViewModel(application) 
             val ok = withContext(Dispatchers.IO) {
                 runCatching {
                     val before = original
-                    if (editingId >= 0 && before != null) {
+                    if (editingId >= 0 && before != null && s.recurring && scope != null) {
+                        EventWriter.updateSeries(
+                            context.contentResolver, editingId, occurrenceBegin, occurrenceEnd, s.draft, before, zone, scope,
+                        )
+                    } else if (editingId >= 0 && before != null) {
                         EventWriter.update(context.contentResolver, editingId, s.draft, before, zone)
                     } else {
                         EventWriter.insert(context.contentResolver, s.draft, zone, s.calendar?.accountName) != null

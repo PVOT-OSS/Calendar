@@ -6,13 +6,11 @@
 package org.prauga.calendar.ui.details
 
 import android.content.ActivityNotFoundException
-import android.content.ContentUris
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.CalendarContract
 import android.provider.CalendarContract.Attendees
-import android.provider.CalendarContract.Events
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
@@ -21,7 +19,6 @@ import com.prauga.pvot.designsystem.platform.PvotBaseActivity
 import com.prauga.pvot.designsystem.theme.PvotAppTheme
 import org.prauga.calendar.DeleteEventHelper
 import org.prauga.calendar.R
-import org.prauga.calendar.event.EditEventActivity
 import org.prauga.calendar.ui.Actions
 import org.prauga.calendar.ui.edit.EditorActivity
 
@@ -78,15 +75,12 @@ class DetailsActivity : PvotBaseActivity() {
     }
 
     private fun edit() {
-        if (viewModel.state.value.details?.rrule == null) {
-            startActivity(Intent(this, EditorActivity::class.java).putExtra(EditorActivity.EXTRA_EVENT_ID, eventId))
-            return
-        }
+        val state = viewModel.state.value
         startActivity(
-            Intent(Intent.ACTION_EDIT, ContentUris.withAppendedId(Events.CONTENT_URI, eventId))
-                .setClass(this, EditEventActivity::class.java)
-                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, viewModel.state.value.begin)
-                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, viewModel.state.value.end)
+            Intent(this, EditorActivity::class.java)
+                .putExtra(EditorActivity.EXTRA_EVENT_ID, eventId)
+                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, state.begin)
+                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, state.end)
         )
     }
 

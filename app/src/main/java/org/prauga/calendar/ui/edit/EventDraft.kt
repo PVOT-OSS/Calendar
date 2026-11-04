@@ -11,6 +11,7 @@ import android.content.ContentValues
 import android.provider.CalendarContract.Attendees
 import android.provider.CalendarContract.Events
 import android.provider.CalendarContract.Reminders
+import org.prauga.calendar.event.EventMover
 import org.prauga.calendar.ics.IcsTime
 import org.prauga.calendar.settings.GeneralPreferences
 import java.time.Duration
@@ -158,6 +159,107 @@ object EventWriter {
         if (resolver.update(ContentUris.withAppendedId(Events.CONTENT_URI, eventId), values, null, null) <= 0) {
             return false
         }
+        updateChildren(resolver, eventId, draft, before)
+        return true
+    }
+
+    enum class Scope { THIS, FOLLOWING, ALL }
+
+    private data class Master(val dtStart: Long, val rule: String?, val allDay: Boolean, val timeZone: String?)
+
+    fun updateSeries(
+        resolver: ContentResolver,
+        masterId: Long,
+        occurrenceBegin: Long,
+        occurrenceEnd: Long,
+        draft: EventDraft,
+        before: EventDraft,
+        zone: ZoneId,
+        scope: Scope,
+    ): Boolean {
+        val master = resolver.query(
+            ContentUris.withAppendedId(Events.CONTENT_URI, masterId),
+            arrayOf(Events.DTSTART, Events.RRULE, Events.ALL_DAY, Events.EVENT_TIMEZONE),
+            null, null, null,
+        )?.use { if (it.moveToFirst()) Master(it.getLong(0), it.getString(1), it.getInt(2) != 0, it.getString(3)) else null }
+            ?: return false
+        val dtStart = master.dtStart
+        val rule = master.rule ?: return update(resolver, masterId, draft, before, zone)
+        val allDay = master.allDay
+        val tz = master.timeZone ?: zone.id
+        return when {
+            scope == Scope.THIS -> updateOccurrence(resolver, masterId, occurrenceBegin, allDay, draft, zone)
+            scope == Scope.FOLLOWING && occurrenceBegin > dtStart -> {
+                val split = SeriesSplit.split(rule, dtStart, allDay, tz, occurrenceBegin)
+                val values = ContentValues().apply {
+                    put(Events.DTSTART, dtStart)
+                    put(Events.RRULE, split.before)
+                }
+                if (resolver.update(ContentUris.withAppendedId(Events.CONTENT_URI, masterId), values, null, null) <= 0) {
+                    return false
+                }
+                val next = if (draft.rrule == before.rrule) draft.copy(rrule = split.from) else draft
+                insert(resolver, next, zone, null) != null
+            }
+            else -> updateAll(resolver, masterId, occurrenceBegin, occurrenceEnd, draft, before, zone)
+        }
+    }
+
+    private fun updateOccurrence(
+        resolver: ContentResolver,
+        masterId: Long,
+        occurrenceBegin: Long,
+        allDay: Boolean,
+        draft: EventDraft,
+        zone: ZoneId,
+    ): Boolean {
+        val overrides = eventValues(draft.copy(rrule = null), zone, null).apply {
+            remove(Events.CALENDAR_ID)
+            remove(Events.RRULE)
+            remove(Events.DURATION)
+        }
+        val created = EventMover(resolver).createException(masterId, occurrenceBegin, allDay, overrides, withReminders = false)
+            ?: return false
+        writeChildren(resolver, created.id, draft)
+        return true
+    }
+
+    private fun updateAll(
+        resolver: ContentResolver,
+        masterId: Long,
+        occurrenceBegin: Long,
+        occurrenceEnd: Long,
+        draft: EventDraft,
+        before: EventDraft,
+        zone: ZoneId,
+    ): Boolean {
+        val newBegin = draft.startMillis(zone)
+        val newEnd = draft.endMillis(zone)
+        if (newBegin != occurrenceBegin || newEnd != occurrenceEnd) {
+            EventMover(resolver).move(masterId, occurrenceBegin, occurrenceEnd, newBegin, newEnd, EventMover.Scope.ALL)
+                ?: return false
+        }
+        val uri = ContentUris.withAppendedId(Events.CONTENT_URI, masterId)
+        val current = resolver.query(uri, arrayOf(Events.DTSTART, Events.RRULE), null, null, null)
+            ?.use { if (it.moveToFirst()) it.getLong(0) to it.getString(1) else null } ?: return false
+        val values = ContentValues().apply {
+            put(Events.TITLE, draft.title.trim())
+            put(Events.EVENT_LOCATION, draft.location.trim())
+            put(Events.DESCRIPTION, draft.description.trim())
+            if (draft.color == null) putNull(Events.EVENT_COLOR) else put(Events.EVENT_COLOR, draft.color)
+            put(Events.DTSTART, current.first)
+            put(Events.RRULE, if (draft.rrule != before.rrule && draft.rrule != null) draft.rrule else current.second)
+        }
+        if (resolver.update(uri, values, null, null) <= 0) return false
+        updateChildren(resolver, masterId, draft, before)
+        return true
+    }
+
+    private fun writeChildren(resolver: ContentResolver, eventId: Long, draft: EventDraft) {
+        updateChildren(resolver, eventId, draft, draft.copy(reminder = GeneralPreferences.NO_REMINDER, guests = emptyList()))
+    }
+
+    private fun updateChildren(resolver: ContentResolver, eventId: Long, draft: EventDraft, before: EventDraft) {
         if (draft.reminder != before.reminder) {
             resolver.delete(Reminders.CONTENT_URI, "${Reminders.EVENT_ID}=?", arrayOf(eventId.toString()))
             if (draft.reminder != GeneralPreferences.NO_REMINDER) {
@@ -183,6 +285,5 @@ object EventWriter {
                 put(Attendees.ATTENDEE_STATUS, Attendees.ATTENDEE_STATUS_INVITED)
             })
         }
-        return true
     }
 }
