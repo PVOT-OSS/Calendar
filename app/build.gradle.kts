@@ -4,7 +4,7 @@ plugins {
 }
 
 editorconfig {
-	excludes = listOf("metadata/**", "**/*.xml", "**/*.webp")
+	excludes = listOf("metadata/**", "PvotLib/**", "**/*.xml", "**/*.webp")
 }
 
 kotlin {
