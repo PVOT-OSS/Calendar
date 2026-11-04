@@ -845,6 +845,8 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
 
         mDesc =  mView.findViewById(R.id.description);
         mUrl =  mView.findViewById(R.id.url);
+        addRowIcon(mDesc, R.drawable.ic_outline_notes);
+        addRowIcon(mUrl, R.drawable.ic_outline_link);
         mJoinMeeting = mView.findViewById(R.id.join_meeting);
         mHeadlines = mView.findViewById(R.id.event_info_headline);
         mLongAttendees = (AttendeesView) mView.findViewById(R.id.long_attendee_list);
@@ -1743,6 +1745,29 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
             mUrl.setText(mEventUrl);
         }
         updateJoinButton();
+    }
+
+    private void addRowIcon(View row, int iconRes) {
+        if (row == null) {
+            return;
+        }
+        TextView text = row.findViewById(R.id.expandable_text);
+        if (text == null) {
+            return;
+        }
+        android.graphics.drawable.Drawable icon = androidx.core.content.ContextCompat.getDrawable(
+                row.getContext(), iconRes);
+        if (icon == null) {
+            return;
+        }
+        icon = icon.mutate();
+        android.util.TypedValue tv = new android.util.TypedValue();
+        if (row.getContext().getTheme().resolveAttribute(
+                com.google.android.material.R.attr.colorOnSurfaceVariant, tv, true)) {
+            icon.setTint(tv.data);
+        }
+        text.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null);
+        text.setCompoundDrawablePadding((int) (16 * row.getResources().getDisplayMetrics().density));
     }
 
     private void updateJoinButton() {
