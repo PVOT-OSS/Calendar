@@ -207,6 +207,16 @@
             </intent-filter>
         </activity>
 
+        <service android:name="org.prauga.calendar.NextEventTileService"
+            android:exported="true"
+            android:icon="@drawable/stat_notify_calendar_events"
+            android:label="@string/tile_next_event"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
         <activity android:name="org.prauga.calendar.WebcalActivity"
             android:exported="true"
             android:theme="@style/Theme.Etar.Translucent">

@@ -72,6 +72,9 @@
     <string name="tasks_pref_summary">Show tasks with a due date from OpenTasks or Tasks.org in day and week view. Long-press a task to tick it off.</string>
     <string name="tasks_pref_summary_none">Install OpenTasks or Tasks.org (with DAVx⁵ for CalDAV task lists) to see your tasks here</string>
 
+    <string name="tile_next_event">Next event</string>
+    <string name="tile_no_events">Nothing in the next 7 days</string>
+
     <string name="shortcut_today">Today</string>
 
     <string name="join_meeting">Join meeting</string>
