@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2019 Aled Powell
+     SPDX-FileCopyrightText: 2019 Jochen Sprickerhof
+     SPDX-FileCopyrightText: 2019 Weblate (bot)
+     SPDX-FileCopyrightText: 2020-2026 Gitsaibot
+     SPDX-FileCopyrightText: 2022-2023 Aayush Gupta
+     SPDX-FileCopyrightText: 2022 woheller69
+     SPDX-FileCopyrightText: 2023 Rhodri
+     SPDX-FileCopyrightText: 2025-2026 Rhoslyn Prys
+     SPDX-License-Identifier: GPL-3.0-or-later
+-->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_label">Calendr</string>
     <string name="today">Heddiw</string>

@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2024 Aayush Gupta
+ * SPDX-FileCopyrightText: 2025 Gitsaibot
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 package org.prauga.calendar.theme
 
 import android.content.Context

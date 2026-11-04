@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2020-2021 Jakub Fabijan
+     SPDX-FileCopyrightText: 2020 Vachan
+     SPDX-FileCopyrightText: 2021 Jochen Sprickerhof
+     SPDX-FileCopyrightText: 2021-2022 phlostically
+     SPDX-FileCopyrightText: 2022-2023 Aayush Gupta
+     SPDX-FileCopyrightText: 2022 Weblate (bot)
+     SPDX-FileCopyrightText: 2022 woheller69
+     SPDX-FileCopyrightText: 2023 Sofia Christchurch
+     SPDX-FileCopyrightText: 2026 Gitsaibot
+     SPDX-License-Identifier: GPL-3.0-or-later
+-->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="preferences_title">Agordoj</string>
     <string name="delete_recurring_event_title">Ĉu forigi <xliff:g id="eventtitle">%s</xliff:g>?</string>

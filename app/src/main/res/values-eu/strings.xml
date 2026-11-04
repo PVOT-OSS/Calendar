@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2019-2025 Jochen Sprickerhof
+     SPDX-FileCopyrightText: 2019 Kintu
+     SPDX-FileCopyrightText: 2019-2020 Osoitz
+     SPDX-FileCopyrightText: 2019 Weblate (bot)
+     SPDX-FileCopyrightText: 2019 arkakuso
+     SPDX-FileCopyrightText: 2020-2026 Gitsaibot
+     SPDX-FileCopyrightText: 2020-2022 Gontzal Manuel Pujana Onaindia
+     SPDX-FileCopyrightText: 2020 LuK1337
+     SPDX-FileCopyrightText: 2020 Tom Hacohen
+     SPDX-FileCopyrightText: 2021 Alexander Gabilondo
+     SPDX-FileCopyrightText: 2022-2023 Aayush Gupta
+     SPDX-FileCopyrightText: 2022 woheller69
+     SPDX-FileCopyrightText: 2026 Thadah D. Denyse
+     SPDX-License-Identifier: GPL-3.0-or-later
+-->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_label">Egutegia</string>
     <string name="today">Gaur</string>

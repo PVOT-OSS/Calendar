@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2012 The Android Open Source Project
+# SPDX-License-Identifier: Apache-2.0
+
 # Built application files
 *.apk
 *.ap_

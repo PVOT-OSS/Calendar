@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2023 Arnau Mora
+ * SPDX-FileCopyrightText: 2023 Gitsaibot
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 package org.prauga.calendar.event;
 
 import android.content.ContentResolver;

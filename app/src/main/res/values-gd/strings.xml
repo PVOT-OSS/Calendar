@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2020 Vachan
+     SPDX-FileCopyrightText: 2021-2022 GunChleoc
+     SPDX-FileCopyrightText: 2022-2023 Aayush Gupta
+     SPDX-FileCopyrightText: 2022 woheller69
+     SPDX-FileCopyrightText: 2026 Gitsaibot
+     SPDX-License-Identifier: GPL-3.0-or-later
+-->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="one_and_a_half_hours">Uair gu leth a thìde</string>
     <string name="one_hour">Uair a thìde</string>

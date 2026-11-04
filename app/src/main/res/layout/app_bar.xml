@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2015 Suhail Alkowaileet
+     SPDX-FileCopyrightText: 2016-2019 Gitsaibot
+     SPDX-FileCopyrightText: 2022-2023 Aayush Gupta
+     SPDX-License-Identifier: GPL-3.0-or-later
+-->
 <androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/toolbar"
     android:layout_width="match_parent"

@@ -1,3 +1,10 @@
+/*
+ * SPDX-FileCopyrightText: 2020 Dominik Schürmann
+ * SPDX-FileCopyrightText: 2020-2025 Gitsaibot
+ * SPDX-FileCopyrightText: 2022-2024 Aayush Gupta
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 package org.prauga.calendar
 
 import android.os.Bundle

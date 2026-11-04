@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2023 Subham Jena
+     SPDX-FileCopyrightText: 2025 Gitsaibot
+     SPDX-FileCopyrightText: 2025 Jochen Sprickerhof
+     SPDX-License-Identifier: GPL-3.0-or-later
+-->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="menu_preferences">ସେଟିଂ</string>
     <string name="hint_description">ଵର୍ଣ୍ଣନା</string>

@@ -1,3 +1,17 @@
+<!--
+     SPDX-FileCopyrightText: 2013 Dominik Schürmann
+     SPDX-FileCopyrightText: 2015 Michael Moroni
+     SPDX-FileCopyrightText: 2015 Suhail Alkowaileet
+     SPDX-FileCopyrightText: 2017 Zach DeCook
+     SPDX-FileCopyrightText: 2018-2025 Jochen Sprickerhof
+     SPDX-FileCopyrightText: 2018 tomjaguarpaw
+     SPDX-FileCopyrightText: 2019-2026 Gitsaibot
+     SPDX-FileCopyrightText: 2019 Marcus
+     SPDX-FileCopyrightText: 2020 milotype
+     SPDX-FileCopyrightText: 2022 Aayush Gupta
+     SPDX-FileCopyrightText: 2022 Johannes Wienke
+     SPDX-License-Identifier: GPL-3.0-or-later
+-->
 # Etar Calendar
 Etar (from Arabic:  `إِيتَار`)  is an open source material designed calendar made for everyone!
 

@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2020-2025 Gitsaibot
+     SPDX-FileCopyrightText: 2021 Michael Bestas
+     SPDX-FileCopyrightText: 2022 Aayush Gupta
+     SPDX-License-Identifier: GPL-3.0-or-later
+-->
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <string-array name="pref_theme_entries" tools:ignore="InconsistentArrays">

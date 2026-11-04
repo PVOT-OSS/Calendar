@@ -1,4 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2019-2025 Jochen Sprickerhof
+     SPDX-FileCopyrightText: 2019 Rui Mendes
+     SPDX-FileCopyrightText: 2019 Weblate (bot)
+     SPDX-FileCopyrightText: 2020 Eduardo Pagnussat Titello
+     SPDX-FileCopyrightText: 2020-2026 Gitsaibot
+     SPDX-FileCopyrightText: 2020-2022 joaooliva
+     SPDX-FileCopyrightText: 2021 SC
+     SPDX-FileCopyrightText: 2021 elena volpato
+     SPDX-FileCopyrightText: 2022-2023 Aayush Gupta
+     SPDX-FileCopyrightText: 2022 woheller69
+     SPDX-FileCopyrightText: 2023 Vitor Henrique
+     SPDX-FileCopyrightText: 2024 lucasmz
+     SPDX-FileCopyrightText: 2025-2026 F Bausch
+     SPDX-FileCopyrightText: 2025 LucasMZ
+     SPDX-License-Identifier: GPL-3.0-or-later
+-->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_label">Agenda</string>
     <string name="today">Hoje</string>

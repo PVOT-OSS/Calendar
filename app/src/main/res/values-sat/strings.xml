@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2024 Prasanta-Hembram
+     SPDX-License-Identifier: GPL-3.0-or-later
+-->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="tomorrow">ᱜᱟᱯᱟ</string>
     <string name="tomorrow_at_time_fmt">ᱜᱟᱯᱟ <xliff:g id="time_interval">%s</xliff:g> ᱨᱮ</string>

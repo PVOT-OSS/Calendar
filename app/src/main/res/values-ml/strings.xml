@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2020 Vachan
+     SPDX-FileCopyrightText: 2021 Shanavas
+     SPDX-FileCopyrightText: 2022 Aayush Gupta
+     SPDX-FileCopyrightText: 2022 woheller69
+     SPDX-FileCopyrightText: 2025 Gitsaibot
+     SPDX-FileCopyrightText: 2025 Jochen Sprickerhof
+     SPDX-License-Identifier: GPL-3.0-or-later
+-->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="hint_description">വിവരണം</string>
     <string name="hint_where">സ്ഥലം</string>

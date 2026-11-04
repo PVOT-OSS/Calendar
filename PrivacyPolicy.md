@@ -1,3 +1,8 @@
+<!--
+     SPDX-FileCopyrightText: 2017 Suhail Alkowaileet
+     SPDX-FileCopyrightText: 2026 Saalim Quadri <danascape@gmail.com>
+     SPDX-License-Identifier: GPL-3.0-or-later
+-->
 
 # Etar calendar Privacy Policy
 Etar is an open source application that respects your privacy. Etar application does not send any of your data to us. Also Etar does not use the Internet permission at all.
