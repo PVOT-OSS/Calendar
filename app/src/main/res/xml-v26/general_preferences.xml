@@ -89,6 +89,12 @@
             app:defaultValue="@string/preferences_home_tz_default"
             app:title="@string/preferences_home_tz_title" />
         <Preference
+            app:key="preferences_working_hours_screen"
+            app:fragment="org.prauga.calendar.settings.WorkingHoursPreferences"
+            app:title="@string/working_hours_title"
+            app:summary="@string/working_hours_enable_summary" />
+
+        <Preference
             app:key="preferences_extra_calendars"
             app:fragment="org.prauga.calendar.settings.ExtraCalendarsPreferences"
             app:title="@string/extra_calendars_title"

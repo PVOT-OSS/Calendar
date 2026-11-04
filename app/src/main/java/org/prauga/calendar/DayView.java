@@ -2454,6 +2454,7 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
             drawBgColors(r, canvas, p);
         }
         drawGridBackground(r, canvas, p);
+        drawNonWorkingHours(canvas, p);
 
         // Draw each day
         int cell = mFirstJulianDay;
@@ -2480,6 +2481,34 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
 
         drawSelectedRect(r, canvas, p);
         drawDrag(canvas, p);
+    }
+
+    private void drawNonWorkingHours(Canvas canvas, Paint p) {
+        org.prauga.calendar.settings.WorkingHours.Hours hours =
+                org.prauga.calendar.settings.WorkingHours.INSTANCE.get(mContext);
+        if (hours == null) {
+            return;
+        }
+        int color = p.getColor();
+        Style style = p.getStyle();
+        p.setStyle(Style.FILL);
+        p.setColor(mCalendarGridLineInnerVerticalColor);
+        p.setAlpha(60);
+        float dayEnd = minutesToContentY(MINUTES_PER_DAY);
+        Time day = new Time(Utils.getTimeZone(mContext, mTZUpdater));
+        for (int i = 0; i < mNumDays; i++) {
+            day.setJulianDay(mFirstJulianDay + i);
+            float left = computeDayLeftPosition(i);
+            float right = computeDayLeftPosition(i + 1);
+            if (!hours.getDays().contains(day.getWeekDay() + 1)) {
+                canvas.drawRect(left, 0, right, dayEnd, p);
+                continue;
+            }
+            canvas.drawRect(left, 0, right, minutesToContentY(hours.getStartMinute()), p);
+            canvas.drawRect(left, minutesToContentY(hours.getEndMinute()), right, dayEnd, p);
+        }
+        p.setStyle(style);
+        p.setColor(color);
     }
 
     private void drawSelectedRect(Rect r, Canvas canvas, Paint p) {
