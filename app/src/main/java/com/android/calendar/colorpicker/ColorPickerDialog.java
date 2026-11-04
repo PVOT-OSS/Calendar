@@ -29,7 +29,7 @@ import androidx.fragment.app.DialogFragment;
 import com.android.calendar.colorpicker.ColorPickerSwatch.OnColorSelectedListener;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 /**
  * A dialog which takes in as input an array of colors and creates a palette allowing the user to

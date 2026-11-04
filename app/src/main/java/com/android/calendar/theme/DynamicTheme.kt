@@ -19,7 +19,7 @@ import com.android.calendar.Utils
 import com.android.calendar.theme.ThemeUtils.getSuffix
 import com.android.calendar.theme.ThemeUtils.isPureBlackModeEnabled
 import com.android.calendar.theme.model.Theme
-import ws.xsoh.etar.R
+import org.prauga.calendar.R
 
 private const val TEAL: String = "teal"
 private const val MONET: String = "monet"

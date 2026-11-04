@@ -41,8 +41,8 @@ import com.android.calendar.AsyncQueryService;
 import com.android.calendar.EventInfoActivity;
 import com.android.calendar.Utils;
 
-import ws.xsoh.etar.R;
-import ws.xsoh.etar.databinding.AlertActivityBinding;
+import org.prauga.calendar.R;
+import org.prauga.calendar.databinding.AlertActivityBinding;
 
 /**
  * The alert panel that pops up when there is a calendar event alarm.

@@ -95,7 +95,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 /**
  * View for multi-day view. So far only 1 and 7 day have been tested.

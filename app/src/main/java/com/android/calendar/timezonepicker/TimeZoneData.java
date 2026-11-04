@@ -37,7 +37,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 public class TimeZoneData {
     private static final String TAG = "TimeZoneData";

@@ -40,7 +40,7 @@ import java.util.Formatter;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 public class AgendaAdapter extends ResourceCursorAdapter {
     private final String mNoTitleLabel;

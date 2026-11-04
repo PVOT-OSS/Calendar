@@ -52,7 +52,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 /**
  * Allows the user to quickly create a new all-day event from the calendar's month view.

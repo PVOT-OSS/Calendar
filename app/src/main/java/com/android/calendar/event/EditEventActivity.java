@@ -41,8 +41,8 @@ import com.android.calendar.calendarcommon2.Time;
 
 import java.util.ArrayList;
 
-import ws.xsoh.etar.R;
-import ws.xsoh.etar.databinding.SimpleFrameLayoutMaterialBinding;
+import org.prauga.calendar.R;
+import org.prauga.calendar.databinding.SimpleFrameLayoutMaterialBinding;
 
 public class EditEventActivity extends AbstractCalendarActivity {
     public static final String EXTRA_EVENT_COLOR = "event_color";

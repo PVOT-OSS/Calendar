@@ -43,7 +43,7 @@ import com.android.calendar.calendarcommon2.Time;
 import java.util.Calendar;
 import java.util.HashMap;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 /**
  * <p>

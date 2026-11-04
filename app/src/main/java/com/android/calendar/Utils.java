@@ -87,8 +87,8 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ws.xsoh.etar.BuildConfig;
-import ws.xsoh.etar.R;
+import org.prauga.calendar.BuildConfig;
+import org.prauga.calendar.R;
 
 public class Utils {
     // Set to 0 until we have UI to perform undo

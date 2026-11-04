@@ -31,7 +31,7 @@ import com.android.calendar.theme.DynamicThemeKt;
 
 import java.util.Arrays;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 /**
  * Activity which displays when the user wants to email guests from notifications.

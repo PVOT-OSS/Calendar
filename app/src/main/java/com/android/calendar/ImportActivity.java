@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.TimeZone;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 public class ImportActivity extends Activity {
 

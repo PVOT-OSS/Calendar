@@ -36,7 +36,7 @@ import java.util.Calendar;
 import java.util.Formatter;
 import java.util.Locale;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 /*
  * The MenuSpinnerAdapter defines the look of the ActionBar's pull down menu

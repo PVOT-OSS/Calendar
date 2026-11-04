@@ -28,7 +28,7 @@ import androidx.preference.PreferenceManager
 import androidx.preference.PreferenceScreen
 import com.android.calendar.Utils
 import com.android.calendar.Utils.SHARED_PREFS_NAME
-import ws.xsoh.etar.R
+import org.prauga.calendar.R
 import java.util.Arrays
 
 

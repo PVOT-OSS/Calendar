@@ -41,7 +41,7 @@ import com.android.calendar.alerts.AlertUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 public class EventInfoActivity extends AppCompatActivity {
 

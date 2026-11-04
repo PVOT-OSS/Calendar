@@ -39,7 +39,7 @@ import com.android.calendar.calendarcommon2.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 public class MonthByWeekAdapter extends SimpleWeeksAdapter {
     public static final String WEEK_PARAMS_IS_MINI = "mini_month";

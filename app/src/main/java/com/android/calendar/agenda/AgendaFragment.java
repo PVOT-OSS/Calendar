@@ -45,7 +45,7 @@ import com.android.calendar.calendarcommon2.Time;
 
 import java.util.Date;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 public class AgendaFragment extends Fragment implements CalendarController.EventHandler,
         OnScrollListener {

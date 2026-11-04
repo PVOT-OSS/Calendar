@@ -28,7 +28,7 @@ import android.util.Log;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 public class TimeZonePickerUtils {
     private static final String TAG = "TimeZonePickerUtils";

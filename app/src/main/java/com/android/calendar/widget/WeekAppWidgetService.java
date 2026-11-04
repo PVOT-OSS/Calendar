@@ -38,7 +38,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 public class WeekAppWidgetService extends RemoteViewsService {
 

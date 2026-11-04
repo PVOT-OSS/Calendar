@@ -109,7 +109,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 /**
  * RecipientEditTextView is an auto complete text view for use with applications

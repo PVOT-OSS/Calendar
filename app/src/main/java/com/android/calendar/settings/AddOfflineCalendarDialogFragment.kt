@@ -29,7 +29,7 @@ import androidx.fragment.app.DialogFragment
 import com.android.calendar.persistence.CalendarRepository
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
-import ws.xsoh.etar.R
+import org.prauga.calendar.R
 
 
 class AddOfflineCalendarDialogFragment : DialogFragment() {

@@ -60,7 +60,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 public class MonthWeekEventsView extends SimpleWeekView {
 

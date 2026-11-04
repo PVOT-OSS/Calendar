@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 public class MonthAppWidgetProvider extends BaseGridWidgetProvider {
 

@@ -51,7 +51,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 /**
  * Static service class is used to handle calendar event reminders. Called by AlertWorker.

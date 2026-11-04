@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 public class TimeZoneResultAdapter extends BaseAdapter implements OnItemClickListener,
         OnSetFilterListener {

@@ -30,7 +30,7 @@ import com.google.android.material.color.MaterialColors;
 
 import java.text.NumberFormat;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 /**
  * A custom view to draw the day of the month in the today button in the options menu

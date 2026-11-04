@@ -56,7 +56,7 @@ import com.android.calendar.theme.isSystemInDarkTheme
 import com.android.calendar.timezonepicker.TimeZoneInfo
 import com.android.calendar.timezonepicker.TimeZonePickerDialog
 import com.android.calendar.timezonepicker.TimeZonePickerUtils
-import ws.xsoh.etar.R
+import org.prauga.calendar.R
 import java.util.TimeZone
 
 class GeneralPreferences : PreferenceFragmentCompat(),

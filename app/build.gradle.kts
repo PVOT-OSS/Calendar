@@ -12,7 +12,7 @@ kotlin {
 }
 
 android {
-	namespace = "ws.xsoh.etar"
+	namespace = "org.prauga.calendar"
 	testNamespace = "com.android.calendar.tests"
 	compileSdk = 37
 
@@ -21,7 +21,7 @@ android {
 		targetSdk = 37
 		versionCode = 57
 		versionName = "1.0.57"
-		applicationId = "ws.xsoh.etar"
+		applicationId = "org.prauga.calendar"
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 	}
 
@@ -39,11 +39,11 @@ android {
 		debug {
 			isMinifyEnabled = false
 
-			applicationIdSuffix = ".debug"
+			applicationIdSuffix = ".dev"
 			resValue(
 				"string",
 				"search_authority",
-				defaultConfig.applicationId + ".debug.CalendarRecentSuggestionsProvider"
+				defaultConfig.applicationId + ".dev.CalendarRecentSuggestionsProvider"
 			)
 		}
 	}

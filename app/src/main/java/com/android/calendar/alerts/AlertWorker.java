@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 /**
  * Worker class to handle calendar alerts processing.

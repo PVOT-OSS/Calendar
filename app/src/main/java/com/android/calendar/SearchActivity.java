@@ -48,8 +48,8 @@ import com.android.calendar.agenda.AgendaFragment;
 import com.android.calendar.theme.DynamicThemeKt;
 import com.android.calendar.calendarcommon2.Time;
 
-import ws.xsoh.etar.R;
-import ws.xsoh.etar.databinding.SimpleFrameLayoutMaterialBinding;
+import org.prauga.calendar.R;
+import org.prauga.calendar.databinding.SimpleFrameLayoutMaterialBinding;
 
 public class SearchActivity extends AppCompatActivity implements CalendarController.EventHandler,
         SearchView.OnQueryTextListener, MenuItemCompat.OnActionExpandListener {

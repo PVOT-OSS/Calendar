@@ -26,7 +26,7 @@ import android.widget.TextView;
 import com.android.calendar.common.contacts.BaseEmailAddressAdapter;
 import com.android.calendar.chips.AccountSpecifier;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 /**
 * An adaptation of {@link BaseEmailAddressAdapter} for the Email app. The main

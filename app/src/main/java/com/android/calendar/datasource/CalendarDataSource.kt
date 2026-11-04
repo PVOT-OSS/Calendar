@@ -30,7 +30,7 @@ import com.android.calendar.persistence.CalendarRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import ws.xsoh.etar.R
+import org.prauga.calendar.R
 
 /**
  * Datasource for Calendar entities

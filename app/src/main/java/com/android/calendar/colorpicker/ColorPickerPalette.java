@@ -27,7 +27,7 @@ import android.widget.TableRow;
 
 import com.android.calendar.colorpicker.ColorPickerSwatch.OnColorSelectedListener;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 /**
  * A color picker custom view which creates an grid of color squares.  The number of squares per

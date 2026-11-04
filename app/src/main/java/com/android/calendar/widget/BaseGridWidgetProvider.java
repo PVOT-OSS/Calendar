@@ -35,7 +35,7 @@ import com.android.calendar.AllInOneActivity;
 import com.android.calendar.Utils;
 import com.android.calendar.theme.DynamicThemeKt;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 abstract class BaseGridWidgetProvider extends AppWidgetProvider {
 

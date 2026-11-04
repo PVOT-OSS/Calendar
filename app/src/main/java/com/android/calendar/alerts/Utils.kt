@@ -10,7 +10,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.database.getStringOrNull
 import com.android.calendar.Utils
 import com.android.calendar.alerts.AlertService.ALERT_CHANNEL_GROUP_ID
-import ws.xsoh.etar.R
+import org.prauga.calendar.R
 
 
 val PROJECTION = arrayOf(

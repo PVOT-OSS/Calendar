@@ -10,7 +10,7 @@ import android.os.Bundle;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 /**
  * Simple dialog fragment for copying the contents of a chip.

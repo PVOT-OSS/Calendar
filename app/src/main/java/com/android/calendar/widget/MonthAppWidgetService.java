@@ -37,7 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 public class MonthAppWidgetService extends RemoteViewsService {
 

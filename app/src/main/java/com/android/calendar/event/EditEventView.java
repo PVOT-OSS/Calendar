@@ -107,7 +107,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 public class EditEventView implements View.OnClickListener, DialogInterface.OnCancelListener,
         DialogInterface.OnClickListener, OnItemSelectedListener,

@@ -24,7 +24,7 @@ import android.widget.QuickContactBadge;
 import com.android.calendar.CalendarColorPickerDialog;
 import com.android.calendar.colorpicker.ColorStateDrawable;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 /**
  * The color square used as an entry point to launching the {@link CalendarColorPickerDialog}.

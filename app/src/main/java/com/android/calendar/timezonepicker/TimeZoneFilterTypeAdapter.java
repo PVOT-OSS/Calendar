@@ -31,7 +31,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 public class TimeZoneFilterTypeAdapter extends BaseAdapter implements Filterable, OnClickListener {
     public static final String TAG = "TimeZoneFilterTypeAdapter";

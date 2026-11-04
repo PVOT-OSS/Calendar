@@ -32,7 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 class CalendarAppWidgetModel {
     private static final String TAG = CalendarAppWidgetModel.class.getSimpleName();

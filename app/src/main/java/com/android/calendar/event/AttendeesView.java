@@ -53,7 +53,7 @@ package com.android.calendar.event;
  import java.util.ArrayList;
  import java.util.HashMap;
 
- import ws.xsoh.etar.R;
+ import org.prauga.calendar.R;
 
 public class AttendeesView extends LinearLayout implements View.OnClickListener {
     private static final String TAG = "AttendeesView";

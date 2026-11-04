@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.android.calendar.theme.applyTheme
 
-import ws.xsoh.etar.R
-import ws.xsoh.etar.databinding.SimpleFrameLayoutMaterialBinding
+import org.prauga.calendar.R
+import org.prauga.calendar.databinding.SimpleFrameLayoutMaterialBinding
 
 class AboutActivity : AppCompatActivity() {
 

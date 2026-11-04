@@ -37,7 +37,7 @@ import android.widget.ListView;
 
 import androidx.core.content.ContextCompat;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 public class TimeZonePickerView extends LinearLayout implements TextWatcher, OnItemClickListener,
     OnClickListener {

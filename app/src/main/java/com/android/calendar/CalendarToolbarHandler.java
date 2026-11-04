@@ -13,7 +13,7 @@ import com.android.calendar.calendarcommon2.Time;
 import java.util.Formatter;
 import java.util.Locale;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 import com.android.calendar.settings.GeneralPreferences;
 
 /**

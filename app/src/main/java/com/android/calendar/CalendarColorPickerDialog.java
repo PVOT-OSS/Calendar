@@ -35,7 +35,7 @@ import com.android.calendar.colorpicker.HsvColorComparator;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 public class CalendarColorPickerDialog extends ColorPickerDialog {
 

@@ -25,7 +25,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 /**
  * A helper class for editing the response to an invitation when the invitation

@@ -51,7 +51,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 public class CalendarAppWidgetService extends RemoteViewsService {
     static final int EVENT_MIN_COUNT = 20;

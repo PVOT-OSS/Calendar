@@ -49,7 +49,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 public class AlertUtils {
     // We use one notification id for the expired events notification.  All

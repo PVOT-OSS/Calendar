@@ -30,7 +30,7 @@ import android.widget.TextView;
 import com.android.calendar.chips.Queries.Query;
 import com.google.android.material.color.MaterialColors;
 
-import ws.xsoh.etar.R;
+import org.prauga.calendar.R;
 
 /**
  * A class that inflates and binds the views in the dropdown list from

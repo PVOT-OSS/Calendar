@@ -141,8 +141,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import ws.xsoh.etar.BuildConfig;
-import ws.xsoh.etar.R;
+import org.prauga.calendar.BuildConfig;
+import org.prauga.calendar.R;
 
 public class EventInfoFragment extends DialogFragment implements OnCheckedChangeListener,
         CalendarController.EventHandler, OnClickListener, DeleteEventHelper.DeleteNotifyListener,
