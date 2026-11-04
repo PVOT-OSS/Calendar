@@ -48,6 +48,7 @@ import com.prauga.pvot.designsystem.components.button.PvotIconButton
 import com.prauga.pvot.designsystem.effects.LocalPvotGlassBackdrop
 import com.prauga.pvot.designsystem.effects.pvotGlassBackdrop
 import com.prauga.pvot.designsystem.effects.rememberPvotGlassBackdrop
+import org.prauga.calendar.AlternateCalendar
 import org.prauga.calendar.ImportActivity
 import org.prauga.calendar.R
 import org.prauga.calendar.ui.calendar.CalendarMode
@@ -91,7 +92,11 @@ fun CalendarApp(launch: LaunchTarget? = null, onLaunched: () -> Unit = {}) {
             TopRow(
                 title = stringResource(if (destination == Destination.Home) R.string.ui_home else R.string.ui_calendar),
             )
-            DateHeader(headerDate, Modifier.padding(vertical = 8.dp))
+            DateHeader(
+                headerDate,
+                Modifier.padding(vertical = 8.dp),
+                secondary = AlternateCalendar.label(context, headerDate.year, headerDate.monthValue - 1, headerDate.dayOfMonth, false),
+            )
             when (destination) {
                 Destination.Home -> HomeScreen(contentPadding)
                 Destination.Calendar -> CalendarScreen(calendarViewModel, contentPadding)

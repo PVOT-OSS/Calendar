@@ -28,7 +28,7 @@ import java.time.format.FormatStyle
 import java.util.Locale
 
 @Composable
-fun DateHeader(date: LocalDate, modifier: Modifier = Modifier) {
+fun DateHeader(date: LocalDate, modifier: Modifier = Modifier, secondary: String? = null) {
     val locale = Locale.getDefault()
     val spoken = date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale))
     Row(
@@ -36,7 +36,7 @@ fun DateHeader(date: LocalDate, modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
             .clearAndSetSemantics {
-                contentDescription = spoken
+                contentDescription = listOfNotNull(spoken, secondary).joinToString(", ")
                 heading()
             },
         verticalAlignment = Alignment.CenterVertically,
@@ -63,6 +63,14 @@ fun DateHeader(date: LocalDate, modifier: Modifier = Modifier) {
                 textAlign = TextAlign.End,
                 color = MaterialTheme.colorScheme.onBackground,
             )
+            if (secondary != null) {
+                Text(
+                    text = secondary,
+                    style = MaterialTheme.typography.labelLarge,
+                    textAlign = TextAlign.End,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }
