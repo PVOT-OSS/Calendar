@@ -18,6 +18,7 @@ import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import android.text.format.DateUtils
 import org.prauga.calendar.R
+import org.prauga.calendar.ui.MainActivity
 import java.util.Formatter
 import java.util.Locale
 import java.util.concurrent.Executors
@@ -87,7 +88,7 @@ class NextEventTileService : TileService() {
         super.onClick()
         val n = next
         val intent = if (n == null) {
-            Intent(this, AllInOneActivity::class.java)
+            Intent(this, MainActivity::class.java)
         } else {
             Intent(Intent.ACTION_VIEW, ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, n.eventId))
                 .setClass(this, EventInfoActivity::class.java)

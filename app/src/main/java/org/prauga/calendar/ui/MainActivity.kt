@@ -37,8 +37,11 @@ import com.prauga.pvot.designsystem.components.button.PvotButton
 
 class MainActivity : PvotBaseActivity() {
 
+    private var launch by mutableStateOf<LaunchTarget?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) launch = LaunchTarget.from(intent, Formats(this).zone)
         if (OnboardingActivity.shouldShow(this)) {
             startActivity(Intent(this, OnboardingActivity::class.java))
             finish()
@@ -48,12 +51,17 @@ class MainActivity : PvotBaseActivity() {
             PvotAppTheme {
                 var granted by remember { mutableStateOf(Utils.isCalendarPermissionGranted(this, false)) }
                 if (granted) {
-                    CalendarApp()
+                    CalendarApp(launch, onLaunched = { launch = null })
                 } else {
                     PermissionScreen(onGranted = { granted = true })
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        launch = LaunchTarget.from(intent, Formats(this).zone)
     }
 }
 

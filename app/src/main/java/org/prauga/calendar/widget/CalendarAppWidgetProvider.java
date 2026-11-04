@@ -34,7 +34,6 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import org.prauga.calendar.AllInOneActivity;
 import org.prauga.calendar.theme.DynamicThemeKt;
 import org.prauga.calendar.EventInfoActivity;
 import org.prauga.calendar.Utils;
@@ -42,6 +41,7 @@ import org.prauga.calendar.event.EditEventActivity;
 import org.prauga.calendar.calendarcommon2.Time;
 
 import org.prauga.calendar.R;
+import org.prauga.calendar.ui.MainActivity;
 
 /**
  * Simple widget to show next upcoming calendar event.
@@ -120,7 +120,7 @@ public class CalendarAppWidgetProvider extends AppWidgetProvider {
             fillInIntent.setClass(context, EventInfoActivity.class);
         } else {
             // If we do not have an event id - start AllInOne
-            fillInIntent.setClass(context, AllInOneActivity.class);
+            fillInIntent.setClass(context, MainActivity.class);
         }
         Uri data = Uri.parse(dataString);
         fillInIntent.setData(data);
@@ -231,7 +231,7 @@ public class CalendarAppWidgetProvider extends AppWidgetProvider {
 
             // Launch calendar app when the user taps on the header
             final Intent launchCalendarIntent = new Intent(Intent.ACTION_VIEW);
-            launchCalendarIntent.setClass(context, AllInOneActivity.class);
+            launchCalendarIntent.setClass(context, MainActivity.class);
             launchCalendarIntent
                     .setData(Uri.parse("content://com.android.calendar/time/" + millis));
             final PendingIntent launchCalendarPendingIntent = PendingIntent.getActivity(

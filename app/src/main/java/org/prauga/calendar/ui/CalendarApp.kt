@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +50,7 @@ import com.prauga.pvot.designsystem.effects.pvotGlassBackdrop
 import com.prauga.pvot.designsystem.effects.rememberPvotGlassBackdrop
 import org.prauga.calendar.ImportActivity
 import org.prauga.calendar.R
+import org.prauga.calendar.ui.calendar.CalendarMode
 import org.prauga.calendar.ui.calendar.CalendarScreen
 import org.prauga.calendar.ui.calendar.CalendarViewModel
 import org.prauga.calendar.ui.components.DateHeader
@@ -57,11 +59,18 @@ import org.prauga.calendar.ui.home.HomeScreen
 enum class Destination { Home, Calendar }
 
 @Composable
-fun CalendarApp() {
+fun CalendarApp(launch: LaunchTarget? = null, onLaunched: () -> Unit = {}) {
     val context = LocalContext.current
     val formats = remember { Formats(context) }
     var destination by rememberSaveable { mutableStateOf(Destination.Home) }
     val calendarViewModel: CalendarViewModel = viewModel()
+    LaunchedEffect(launch) {
+        launch ?: return@LaunchedEffect
+        destination = Destination.Calendar
+        if (launch.mode == CalendarMode.Day) calendarViewModel.openDay(launch.date)
+        else calendarViewModel.select(launch.date)
+        onLaunched()
+    }
     val selected by calendarViewModel.selected.collectAsStateWithLifecycle()
     val headerDate = if (destination == Destination.Home) formats.today() else selected
     val backdrop = rememberPvotGlassBackdrop()

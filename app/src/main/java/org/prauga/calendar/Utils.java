@@ -64,6 +64,7 @@ import org.prauga.calendar.CalendarController.ViewType;
 import org.prauga.calendar.CalendarEventModel.ReminderEntry;
 import org.prauga.calendar.CalendarUtils.TimeZoneUtils;
 import org.prauga.calendar.settings.GeneralPreferences;
+import org.prauga.calendar.ui.MainActivity;
 import org.prauga.calendar.widget.CalendarAppWidgetProvider;
 import org.prauga.calendar.widget.MonthAppWidgetProvider;
 import org.prauga.calendar.widget.WeekAppWidgetProvider;
@@ -1444,7 +1445,7 @@ public class Utils {
      * @param context
      */
     public static void returnToCalendarHome(Context context) {
-        Intent launchIntent = new Intent(context, AllInOneActivity.class);
+        Intent launchIntent = new Intent(context, MainActivity.class);
         launchIntent.setAction(Intent.ACTION_DEFAULT);
         launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         launchIntent.putExtra(INTENT_KEY_HOME, true);

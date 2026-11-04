@@ -12,6 +12,7 @@ import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
 import org.prauga.calendar.event.EditEventActivity
 import org.prauga.calendar.R
+import org.prauga.calendar.ui.MainActivity
 
 object AppShortcuts {
 
@@ -30,7 +31,7 @@ object AppShortcuts {
                 .setShortLabel(context.getString(R.string.shortcut_today))
                 .setIcon(IconCompat.createWithResource(context, R.drawable.ic_baseline_calendar_today))
                 .setIntent(
-                    Intent(Intent.ACTION_VIEW).setClass(context, AllInOneActivity::class.java)
+                    Intent(Intent.ACTION_VIEW).setClass(context, MainActivity::class.java)
                         .putExtra(Utils.INTENT_KEY_VIEW_TYPE, Utils.INTENT_VALUE_VIEW_TYPE_DAY)
                         .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 )

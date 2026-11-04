@@ -31,12 +31,12 @@ import android.provider.CalendarContract.Instances;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
 
-import org.prauga.calendar.AllInOneActivity;
 import org.prauga.calendar.Utils;
 import org.prauga.calendar.event.EditEventActivity;
 import org.prauga.calendar.theme.DynamicThemeKt;
 
 import org.prauga.calendar.R;
+import org.prauga.calendar.ui.MainActivity;
 
 abstract class BaseGridWidgetProvider extends AppWidgetProvider {
 
@@ -265,7 +265,7 @@ abstract class BaseGridWidgetProvider extends AppWidgetProvider {
                     getLaunchPendingIntentTemplate(context));
 
             Intent launchIntent = new Intent(Intent.ACTION_VIEW);
-            launchIntent.setClass(context, AllInOneActivity.class);
+            launchIntent.setClass(context, MainActivity.class);
             launchIntent.setData(Uri.parse("content://com.android.calendar/time/" + now));
             PendingIntent headerPendingIntent = PendingIntent.getActivity(
                     context, appWidgetId, launchIntent, PendingIntent.FLAG_IMMUTABLE);
