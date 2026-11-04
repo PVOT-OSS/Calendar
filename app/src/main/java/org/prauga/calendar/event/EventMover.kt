@@ -46,11 +46,11 @@ class EventMover(private val resolver: ContentResolver) {
 
     fun move(eventId: Long, oldBegin: Long, oldEnd: Long, newBegin: Long, newEnd: Long, scope: Scope): (() -> Unit)? {
         val info = info(eventId) ?: return null
-        if (!info.canModify || info.allDay) return null
+        if (!info.canModify) return null
         return when {
             !info.recurring -> moveSingle(eventId, newBegin, newEnd)
-            scope == Scope.ALL -> moveSeries(eventId, oldBegin, newBegin, newEnd)
-            else -> moveOccurrence(eventId, oldBegin, newBegin, newEnd)
+            scope == Scope.ALL -> moveSeries(eventId, oldBegin, newBegin, newEnd, info.allDay)
+            else -> moveOccurrence(eventId, oldBegin, newBegin, newEnd, info.allDay)
         }
     }
 
@@ -70,7 +70,7 @@ class EventMover(private val resolver: ContentResolver) {
         return { resolver.update(uri, before, null, null) }
     }
 
-    private fun moveSeries(eventId: Long, oldBegin: Long, newBegin: Long, newEnd: Long): (() -> Unit)? {
+    private fun moveSeries(eventId: Long, oldBegin: Long, newBegin: Long, newEnd: Long, allDay: Boolean): (() -> Unit)? {
         val uri = ContentUris.withAppendedId(Events.CONTENT_URI, eventId)
         val before = ContentValues()
         val zone: String
@@ -85,7 +85,7 @@ class EventMover(private val resolver: ContentResolver) {
         before.put(Events.EXDATE, exdate)
         val after = ContentValues(before).apply {
             put(Events.DTSTART, before.getAsLong(Events.DTSTART) + delta)
-            put(Events.DURATION, IcsTime.formatDuration(newEnd - newBegin, false))
+            put(Events.DURATION, IcsTime.formatDuration(newEnd - newBegin, allDay))
             put(Events.RRULE, shiftWeekday(before.getAsString(Events.RRULE), oldBegin, newBegin, zone))
             put(Events.EXDATE, shiftExdates(exdate, delta))
         }
@@ -115,7 +115,7 @@ class EventMover(private val resolver: ContentResolver) {
         }
     }
 
-    private fun moveOccurrence(masterId: Long, oldBegin: Long, newBegin: Long, newEnd: Long): (() -> Unit)? {
+    private fun moveOccurrence(masterId: Long, oldBegin: Long, newBegin: Long, newEnd: Long, allDay: Boolean): (() -> Unit)? {
         val master = ContentValues()
         var accountName = ""
         var accountType = ""
@@ -135,19 +135,20 @@ class EventMover(private val resolver: ContentResolver) {
 
         val syncId = SeriesWriter.ensureSyncId(resolver, masterId, accountName, accountType)
         if (syncId == null) {
-            SeriesWriter.addExdate(resolver, masterId, oldBegin, false)
+            SeriesWriter.addExdate(resolver, masterId, oldBegin, allDay)
             val uri = resolver.insert(Events.CONTENT_URI, master) ?: return null
             val newId = ContentUris.parseId(uri)
             copyReminders(masterId, newId)
             return {
                 resolver.delete(ContentUris.withAppendedId(Events.CONTENT_URI, newId), null, null)
-                SeriesWriter.removeExdate(resolver, masterId, oldBegin, false)
+                SeriesWriter.removeExdate(resolver, masterId, oldBegin, allDay)
             }
         }
         master.put(Events.ORIGINAL_ID, masterId)
         master.put(Events.ORIGINAL_SYNC_ID, syncId)
         master.put(Events.ORIGINAL_INSTANCE_TIME, oldBegin)
-        master.put(Events.ORIGINAL_ALL_DAY, 0)
+        master.put(Events.ORIGINAL_ALL_DAY, if (allDay) 1 else 0)
+        master.put(Events.ALL_DAY, if (allDay) 1 else 0)
         val uri = resolver.insert(Events.CONTENT_URI, master) ?: return null
         val exceptionId = ContentUris.parseId(uri)
         copyReminders(masterId, exceptionId)
