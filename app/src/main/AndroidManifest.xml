@@ -207,6 +207,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name="org.prauga.calendar.OnboardingActivity"
+            android:exported="false" />
+
         <service android:name="org.prauga.calendar.NextEventTileService"
             android:exported="true"
             android:icon="@drawable/stat_notify_calendar_events"

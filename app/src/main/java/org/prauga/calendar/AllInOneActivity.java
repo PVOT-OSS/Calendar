@@ -249,6 +249,7 @@ public class AllInOneActivity extends AbstractCalendarActivity implements EventH
     private LayoutParams mControlsParams;
     private LinearLayout.LayoutParams mVerticalControlsParams;
     private boolean mPendingTodayInDayView;
+    static final String PREF_EXACT_ALARM_ASKED = "exact_alarm_asked";
     private AllInOneMenuExtensionsInterface mExtensions = ExtensionsFactory
             .getAllInOneMenuExtensions();
 
@@ -284,6 +285,12 @@ public class AllInOneActivity extends AbstractCalendarActivity implements EventH
         mActivity = this;
         // This needs to be created before setContentView
         mController = CalendarController.getInstance(this);
+
+        if (OnboardingActivity.shouldShow(this)) {
+            startActivity(new Intent(this, OnboardingActivity.class));
+            finish();
+            return;
+        }
 
         // Check and ask for most needed permissions
         checkAppPermissions();
@@ -620,7 +627,9 @@ public class AllInOneActivity extends AbstractCalendarActivity implements EventH
         }
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-            if (!Utils.canScheduleAlarms(this)) {
+            SharedPreferences prefs = GeneralPreferences.Companion.getSharedPreferences(this);
+            if (!Utils.canScheduleAlarms(this) && !prefs.getBoolean(PREF_EXACT_ALARM_ASKED, false)) {
+                prefs.edit().putBoolean(PREF_EXACT_ALARM_ASKED, true).apply();
                 Intent intent = new Intent();
                 intent.setAction(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
                 startActivity(intent);

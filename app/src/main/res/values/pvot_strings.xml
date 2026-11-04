@@ -75,6 +75,19 @@
     <string name="tile_next_event">Next event</string>
     <string name="tile_no_events">Nothing in the next 7 days</string>
 
+    <string name="onboarding_title">Welcome to Calendar</string>
+    <string name="onboarding_intro">Your events stay on your device or with the calendar service you choose. The app itself never goes online.</string>
+    <string name="onboarding_permissions">Permissions</string>
+    <string name="onboarding_allow_calendar">Allow access to your calendars</string>
+    <string name="onboarding_allow_notifications">Allow reminders as notifications</string>
+    <string name="onboarding_allow_alarms">Allow reminders on time (exact alarms)</string>
+    <string name="onboarding_allowed">%s ✓</string>
+    <string name="onboarding_calendars">Calendars</string>
+    <string name="onboarding_calendars_text">Keep events only on this phone with an offline calendar, or sync Nextcloud, Google and other CalDAV calendars with DAVx⁵.</string>
+    <string name="onboarding_offline">Add an offline calendar</string>
+    <string name="onboarding_davx5">Sync with DAVx⁵</string>
+    <string name="onboarding_done">Done</string>
+
     <string name="shortcut_today">Today</string>
 
     <string name="join_meeting">Join meeting</string>
