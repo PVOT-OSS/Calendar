@@ -13,6 +13,7 @@ import androidx.core.graphics.drawable.IconCompat
 import org.prauga.calendar.R
 import org.prauga.calendar.ui.MainActivity
 import org.prauga.calendar.ui.edit.EditorActivity
+import org.prauga.calendar.ui.search.SearchActivity
 
 object AppShortcuts {
 

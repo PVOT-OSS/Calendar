@@ -193,10 +193,10 @@
         <!-- Declarations for search -->
         <!-- Make all activities a searchable context -->
         <meta-data android:name="android.app.default_searchable"
-            android:value="org.prauga.calendar.SearchActivity"/>
+            android:value="org.prauga.calendar.ui.search.SearchActivity"/>
 
         <activity
-            android:name="org.prauga.calendar.SearchActivity"
+            android:name="org.prauga.calendar.ui.search.SearchActivity"
             android:exported="true"
             android:label="@string/search_title"
             android:launchMode="singleTop"

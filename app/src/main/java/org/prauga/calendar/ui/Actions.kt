@@ -14,12 +14,12 @@ import android.provider.CalendarContract
 import android.provider.CalendarContract.Events
 import org.prauga.calendar.AboutActivity
 import org.prauga.calendar.CalendarController
-import org.prauga.calendar.SearchActivity
 import org.prauga.calendar.data.Agenda
 import org.prauga.calendar.settings.SettingsActivity
 import org.prauga.calendar.tasks.TasksRepository
 import org.prauga.calendar.ui.details.DetailsActivity
 import org.prauga.calendar.ui.edit.EditorActivity
+import org.prauga.calendar.ui.search.SearchActivity
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId

@@ -12,6 +12,7 @@ import android.os.Looper
 import android.provider.CalendarContract
 import android.provider.CalendarContract.Attendees
 import android.provider.CalendarContract.Events
+import android.provider.CalendarContract.Instances
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -98,4 +99,43 @@ class AgendaRepository(context: Context) {
             }
             result
         }
+
+    suspend fun search(query: String, from: Long, to: Long): List<Agenda> = withContext(Dispatchers.IO) {
+        if (query.isBlank() || !Utils.isCalendarPermissionGranted(context, false)) return@withContext emptyList()
+        val uri = Instances.CONTENT_SEARCH_URI.buildUpon()
+            .appendPath(from.toString()).appendPath(to.toString()).appendPath(query.trim()).build()
+        val result = ArrayList<Agenda>()
+        resolver.query(
+            uri,
+            arrayOf(
+                Instances.EVENT_ID, Instances.TITLE, Instances.EVENT_LOCATION, Instances.BEGIN, Instances.END,
+                Instances.ALL_DAY, Instances.DISPLAY_COLOR, Instances.START_DAY, Instances.END_DAY,
+                Instances.START_MINUTE, Instances.END_MINUTE, Instances.SELF_ATTENDEE_STATUS,
+            ),
+            "${Instances.VISIBLE}=1", null, "${Instances.BEGIN} ASC",
+        )?.use { c ->
+            while (c.moveToNext() && result.size < SEARCH_LIMIT) {
+                result += Agenda(
+                    eventId = c.getLong(0),
+                    title = c.getString(1).orEmpty(),
+                    location = c.getString(2).orEmpty(),
+                    begin = c.getLong(3),
+                    end = c.getLong(4),
+                    allDay = c.getInt(5) != 0,
+                    color = Utils.getDisplayColorFromColor(context, c.getInt(6)),
+                    startDay = c.getInt(7),
+                    endDay = c.getInt(8),
+                    startMinute = c.getInt(9),
+                    endMinute = c.getInt(10),
+                    isTask = false,
+                    declined = c.getInt(11) == Attendees.ATTENDEE_STATUS_DECLINED,
+                )
+            }
+        }
+        result
+    }
+
+    private companion object {
+        const val SEARCH_LIMIT = 500
+    }
 }

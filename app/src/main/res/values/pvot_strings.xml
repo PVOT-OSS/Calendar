@@ -206,4 +206,5 @@
     <string name="ui_not_going">Not going</string>
     <string name="ui_maybe_going">Maybe</string>
     <string name="ui_awaiting">Awaiting reply</string>
+    <string name="ui_no_results">No matching events</string>
 </resources>
