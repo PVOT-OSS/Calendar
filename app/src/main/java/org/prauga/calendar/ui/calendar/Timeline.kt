@@ -7,6 +7,7 @@ package org.prauga.calendar.ui.calendar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
@@ -36,14 +37,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.onClick
@@ -51,6 +58,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import kotlinx.coroutines.delay
 import org.prauga.calendar.data.Agenda
 import org.prauga.calendar.data.JulianDay
@@ -58,6 +66,7 @@ import org.prauga.calendar.ui.Formats
 import java.time.LocalDate
 import java.time.LocalTime
 import kotlin.math.abs
+import kotlin.math.roundToInt
 
 private val HourHeight = 72.dp
 private val LabelWidth = 84.dp
@@ -73,6 +82,7 @@ fun Timeline(
     onSwipe: (forward: Boolean) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
+    onMove: ((Agenda, minutes: Int) -> Unit)? = null,
 ) {
     val julianDay = JulianDay.of(date)
     val allDay = remember(items, julianDay) { items.filter { it.allDay && it.occursOn(julianDay) } }
@@ -135,6 +145,8 @@ fun Timeline(
                         agenda = slot.agenda,
                         time = formats.timeRange(slot.agenda),
                         onClick = { onOpen(slot.agenda) },
+                        hourPx = hourPx,
+                        onMove = if (slot.agenda.isTask) null else onMove?.let { move -> { minutes -> move(slot.agenda, minutes) } },
                         modifier = Modifier
                             .offset(x = columnWidth * slot.column, y = HourHeight * (slot.startMinute / 60f))
                             .width(columnWidth - 4.dp)
@@ -200,17 +212,55 @@ private fun NowLine(formats: Formats) {
 private fun minuteNow(formats: Formats) = LocalTime.now(formats.zone).let { it.hour * 60 + it.minute }
 
 @Composable
-private fun TimelineCard(agenda: Agenda, time: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun TimelineCard(
+    agenda: Agenda,
+    time: String,
+    onClick: () -> Unit,
+    hourPx: Float,
+    onMove: ((Int) -> Unit)?,
+    modifier: Modifier = Modifier,
+) {
+    var drag by remember { mutableFloatStateOf(0f) }
+    var dragging by remember { mutableStateOf(false) }
+    val haptics = LocalHapticFeedback.current
+    val snapPx = hourPx / 4
     Surface(
         modifier = modifier
+            .zIndex(if (dragging) 1f else 0f)
+            .graphicsLayer { translationY = (drag / snapPx).roundToInt() * snapPx }
+            .let { base ->
+                if (onMove == null) base else base.pointerInput(agenda.eventId, agenda.begin) {
+                    detectDragGesturesAfterLongPress(
+                        onDragStart = {
+                            dragging = true
+                            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                        },
+                        onDrag = { change, amount ->
+                            change.consume()
+                            drag += amount.y
+                        },
+                        onDragEnd = {
+                            val steps = (drag / snapPx).roundToInt()
+                            dragging = false
+                            drag = 0f
+                            if (steps != 0) onMove(steps * 15)
+                        },
+                        onDragCancel = {
+                            dragging = false
+                            drag = 0f
+                        },
+                    )
+                }
+            }
             .clip(RoundedCornerShape(12.dp))
             .clearAndSetSemantics {
                 contentDescription = "${agenda.title}, $time"
                 onClick { onClick(); true }
             }
             .clickable(onClick = onClick),
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        color = if (dragging) MaterialTheme.colorScheme.surfaceContainerHighest else MaterialTheme.colorScheme.surfaceContainerHigh,
         shape = RoundedCornerShape(12.dp),
+        shadowElevation = if (dragging) 8.dp else 0.dp,
     ) {
         Row {
             Box(Modifier.width(4.dp).fillMaxHeight().background(Color(agenda.color)))
