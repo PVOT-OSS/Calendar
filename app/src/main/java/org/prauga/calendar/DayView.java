@@ -101,9 +101,22 @@ import org.prauga.calendar.R;
  * View for multi-day view. So far only 1 and 7 day have been tested.
  */
 public class DayView extends View implements View.OnCreateContextMenuListener,
-        ScaleGestureDetector.OnScaleGestureListener, View.OnClickListener, View.OnLongClickListener
+        ScaleGestureDetector.OnScaleGestureListener, View.OnClickListener, View.OnLongClickListener,
+        EventTouchHelper.Source
         {
     private static String TAG = "DayView";
+
+    private static final class AccessibleEvent {
+        Event event;
+        final Rect rect = new Rect();
+        boolean allDay;
+    }
+
+    private EventTouchHelper mTouchHelper;
+    private final ArrayList<AccessibleEvent> mDrawnForAccessibility = new ArrayList<>();
+    private int mDrawnForAccessibilityCount;
+    private final ArrayList<AccessibleEvent> mAccessibleEvents = new ArrayList<>();
+    private int mAccessibleEventsHash;
     private static boolean DEBUG = false;
     private static boolean DEBUG_SCALING = false;
     private static final String PERIOD_SPACE = ". ";
@@ -830,6 +843,8 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
         setFocusableInTouchMode(true);
         setClickable(true);
         setOnCreateContextMenuListener(this);
+        mTouchHelper = new EventTouchHelper(this, this);
+        androidx.core.view.ViewCompat.setAccessibilityDelegate(this, mTouchHelper);
 
         mFirstDayOfWeek = Utils.getFirstDayOfWeek(context);
 
@@ -1696,6 +1711,86 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
 
 
     @Override
+    protected boolean dispatchHoverEvent(MotionEvent event) {
+        return mTouchHelper.dispatchHoverEvent(event) || super.dispatchHoverEvent(event);
+    }
+
+    @Override
+    public int accessibleEventCount() {
+        return mAccessibleEvents.size();
+    }
+
+    @Override
+    public void accessibleEventBounds(int index, Rect out) {
+        out.set(mAccessibleEvents.get(index).rect);
+    }
+
+    @Override
+    public CharSequence describeAccessibleEvent(int index) {
+        StringBuilder b = new StringBuilder();
+        appendEventAccessibilityString(b, mAccessibleEvents.get(index).event);
+        return b.toString().trim();
+    }
+
+    @Override
+    public void openAccessibleEvent(int index) {
+        Event e = mAccessibleEvents.get(index).event;
+        if (org.prauga.calendar.tasks.TasksRepository.INSTANCE.isTask(e.id)) {
+            org.prauga.calendar.tasks.TasksRepository.INSTANCE.open(mContext, e.id);
+            return;
+        }
+        mController.sendEventRelatedEvent(this, EventType.VIEW_EVENT, e.id, e.startMillis,
+                e.endMillis, 0, 0, getSelectedTimeInMillis());
+    }
+
+    private boolean recordsForAccessibility() {
+        return mAccessibilityMgr != null && mAccessibilityMgr.isEnabled();
+    }
+
+    private void recordForAccessibility(Event event, float left, float top, float right,
+            float bottom, boolean allDay) {
+        int t = (int) top;
+        int b = (int) bottom;
+        if (!allDay) {
+            t = Math.max(t, mFirstCell);
+            b = Math.min(b, mViewHeight);
+        }
+        if (b <= t || right <= left) {
+            return;
+        }
+        if (mDrawnForAccessibilityCount == mDrawnForAccessibility.size()) {
+            mDrawnForAccessibility.add(new AccessibleEvent());
+        }
+        AccessibleEvent a = mDrawnForAccessibility.get(mDrawnForAccessibilityCount++);
+        a.event = event;
+        a.allDay = allDay;
+        a.rect.set((int) left, t, (int) right, b);
+    }
+
+    private void publishAccessibleEvents() {
+        mAccessibleEvents.clear();
+        for (int i = 0; i < mDrawnForAccessibilityCount; i++) {
+            mAccessibleEvents.add(mDrawnForAccessibility.get(i));
+        }
+        mAccessibleEvents.sort((x, y) -> {
+            if (x.allDay != y.allDay) return x.allDay ? -1 : 1;
+            if (x.allDay && x.rect.top != y.rect.top) return Integer.compare(x.rect.top, y.rect.top);
+            if (x.rect.left != y.rect.left) return Integer.compare(x.rect.left, y.rect.left);
+            return Integer.compare(x.rect.top, y.rect.top);
+        });
+        int hash = 1;
+        for (AccessibleEvent a : mAccessibleEvents) {
+            hash = 31 * hash + Long.hashCode(a.event.id);
+            hash = 31 * hash + Long.hashCode(a.event.startMillis);
+            hash = 31 * hash + a.rect.hashCode();
+        }
+        if (hash != mAccessibleEventsHash) {
+            mAccessibleEventsHash = hash;
+            mTouchHelper.invalidateRoot();
+        }
+    }
+
+    @Override
     public boolean onHoverEvent(MotionEvent event) {
         if (DEBUG) {
             int action = event.getAction();
@@ -2201,6 +2296,7 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
             mRemeasure = false;
         }
         canvas.save();
+        mDrawnForAccessibilityCount = 0;
 
         float yTranslate = -mViewStartY + DAY_HEADER_HEIGHT + mAlldayHeight;
         // offset canvas by the current drag and header position
@@ -2248,6 +2344,9 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
 
         // Draw the fixed areas (that don't scroll) directly to the canvas.
         drawAfterScroll(canvas);
+        if (recordsForAccessibility()) {
+            publishAccessibleEvents();
+        }
         if (mComputeSelectedEvents && mUpdateToast) {
             updateEventDetails();
             mUpdateToast = false;
@@ -3057,6 +3156,9 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
                 }
             }
             drawEventRect(event, canvas, p, (int) event.left, (int) event.top, (int) event.right, (int) event.bottom);
+            if (recordsForAccessibility()) {
+                recordForAccessibility(event, event.left, event.top, event.right, event.bottom, true);
+            }
             Rect r = mRect;
             if (getAllDayEventTextRect(r, event)) {
                 StaticLayout layout = getEventLayout(mAllDayLayouts, i, event, eventTextPaint, r);
@@ -3244,6 +3346,11 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
             }
 
             drawEventRect(event, canvas, p, left, mViewStartY, right, viewEndY);
+            if (recordsForAccessibility()) {
+                float dy = -mViewStartY + DAY_HEADER_HEIGHT + mAlldayHeight;
+                recordForAccessibility(event, event.left - mViewStartX, event.top + dy,
+                        event.right - mViewStartX, event.bottom + dy, false);
+            }
 
             Rect r = mRect;
             if (!getEventTextRect(r, event)) {
