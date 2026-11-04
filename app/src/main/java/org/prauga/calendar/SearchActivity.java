@@ -50,6 +50,7 @@ import org.prauga.calendar.calendarcommon2.Time;
 
 import org.prauga.calendar.R;
 import org.prauga.calendar.databinding.SimpleFrameLayoutMaterialBinding;
+import org.prauga.calendar.ui.details.DetailsActivity;
 
 public class SearchActivity extends AppCompatActivity implements CalendarController.EventHandler,
         SearchView.OnQueryTextListener, MenuItemCompat.OnActionExpandListener {
@@ -193,7 +194,7 @@ public class SearchActivity extends AppCompatActivity implements CalendarControl
             Intent intent = new Intent(Intent.ACTION_VIEW);
             Uri eventUri = ContentUris.withAppendedId(Events.CONTENT_URI, event.id);
             intent.setData(eventUri);
-            intent.setClass(this, EventInfoActivity.class);
+            intent.setClass(this, DetailsActivity.class);
             intent.putExtra(EXTRA_EVENT_BEGIN_TIME,
                     event.startTime != null ? event.startTime.toMillis() : -1);
             intent.putExtra(

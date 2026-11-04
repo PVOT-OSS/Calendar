@@ -38,11 +38,11 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import org.prauga.calendar.AsyncQueryService;
-import org.prauga.calendar.EventInfoActivity;
 import org.prauga.calendar.Utils;
 
 import org.prauga.calendar.R;
 import org.prauga.calendar.databinding.AlertActivityBinding;
+import org.prauga.calendar.ui.details.DetailsActivity;
 
 /**
  * The alert panel that pops up when there is a calendar event alarm.
@@ -107,7 +107,7 @@ public class AlertActivity extends Activity implements OnClickListener {
             Intent eventIntent = AlertUtils.buildEventViewIntent(AlertActivity.this, eventId,
                     startMillis, endMillis);
 
-            TaskStackBuilder.create(AlertActivity.this).addParentStack(EventInfoActivity.class)
+            TaskStackBuilder.create(AlertActivity.this).addParentStack(DetailsActivity.class)
                     .addNextIntent(eventIntent).startActivities();
 
             alertActivity.finish();

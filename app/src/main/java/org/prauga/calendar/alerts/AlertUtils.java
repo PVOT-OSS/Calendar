@@ -41,10 +41,10 @@ import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
-import org.prauga.calendar.EventInfoActivity;
 import org.prauga.calendar.Utils;
 import org.prauga.calendar.calendarcommon2.Time;
 
+import org.prauga.calendar.ui.details.DetailsActivity;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -218,7 +218,7 @@ public class AlertUtils {
         Uri.Builder builder = CalendarContract.CONTENT_URI.buildUpon();
         builder.appendEncodedPath("events/" + eventId);
         i.setData(builder.build());
-        i.setClass(c, EventInfoActivity.class);
+        i.setClass(c, DetailsActivity.class);
         i.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, begin);
         i.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end);
         return i;

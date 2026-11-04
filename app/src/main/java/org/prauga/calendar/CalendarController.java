@@ -44,6 +44,7 @@ import org.prauga.calendar.settings.GeneralPreferences;
 import org.prauga.calendar.settings.SettingsActivity;
 import org.prauga.calendar.calendarcommon2.Time;
 
+import org.prauga.calendar.ui.details.DetailsActivity;
 import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -579,7 +580,7 @@ public class CalendarController {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         Uri eventUri = ContentUris.withAppendedId(Events.CONTENT_URI, eventId);
         intent.setData(eventUri);
-        intent.setClass(mContext, AllInOneActivity.class);
+        intent.setClass(mContext, DetailsActivity.class);
         intent.putExtra(EXTRA_EVENT_BEGIN_TIME, startMillis);
         intent.putExtra(EXTRA_EVENT_END_TIME, endMillis);
         intent.putExtra(ATTENDEE_STATUS, response);

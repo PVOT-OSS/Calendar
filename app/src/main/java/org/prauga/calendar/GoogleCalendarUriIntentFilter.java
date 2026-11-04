@@ -40,6 +40,7 @@ import org.prauga.calendar.calendarcommon2.DateException;
 import org.prauga.calendar.calendarcommon2.Duration;
 
 import org.prauga.calendar.R;
+import org.prauga.calendar.ui.details.DetailsActivity;
 
 public class GoogleCalendarUriIntentFilter extends Activity {
     static final boolean debug = false;
@@ -228,7 +229,7 @@ public class GoogleCalendarUriIntentFilter extends Activity {
                             final Uri calendarUri = ContentUris.withAppendedId(
                                     Events.CONTENT_URI, eventId);
                             intent = new Intent(Intent.ACTION_VIEW, calendarUri);
-                            intent.setClass(this, EventInfoActivity.class);
+                            intent.setClass(this, DetailsActivity.class);
                             intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startMillis);
                             intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endMillis);
                             if (attendeeStatus == Attendees.ATTENDEE_STATUS_NONE) {

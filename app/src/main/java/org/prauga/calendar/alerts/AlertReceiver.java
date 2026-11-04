@@ -53,10 +53,10 @@ import androidx.core.content.ContextCompat;
 import org.prauga.calendar.MeetingLinks;
 import org.prauga.calendar.event.ExtendedProperty;
 import org.prauga.calendar.theme.DynamicThemeKt;
-import org.prauga.calendar.EventInfoActivity;
 import org.prauga.calendar.Utils;
 import org.prauga.calendar.alerts.AlertService.NotificationWrapper;
 
+import org.prauga.calendar.ui.details.DetailsActivity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -125,7 +125,7 @@ public class AlertReceiver extends BroadcastReceiver {
         Intent intent = AlertUtils.buildEventViewIntent(context, eventId, startMillis, endMillis);
         intent.putExtra(AlertUtils.NOTIFICATION_ID_KEY, notificationId);
         return TaskStackBuilder.create(context)
-            .addParentStack(EventInfoActivity.class)
+            .addParentStack(DetailsActivity.class)
             .addNextIntent(intent)
             .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }

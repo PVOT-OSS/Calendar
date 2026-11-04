@@ -19,6 +19,7 @@ import android.service.quicksettings.TileService
 import android.text.format.DateUtils
 import org.prauga.calendar.R
 import org.prauga.calendar.ui.MainActivity
+import org.prauga.calendar.ui.details.DetailsActivity
 import java.util.Formatter
 import java.util.Locale
 import java.util.concurrent.Executors
@@ -91,7 +92,7 @@ class NextEventTileService : TileService() {
             Intent(this, MainActivity::class.java)
         } else {
             Intent(Intent.ACTION_VIEW, ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, n.eventId))
-                .setClass(this, EventInfoActivity::class.java)
+                .setClass(this, DetailsActivity::class.java)
                 .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, n.begin)
                 .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, n.end)
                 .putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, n.allDay)

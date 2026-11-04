@@ -35,13 +35,13 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import org.prauga.calendar.theme.DynamicThemeKt;
-import org.prauga.calendar.EventInfoActivity;
 import org.prauga.calendar.Utils;
 import org.prauga.calendar.event.EditEventActivity;
 import org.prauga.calendar.calendarcommon2.Time;
 
 import org.prauga.calendar.R;
 import org.prauga.calendar.ui.MainActivity;
+import org.prauga.calendar.ui.details.DetailsActivity;
 
 /**
  * Simple widget to show next upcoming calendar event.
@@ -117,7 +117,7 @@ public class CalendarAppWidgetProvider extends AppWidgetProvider {
 
             dataString += "/" + id;
             // If we have an event id - start the event info activity
-            fillInIntent.setClass(context, EventInfoActivity.class);
+            fillInIntent.setClass(context, DetailsActivity.class);
         } else {
             // If we do not have an event id - start AllInOne
             fillInIntent.setClass(context, MainActivity.class);

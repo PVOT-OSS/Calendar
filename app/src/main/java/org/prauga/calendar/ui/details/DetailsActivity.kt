@@ -11,6 +11,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.CalendarContract
+import android.provider.CalendarContract.Attendees
 import android.provider.CalendarContract.Events
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -32,9 +33,15 @@ class DetailsActivity : PvotBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        eventId = intent.data?.let { runCatching { ContentUris.parseId(it) }.getOrNull() } ?: -1L
         begin = intent.getLongExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, 0L)
         end = intent.getLongExtra(CalendarContract.EXTRA_EVENT_END_TIME, 0L)
+        val segments = intent.data?.pathSegments.orEmpty()
+        eventId = segments.getOrNull(1)?.toLongOrNull() ?: -1L
+        if (segments.size > 4 && segments[2] == "EventTime") {
+            begin = segments[3].toLongOrNull() ?: begin
+            end = segments[4].toLongOrNull() ?: end
+        }
+        viewModel.respondOnLoad(intent.getIntExtra(Attendees.ATTENDEE_STATUS, Attendees.ATTENDEE_STATUS_NONE))
         if (eventId < 0) {
             finish()
             return
@@ -52,7 +59,10 @@ class DetailsActivity : PvotBaseActivity() {
                             Toast.makeText(this, if (ok) R.string.ui_duplicated else R.string.ui_save_failed, Toast.LENGTH_SHORT).show()
                         }
                     },
-                    onDelete = { DeleteEventHelper(this, this, true).delete(begin, end, eventId, -1) },
+                    onDelete = {
+                        val s = viewModel.state.value
+                        DeleteEventHelper(this, this, true).delete(s.begin, s.end, eventId, -1)
+                    },
                     onJoin = { Actions.join(this, it) },
                     onMap = ::openMap,
                     onRespond = viewModel::respond,
@@ -70,8 +80,8 @@ class DetailsActivity : PvotBaseActivity() {
         startActivity(
             Intent(Intent.ACTION_EDIT, ContentUris.withAppendedId(Events.CONTENT_URI, eventId))
                 .setClass(this, EditEventActivity::class.java)
-                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, begin)
-                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end)
+                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, viewModel.state.value.begin)
+                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, viewModel.state.value.end)
         )
     }
 

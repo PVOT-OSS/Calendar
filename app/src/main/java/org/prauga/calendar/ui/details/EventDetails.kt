@@ -13,6 +13,7 @@ import android.provider.CalendarContract.Calendars
 import android.provider.CalendarContract.Events
 import android.provider.CalendarContract.Reminders
 import org.prauga.calendar.MeetingLinks
+import org.prauga.calendar.ics.IcsTime
 import org.prauga.calendar.persistence.CalendarTarget
 
 data class Guest(
@@ -37,6 +38,8 @@ data class EventDetails(
     val guests: List<Guest>,
     val reminders: List<Int>,
     val meetingUrl: String?,
+    val dtStart: Long,
+    val dtEnd: Long,
 ) {
     val self: Guest? get() = guests.firstOrNull { it.email.equals(ownerAccount, ignoreCase = true) }
 
@@ -53,7 +56,7 @@ object EventDetailsLoader {
                 Events.TITLE, Events.EVENT_LOCATION, Events.DESCRIPTION, Events.ALL_DAY, Events.RRULE,
                 Events.DISPLAY_COLOR, Events.CALENDAR_ID, Events.CALENDAR_DISPLAY_NAME, Events.ACCOUNT_NAME,
                 Events.ACCOUNT_TYPE, Events.CALENDAR_COLOR, Events.OWNER_ACCOUNT, Events.CALENDAR_ACCESS_LEVEL,
-                Events.ORGANIZER, Events.GUESTS_CAN_MODIFY,
+                Events.ORGANIZER, Events.GUESTS_CAN_MODIFY, Events.DTSTART, Events.DTEND, Events.DURATION,
             ),
             null, null, null,
         )?.use { c ->
@@ -77,6 +80,8 @@ object EventDetailsLoader {
                 guests = emptyList(),
                 reminders = emptyList(),
                 meetingUrl = MeetingLinks.find(c.getString(1), c.getString(2))?.url,
+                dtStart = c.getLong(15),
+                dtEnd = if (c.isNull(16)) c.getLong(15) + durationMillis(c.getString(17)) else c.getLong(16),
             )
         } ?: return null
 
@@ -108,6 +113,9 @@ object EventDetailsLoader {
             reminders = reminders,
         )
     }
+
+    private fun durationMillis(duration: String?): Long =
+        duration?.let { IcsTime.parseDuration(it) } ?: 3_600_000L
 
     fun respond(resolver: ContentResolver, details: EventDetails, status: Int): Boolean {
         val self = details.self ?: return false
