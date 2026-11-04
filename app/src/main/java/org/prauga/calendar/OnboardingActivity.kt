@@ -50,6 +50,9 @@ class OnboardingActivity : AppCompatActivity() {
         }
         findViewById<Button>(R.id.onboarding_davx5).setOnClickListener { openDavx5() }
         findViewById<Button>(R.id.onboarding_done).setOnClickListener { finishOnboarding() }
+        onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() = finishOnboarding()
+        })
     }
 
     override fun onResume() {
@@ -101,10 +104,6 @@ class OnboardingActivity : AppCompatActivity() {
         finish()
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        finishOnboarding()
-    }
 
     companion object {
         private const val PREF_DONE = "onboarding_done"

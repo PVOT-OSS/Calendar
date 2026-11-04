@@ -323,9 +323,10 @@ class ImportActivity : AppCompatActivity() {
             holder.itemView.isEnabled = enabled
             holder.itemView.alpha = if (enabled) 1f else 0.6f
             holder.itemView.setOnClickListener {
-                if (!enabled) return@setOnClickListener
-                if (!selected.remove(position)) selected += position
-                notifyItemChanged(position)
+                val row = holder.bindingAdapterPosition
+                if (!enabled || row == RecyclerView.NO_POSITION) return@setOnClickListener
+                if (!selected.remove(row)) selected += row
+                notifyItemChanged(row)
                 onChange()
                 invalidateOptionsMenu()
             }
