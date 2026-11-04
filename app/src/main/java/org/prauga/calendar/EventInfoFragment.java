@@ -1185,9 +1185,9 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
                 ? mEventCursor.getLong(EVENT_INDEX_CALENDAR_ID) : -1;
         final android.content.ContentResolver resolver = mContext.getContentResolver();
         new Thread(() -> {
-            java.util.List<org.prauga.calendar.ics.ImportTarget> targets = new java.util.ArrayList<>();
-            for (org.prauga.calendar.ics.ImportTarget t
-                    : new org.prauga.calendar.ics.IcsImporter(resolver).writableCalendars()) {
+            java.util.List<org.prauga.calendar.persistence.CalendarTarget> targets = new java.util.ArrayList<>();
+            for (org.prauga.calendar.persistence.CalendarTarget t
+                    : org.prauga.calendar.persistence.WritableCalendars.INSTANCE.list(resolver)) {
                 if (t.getId() != sourceCalendar) {
                     targets.add(t);
                 }
@@ -1205,14 +1205,14 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
                 }
                 String[] names = new String[targets.size()];
                 for (int i = 0; i < names.length; i++) {
-                    org.prauga.calendar.ics.ImportTarget t = targets.get(i);
+                    org.prauga.calendar.persistence.CalendarTarget t = targets.get(i);
                     names[i] = t.getDisplayName().equals(t.getAccountName())
                             ? t.getDisplayName() : t.getDisplayName() + " (" + t.getAccountName() + ")";
                 }
                 new MaterialAlertDialogBuilder(mActivity)
                         .setTitle(R.string.copy_to_calendar)
                         .setItems(names, (dialog, which) -> {
-                            org.prauga.calendar.ics.ImportTarget target = targets.get(which);
+                            org.prauga.calendar.persistence.CalendarTarget target = targets.get(which);
                             new Thread(() -> {
                                 Long copied = new EventCopier(resolver).copy(eventId, target);
                                 if (mActivity != null) {

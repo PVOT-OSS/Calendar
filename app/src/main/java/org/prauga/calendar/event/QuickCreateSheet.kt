@@ -25,8 +25,8 @@ import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import org.prauga.calendar.Utils
-import org.prauga.calendar.ics.IcsImporter
-import org.prauga.calendar.ics.ImportTarget
+import org.prauga.calendar.persistence.CalendarTarget
+import org.prauga.calendar.persistence.WritableCalendars
 import org.prauga.calendar.settings.CalendarDefaults
 import org.prauga.calendar.settings.GeneralPreferences
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -43,7 +43,7 @@ class QuickCreateSheet : BottomSheetDialogFragment() {
     private var startMillis = 0L
     private var endMillis = 0L
     private var allDay = false
-    private var targets: List<ImportTarget> = emptyList()
+    private var targets: List<CalendarTarget> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +74,7 @@ class QuickCreateSheet : BottomSheetDialogFragment() {
         dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
 
         viewLifecycleOwner.lifecycleScope.launch {
-            targets = withContext(Dispatchers.IO) { IcsImporter(requireContext().contentResolver).writableCalendars() }
+            targets = withContext(Dispatchers.IO) { WritableCalendars.list(requireContext().contentResolver) }
             if (targets.isEmpty()) {
                 openFullEditor(title.text.toString())
                 return@launch
@@ -125,7 +125,7 @@ class QuickCreateSheet : BottomSheetDialogFragment() {
         return DateUtils.formatDateRange(requireContext(), Formatter(StringBuilder(50), Locale.getDefault()), start, shownEnd, flags, tz).toString()
     }
 
-    private fun saveEvent(title: String, target: ImportTarget) {
+    private fun saveEvent(title: String, target: CalendarTarget) {
         val context = requireContext().applicationContext
         val (start, end) = times()
         val tz = if (allDay) "UTC" else Utils.getTimeZone(context, null)

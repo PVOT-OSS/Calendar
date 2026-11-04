@@ -32,7 +32,8 @@ import org.prauga.calendar.ics.IcsCalendar
 import org.prauga.calendar.ics.IcsEvent
 import org.prauga.calendar.ics.IcsImporter
 import org.prauga.calendar.ics.ImportAction
-import org.prauga.calendar.ics.ImportTarget
+import org.prauga.calendar.persistence.CalendarTarget
+import org.prauga.calendar.persistence.WritableCalendars
 import org.prauga.calendar.theme.applyTheme
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.Dispatchers
@@ -50,8 +51,8 @@ class ImportActivity : AppCompatActivity() {
     private lateinit var importButton: TextView
     private lateinit var summary: TextView
     private var calendar: IcsCalendar? = null
-    private var targets: List<ImportTarget> = emptyList()
-    private var target: ImportTarget? = null
+    private var targets: List<CalendarTarget> = emptyList()
+    private var target: CalendarTarget? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         applyTheme()
@@ -82,7 +83,7 @@ class ImportActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val loaded = withContext(Dispatchers.IO) {
                 val text = readText(uri) ?: return@withContext null
-                IcsCalendar.parse(text, Utils.getTimeZone(this@ImportActivity, null)) to importer.writableCalendars()
+                IcsCalendar.parse(text, Utils.getTimeZone(this@ImportActivity, null)) to WritableCalendars.list(contentResolver)
             }
             if (loaded == null || loaded.first.events.isEmpty()) {
                 Toast.makeText(this@ImportActivity, R.string.cal_nothing_to_import, Toast.LENGTH_SHORT).show()
@@ -104,7 +105,7 @@ class ImportActivity : AppCompatActivity() {
         null
     }
 
-    private fun show(parsed: IcsCalendar, writable: List<ImportTarget>) {
+    private fun show(parsed: IcsCalendar, writable: List<CalendarTarget>) {
         calendar = parsed
         targets = writable
         if (parsed.warnings.isNotEmpty()) {
@@ -141,7 +142,7 @@ class ImportActivity : AppCompatActivity() {
         selectTarget(writable[spinner.selectedItemPosition.coerceAtLeast(0)])
     }
 
-    private fun selectTarget(newTarget: ImportTarget) {
+    private fun selectTarget(newTarget: CalendarTarget) {
         target = newTarget
         val parsed = calendar ?: return
         lifecycleScope.launch {

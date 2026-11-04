@@ -13,11 +13,11 @@ import android.provider.CalendarContract.Attendees
 import android.provider.CalendarContract.Events
 import android.provider.CalendarContract.ExtendedProperties
 import android.provider.CalendarContract.Reminders
-import org.prauga.calendar.ics.ImportTarget
+import org.prauga.calendar.persistence.CalendarTarget
 
 class EventCopier(private val resolver: ContentResolver) {
 
-    fun copy(eventId: Long, target: ImportTarget): Long? {
+    fun copy(eventId: Long, target: CalendarTarget): Long? {
         val values = ContentValues()
         resolver.query(ContentUris.withAppendedId(Events.CONTENT_URI, eventId), EVENT_COLUMNS, null, null, null)?.use {
             if (!it.moveToFirst()) return null

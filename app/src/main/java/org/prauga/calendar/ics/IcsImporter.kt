@@ -16,44 +16,13 @@ import android.provider.CalendarContract.Reminders
 import android.util.Log
 import org.prauga.calendar.event.ExtendedProperty
 import org.prauga.calendar.event.SeriesWriter
-
-data class ImportTarget(
-    val id: Long,
-    val displayName: String,
-    val accountName: String,
-    val accountType: String,
-    val color: Int
-) {
-    val isLocal: Boolean get() = accountType == android.provider.CalendarContract.ACCOUNT_TYPE_LOCAL
-}
+import org.prauga.calendar.persistence.CalendarTarget
 
 enum class ImportAction { ADD, UPDATE, DELETE, SKIP }
 
 data class ImportResult(val added: Int, val updated: Int, val deleted: Int, val failed: Int)
 
 class IcsImporter(private val resolver: ContentResolver) {
-
-    fun writableCalendars(): List<ImportTarget> {
-        val targets = mutableListOf<ImportTarget>()
-        resolver.query(
-            Calendars.CONTENT_URI,
-            arrayOf(
-                Calendars._ID, Calendars.CALENDAR_DISPLAY_NAME, Calendars.ACCOUNT_NAME,
-                Calendars.ACCOUNT_TYPE, Calendars.CALENDAR_COLOR
-            ),
-            "${Calendars.CALENDAR_ACCESS_LEVEL}>=${Calendars.CAL_ACCESS_CONTRIBUTOR} AND ${Calendars.SYNC_EVENTS}=1",
-            null,
-            "${Calendars.IS_PRIMARY} DESC, ${Calendars.ACCOUNT_NAME}, ${Calendars.CALENDAR_DISPLAY_NAME}"
-        )?.use {
-            while (it.moveToNext()) {
-                targets += ImportTarget(
-                    it.getLong(0), it.getString(1) ?: it.getString(2) ?: "", it.getString(2) ?: "",
-                    it.getString(3) ?: "", it.getInt(4)
-                )
-            }
-        }
-        return targets
-    }
 
     fun plan(events: List<IcsEvent>, method: String?, calendarId: Long): List<ImportAction> {
         val masters = HashMap<String, Long?>()
@@ -68,7 +37,7 @@ class IcsImporter(private val resolver: ContentResolver) {
         }
     }
 
-    fun import(events: List<IcsEvent>, method: String?, target: ImportTarget): ImportResult {
+    fun import(events: List<IcsEvent>, method: String?, target: CalendarTarget): ImportResult {
         var added = 0
         var updated = 0
         var deleted = 0
@@ -146,14 +115,14 @@ class IcsImporter(private val resolver: ContentResolver) {
         arrayOf(masterId.toString(), instanceMillis.toString()), null
     )?.use { if (it.moveToFirst()) it.getLong(0) else null }
 
-    private fun insert(event: IcsEvent, target: ImportTarget): Long? {
+    private fun insert(event: IcsEvent, target: CalendarTarget): Long? {
         val uri = resolver.insert(Events.CONTENT_URI, event.toEventValues(target.id)) ?: return null
         val id = ContentUris.parseId(uri)
         writeChildren(id, event, target)
         return id
     }
 
-    private fun insertException(masterId: Long, event: IcsEvent, target: ImportTarget) {
+    private fun insertException(masterId: Long, event: IcsEvent, target: CalendarTarget) {
         val instance = event.recurrenceId!!
         val syncId = SeriesWriter.ensureSyncId(resolver, masterId, target.accountName, target.accountType, event.uid)
         if (syncId == null) {
@@ -173,7 +142,7 @@ class IcsImporter(private val resolver: ContentResolver) {
         if (uri != null) writeChildren(ContentUris.parseId(uri), event, target)
     }
 
-    private fun update(id: Long, event: IcsEvent, target: ImportTarget) {
+    private fun update(id: Long, event: IcsEvent, target: CalendarTarget) {
         val values = event.toEventValues(target.id)
         if (event.isException) {
             values.remove(Events.RRULE); values.remove(Events.RDATE); values.remove(Events.EXDATE)
@@ -190,7 +159,7 @@ class IcsImporter(private val resolver: ContentResolver) {
         resolver.delete(ContentUris.withAppendedId(Events.CONTENT_URI, id), null, null)
     }
 
-    private fun writeChildren(eventId: Long, event: IcsEvent, target: ImportTarget) {
+    private fun writeChildren(eventId: Long, event: IcsEvent, target: CalendarTarget) {
         event.organizer?.let { organizer ->
             if (event.attendees.none { it.email.equals(organizer, true) }) {
                 resolver.insert(Attendees.CONTENT_URI, ContentValues().apply {
