@@ -4114,6 +4114,9 @@ public class DayView extends View implements View.OnCreateContextMenuListener,
                         mLastReloadMillis = 0;
                         reloadEvents();
                     });
+                } else {
+                    post(() -> org.prauga.calendar.tasks.TasksRepository.INSTANCE.open(
+                            mContext, taskEventId));
                 }
             }).start();
             return;

@@ -61,7 +61,7 @@ object TasksRepository {
                 context.contentResolver.query(
                     Uri.parse("content://${provider.authority}/tasks"),
                     arrayOf("_id", "title", "due", "is_allday", "status", "list_color"),
-                    "due >= ? AND due < ? AND _deleted = 0 AND visible = 1",
+                    "due >= ? AND due < ? AND _deleted = 0 AND visible = 1 AND rrule IS NULL",
                     arrayOf((from - DAY).toString(), (to + DAY).toString()), "due"
                 )?.use { c ->
                     while (c.moveToNext()) {
@@ -73,11 +73,70 @@ object TasksRepository {
                         if (event.endDay >= startDay && event.startDay <= endDay) add(events, event)
                     }
                 }
+                appendRepeating(context, provider, events, startDay, endDay, from, to, tz)
             } catch (e: RuntimeException) {
                 Log.w(TAG, "Couldn't read tasks from ${provider.authority}", e)
             }
         }
     }
+
+    private fun appendRepeating(
+        context: Context, provider: Provider, events: MutableList<Event>, startDay: Int, endDay: Int,
+        from: Long, to: Long, tz: String
+    ) {
+        context.contentResolver.query(
+            Uri.parse("content://${provider.authority}/tasks"),
+            arrayOf("_id", "title", "dtstart", "due", "is_allday", "status", "list_color", "rrule", "tz"),
+            "rrule IS NOT NULL AND due IS NOT NULL AND due < ? AND _deleted = 0 AND visible = 1",
+            arrayOf((to + DAY).toString()), null
+        )?.use { c ->
+            while (c.moveToNext()) {
+                val taskId = c.getLong(0)
+                val due = c.getLong(3)
+                val dtstart = if (c.isNull(2)) due else c.getLong(2)
+                val allDay = c.getInt(4) != 0
+                val done = c.getInt(5) == STATUS_COMPLETED
+                val taskZone = if (allDay) "UTC" else c.getString(8) ?: tz
+                occurrences(c.getString(7), dtstart, allDay, taskZone, to + DAY).forEachIndexed { index, start ->
+                    val occurrenceDue = start + (due - dtstart)
+                    if (occurrenceDue < due || occurrenceDue < from - DAY) return@forEachIndexed
+                    val current = occurrenceDue == due
+                    val event = taskEvent(
+                        provider, taskId, c.getString(1) ?: "", occurrenceDue, allDay, current && done,
+                        c.getInt(6), tz, if (current) 0 else index + 1
+                    )
+                    if (!current) futureOccurrences += event.id
+                    if (event.endDay >= startDay && event.startDay <= endDay) add(events, event)
+                }
+            }
+        }
+    }
+
+    fun occurrences(rrule: String, start: Long, allDay: Boolean, zone: String, until: Long): List<Long> {
+        val result = mutableListOf<Long>()
+        try {
+            val rule = org.dmfs.rfc5545.recur.RecurrenceRule(rrule)
+            val first = if (allDay) {
+                val utc = java.util.Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC")).apply { timeInMillis = start }
+                org.dmfs.rfc5545.DateTime(utc.get(java.util.Calendar.YEAR), utc.get(java.util.Calendar.MONTH), utc.get(java.util.Calendar.DAY_OF_MONTH))
+            } else {
+                org.dmfs.rfc5545.DateTime(java.util.TimeZone.getTimeZone(zone), start)
+            }
+            val set = org.dmfs.rfc5545.iterable.RecurrenceSet(first, org.dmfs.rfc5545.iterable.instanceiterable.RuleInstances(rule))
+            for (instance in set) {
+                val t = instance.timestamp
+                if (t >= until || result.size >= 1000) break
+                result += t
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Bad task RRULE $rrule", e)
+        }
+        return result
+    }
+
+    private val futureOccurrences = java.util.Collections.newSetFromMap(ConcurrentHashMap<Long, Boolean>())
+
+    fun canToggle(eventId: Long) = isTask(eventId) && eventId !in futureOccurrences
 
     private fun add(events: MutableList<Event>, event: Event) {
         if (event.drawAsAllday()) {
@@ -91,9 +150,10 @@ object TasksRepository {
 
     private fun taskEvent(
         provider: Provider, taskId: Long, title: String, due: Long, allDay: Boolean, done: Boolean,
-        color: Int, tz: String
+        color: Int, tz: String, occurrence: Int = 0
     ): Event {
-        val id = -(provider.authority.hashCode().toLong() and 0xffff) * 10_000_000L - taskId - 1
+        val id = -((provider.authority.hashCode().toLong() and 0xffff) * 1_000_000_000_000L +
+            taskId * 10_000L + occurrence + 1)
         tasksByEventId[id] = provider to taskId
         val e = Event()
         e.id = id
@@ -201,7 +261,7 @@ object TasksRepository {
 
     fun toggleDone(context: Context, eventId: Long): Boolean {
         val (provider, taskId) = tasksByEventId[eventId] ?: return false
-        if (!canWrite(context, provider)) return false
+        if (!canToggle(eventId) || !canWrite(context, provider)) return false
         val uri = ContentUris.withAppendedId(Uri.parse("content://${provider.authority}/tasks"), taskId)
         return try {
             val done = context.contentResolver.query(uri, arrayOf("status"), null, null, null)
