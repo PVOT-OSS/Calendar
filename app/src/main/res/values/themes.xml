@@ -25,23 +25,6 @@
         <item name="calendarSpinnerDisabledTextColor">@color/calendar_item_disabled</item>
     </style>
 
-    <style name="CalendarAppThemeDarkTeal" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowBackground">@color/bg_dark</item>
-        <item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
-        <item name="android:itemBackground">@color/bg_dark</item>
-        <item name="calendarSpinnerDisabledTextColor">@color/calendar_item_disabled_dark</item>
-    </style>
 
-    <style name="CalendarAppThemeBlackTeal" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/bg_black</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowBackground">@color/bg_black</item>
-        <item name="android:itemBackground">@color/bg_black</item>
-        <item name="calendarSpinnerDisabledTextColor">@color/calendar_item_disabled_black</item>
-    </style>
 
 </resources>

@@ -16,47 +16,14 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string-array name="reminder_methods_labels">
-    <item msgid="5172236776878811487">"إشعار"</item>
-    <item msgid="1751151680520784746">"بريد إلكتروني"</item>
-    <item msgid="2658001219380695677">"رسائل SMS"</item>
-    <item msgid="7926918288165444873">"المنبه"</item>
-  </string-array>
-  <string-array name="availability">
-    <item msgid="454869065893453189">"مشغول"</item>
-    <item msgid="6228387173725732140">"متواجد"</item>
-    <item msgid="2064426942462573474">"مبدئي"</item>
-  </string-array>
-  <string-array name="response_labels1">
-    <item msgid="5605392595848194997">"لا استجابة"</item>
-    <item msgid="3724434080904437698">"نعم"</item>
-    <item msgid="8854145743148992583">"ربما"</item>
-    <item msgid="6174292185978948873">"لا"</item>
-  </string-array>
   <string-array name="delete_repeating_labels">
     <item msgid="4208432367651646938">"هذا الحدث فقط"</item>
     <item msgid="1536401639805370405">"هذا الحدث والأحداث المستقبلية"</item>
     <item msgid="7833229563617435430">"جميع الأحداث"</item>
   </string-array>
-  <string-array name="change_response_labels">
-    <item msgid="3466644709343519437">"هذا الحدث فقط"</item>
-    <item msgid="140670561403965380">"جميع الأحداث في سلسلة الأحداث"</item>
-  </string-array>
-  <string-array name="buttons_list">
-    <item msgid="5917946202321434335">"يوم"</item>
-    <item msgid="6248480754959562740">"أسبوع"</item>
-    <item msgid="4298472806133153766">"شهر"</item>
-    <item msgid="5033084974413793845">"أجندة"</item>
-  </string-array>
   <string-array name="preferences_skip_reminders_labels">
     <item msgid="2285927842308686988">"في حالة الرفض فقط"</item>
     <item msgid="6367412240524984286">"في حالة الرفض أو عدم الرد"</item>
-  </string-array>
-  <string-array name="recurrence_freq">
-    <item msgid="3388478383574917007">"التكرار يوميًا"</item>
-    <item msgid="6300824484048337842">"التكرار أسبوعيًا"</item>
-    <item msgid="189361731610816256">"التكرار شهريًا"</item>
-    <item msgid="8714177874112569158">"التكرار سنويًا"</item>
   </string-array>
   <string-array name="repeat_by_nth_sun">
     <item msgid="143841313172233420">"يوم الأحد الأول من كل شهر"</item>

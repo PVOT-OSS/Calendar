@@ -5,7 +5,6 @@
 -->
 <!-- Strings added by PVOT-OSS. English only for now. -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="three_day_view">3 days</string>
 
     <string name="calendar_default_notifications">Default notifications</string>
     <string name="calendar_default_reminder_timed">Events</string>
@@ -22,14 +21,7 @@
         <item quantity="other">%1$d weeks before at %2$s</item>
     </plurals>
 
-    <string name="optional_guests_hint">Optional guests</string>
-    <string name="optional_guest_label">%s (optional)</string>
-    <string name="guests_can">Guests can</string>
-    <string name="guests_can_modify">Modify the event</string>
-    <string name="guests_can_invite">Invite others</string>
-    <string name="guests_can_see">See the guest list</string>
 
-    <string name="repeat_custom">Custom…</string>
 
     <string name="move_recurring_title">Change recurring event</string>
     <string name="move_this_event">This event</string>
@@ -38,10 +30,6 @@
     <string name="move_undo">Undo</string>
     <string name="move_failed">Couldn\'t change the event</string>
 
-    <string name="quick_create_title_hint">Add title</string>
-    <string name="quick_create_all_day">All day</string>
-    <string name="quick_create_more">More options</string>
-    <string name="quick_create_saved">Event saved</string>
 
     <string name="extra_calendars_title">Extra calendars</string>
     <string name="extra_calendars_summary">Birthdays from contacts, holidays</string>
@@ -90,19 +78,11 @@
     <string name="onboarding_davx5">Sync with DAVx⁵</string>
     <string name="onboarding_done">Done</string>
 
-    <string name="end_timezone_add">Use a different end time zone</string>
-    <string name="end_timezone_label">Ends in %s</string>
 
     <string name="shortcut_today">Today</string>
 
     <string name="join_meeting">Join meeting</string>
-    <string name="join_meeting_service">Join with %s</string>
-    <string name="join_meeting_no_app">No app can open this meeting link</string>
 
-    <string name="copy_to_calendar">Copy to…</string>
-    <string name="copy_to_no_calendar">No other calendar you can add events to</string>
-    <string name="copy_to_done">Copied to %s</string>
-    <string name="copy_to_failed">Couldn\'t copy the event</string>
 
     <string name="import_title">Import events</string>
     <string name="import_target_calendar">Add to calendar</string>
@@ -125,7 +105,6 @@
     <string name="import_unknown_zones">Unknown time zones, used yours instead: %s</string>
     <string name="import_result">Added %1$d, updated %2$d, removed %3$d</string>
     <string name="import_result_failed">Added %1$d, updated %2$d, removed %3$d, failed %4$d</string>
-    <string name="month_day_no_events">No events</string>
     <plurals name="month_day_events">
         <item quantity="one">%d event</item>
         <item quantity="other">%d events</item>

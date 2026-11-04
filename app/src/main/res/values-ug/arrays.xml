@@ -14,47 +14,14 @@
      limitations under the License.
  -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string-array name="reminder_methods_labels">
-    <item msgid="5172236776878811487">"ئۇقتۇرۇش"</item>
-    <item msgid="1751151680520784746">"ئېلخەت"</item>
-    <item msgid="2658001219380695677">"قىسقا ئۇچۇر"</item>
-    <item msgid="7926918288165444873">"قوڭغۇراق"</item>
-  </string-array>
-  <string-array name="availability">
-    <item msgid="454869065893453189">"ئالدىراش"</item>
-    <item msgid="6228387173725732140">"ئىشلىتىلىشچان"</item>
-    <item msgid="2064426942462573474">"سىناق"</item>
-  </string-array>
-  <string-array name="response_labels1">
-    <item msgid="5605392595848194997">"ئىنكاس يوق"</item>
-    <item msgid="3724434080904437698">"ھەئە"</item>
-    <item msgid="8854145743148992583">«بەلكىم»</item>
-    <item msgid="6174292185978948873">"ياق"</item>
-  </string-array>
   <string-array name="delete_repeating_labels">
     <item msgid="4208432367651646938">"مۇشۇ پائالىيەتلا"</item>
     <item msgid="1536401639805370405">"بۇ ۋە كەلگۈسىدىكى پائالىيەتلەر"</item>
     <item msgid="7833229563617435430">"ھەممە پائالىيەت"</item>
   </string-array>
-  <string-array name="change_response_labels">
-    <item msgid="3466644709343519437">"مۇشۇ پائالىيەتلا"</item>
-    <item msgid="140670561403965380">"ھەممە مۇھىم پائالىيەتلەر"</item>
-  </string-array>
-  <string-array name="buttons_list">
-    <item msgid="5917946202321434335">"كۈن"</item>
-    <item msgid="6248480754959562740">"ھەپتە"</item>
-    <item msgid="4298472806133153766">"ئاي"</item>
-    <item msgid="5033084974413793845">"كۈنتەرتىپ"</item>
-  </string-array>
   <string-array name="preferences_skip_reminders_labels">
     <item msgid="2285927842308686988">"سىز قاتناشمىغان ئەھۋالدىلا"</item>
     <item msgid="6367412240524984286">"سىز قاتناشمىغان ياكى جاۋاب قايتۇرمىغان ئەھۋالدا"</item>
-  </string-array>
-  <string-array name="recurrence_freq">
-    <item msgid="3388478383574917007">"ھەر كۈنى قايتىلا"</item>
-    <item msgid="6300824484048337842">"ھەر ھەپتە قايتىلا"</item>
-    <item msgid="189361731610816256">"ھەر ئايدا قايتىلا"</item>
-    <item msgid="8714177874112569158">"ھەر يىلى قايتىلا"</item>
   </string-array>
   <string-array name="repeat_by_nth_sun">
     <item msgid="143841313172233420">"ھەر ئاينىڭ بىرىنچى يەكشەنبە كۈنى"</item>

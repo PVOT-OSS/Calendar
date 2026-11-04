@@ -16,47 +16,14 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string-array name="reminder_methods_labels">
-    <item msgid="5172236776878811487">"Notification"</item>
-    <item msgid="1751151680520784746">"E-mail"</item>
-    <item msgid="2658001219380695677">"SMS"</item>
-    <item msgid="7926918288165444873">"Alarme"</item>
-  </string-array>
-  <string-array name="availability">
-    <item msgid="454869065893453189">"Occupé"</item>
-    <item msgid="6228387173725732140">"Disponible"</item>
-    <item msgid="2064426942462573474">"À confirmer"</item>
-  </string-array>
-  <string-array name="response_labels1">
-    <item msgid="5605392595848194997">"Aucune réponse"</item>
-    <item msgid="3724434080904437698">"Oui"</item>
-    <item msgid="8854145743148992583">"Peut-être"</item>
-    <item msgid="6174292185978948873">"Non"</item>
-  </string-array>
   <string-array name="delete_repeating_labels">
     <item msgid="4208432367651646938">"Uniquement cet événement"</item>
     <item msgid="1536401639805370405">"Cet événement et les suivants"</item>
     <item msgid="7833229563617435430">"Tous les événements"</item>
   </string-array>
-  <string-array name="change_response_labels">
-    <item msgid="3466644709343519437">"Uniquement cet événement"</item>
-    <item msgid="140670561403965380">"Tous les événements de la série"</item>
-  </string-array>
-  <string-array name="buttons_list">
-    <item msgid="5917946202321434335">"Jour"</item>
-    <item msgid="6248480754959562740">"Semaine"</item>
-    <item msgid="4298472806133153766">"Mois"</item>
-    <item msgid="5033084974413793845">"Planning"</item>
-  </string-array>
   <string-array name="preferences_skip_reminders_labels">
     <item msgid="2285927842308686988">"Uniquement en cas de refus"</item>
     <item msgid="6367412240524984286">"Si refus ou pas de réponse"</item>
-  </string-array>
-  <string-array name="recurrence_freq">
-    <item msgid="3388478383574917007">"TOUS LES JOURS"</item>
-    <item msgid="6300824484048337842">"TOUTES LES SEMAINES"</item>
-    <item msgid="189361731610816256">"TOUS LES MOIS"</item>
-    <item msgid="8714177874112569158">"TOUS LES ANS"</item>
   </string-array>
   <string-array name="repeat_by_nth_sun">
     <item msgid="143841313172233420">"tous les premiers dimanches"</item>
@@ -108,14 +75,6 @@
     <item msgid="5499975799312474425">"tous les derniers samedis"</item>
   </string-array>
 
-    <string-array name="preferences_days_per_week_labels">
-        <item>2 jours</item>
-        <item>3 jours</item>
-        <item>4 jours</item>
-        <item>5 jours</item>
-        <item>6 jours</item>
-        <item>7 jours</item>
-    </string-array>
 
   <string-array name="timezone_rename_labels">
     <item msgid="4609638052107641231">"Heure centr. Austr. (Terr. Nord)"</item>

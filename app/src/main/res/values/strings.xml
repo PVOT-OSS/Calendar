@@ -21,7 +21,6 @@
     <!-- Shared Labels. These labels are shared among the activities. -->
     <skip/>
     <!-- This is the label for the time of an event [CHAR LIMIT=30] -->
-    <string name="when_label">When</string>
     <!-- Text to show when an event starts on the current day -->
     <string name="today">Today</string>
     <!-- Text to show when an event starts on the next day -->
@@ -90,72 +89,51 @@
         <item quantity="other"><xliff:g id="count">%d</xliff:g> weeks</item>
     </plurals>
     <!-- This is for displaying the week of the year near the date. Eg. "January, 2011 Week 1" -->
-    <plurals name="weekN">
-        <!-- Label for displaying week of the year for all week values [CHAR LIMIT=16] -->
-        <item quantity="other">Week <xliff:g id="count">%d</xliff:g></item>
-    </plurals>
 
     <!-- Menu items: -->
     <skip/>
     <!-- This is a label on a context menu item. Pressing this menu item to initiate
         syncing of your Calendar data with the server. [CHAR LIMIT=11] -->
-    <string name="calendar_refresh">"Refresh"</string>
     <!-- This is a label on a context menu item. Pressing this menu item displays the
          Agenda view. -->
 
     <!-- This is a label on a context menu item. Pressing this menu item displays the
          Day view. -->
-    <string name="show_day_view">"Show day"</string>
     <!-- This is a label on a menu item. Pressing this menu item displays the
          Agenda view. -->
-    <string name="agenda_view">"Agenda"</string>
     <!-- This is a label on a menu item. Pressing this menu item displays the
          Day view. -->
-    <string name="day_view">"Day"</string>
     <!-- This is a label on a menu item. Pressing this menu item displays the
          Week view. -->
-    <string name="week_view">"Week"</string>
     <!-- This is a label on a menu item. Pressing this menu item displays the
          Month view. -->
-    <string name="month_view">"Month"</string>
     <!-- This is a label on a menu item. Pressing this menu item displays the
          details of an event. -->
-    <string name="event_view">"View event"</string>
     <!-- This is a label on a menu item. Pressing this menu item allows the
          user to create a new event. -->
-    <string name="event_create">"New event"</string>
     <!-- This is a label on a menu item in a popup window. Pressing this menu
          item allows the user to edit or change an existing event. -->
-    <string name="event_edit">"Edit event"</string>
     <!-- This is a label on a menu item in a popup window. Pressing this menu
          item allows the user to delete an existing event. -->
-    <string name="event_delete">"Delete event"</string>
-    <string name="share_label">Share</string>
     <!-- This is a label on a menu item. Pressing this menu
          item takes the user to the current day (today) in whatever view
          (Day view, Week view, Agenda view, Month view) they are currently in. -->
-    <string name="goto_today">"Today"</string>
     <!-- This is a label on a menu item. Pressing this menu
          item opens new dialog shown the date that the user wants to go. -->
-    <string name="goto_date">Go to\u2026</string>
     <!-- This is a label on a menu item. Pressing this menu item allows the
          user to view and edit his Settings (or Preferences) -->
     <string name="menu_preferences">"Settings"</string>
     <!-- This is a label on a menu item. Pressing this menu item shows users
          a warning -->
-    <string name="menu_info">Info</string>
     <!-- This is a label on a menu item. Pressing this menu item allows the
          user to select the calendars to display [CHAR LIMIT=20] -->
     <string name="search">"Search"</string>
     <!-- This is a label on a menu item. Pressing this menu item hides
          the navigation controls on the right side. [CHAR LIMIT=20] -->
-    <string name="hide_controls">"Hide controls"</string>
     <!-- This is a label on a menu item. Pressing this menu item shows the
          navigation controls on the right side. [CHAR LIMIT=20] -->
-    <string name="show_controls">"Show controls"</string>
     <!-- This is a label on a menu item. Pressing this menu item shows the
          View settings menu [CHAR LIMIT=20] -->
-    <string name="view_settings">"View settings"</string>
 
 
     <!-- Month view -->
@@ -164,31 +142,22 @@
     <!-- Select Visible Calendars activity -->
     <skip/>
     <!-- Select the set of calendars to sync [CHAR LIMIT=60] -->
-    <string name="select_synced_calendars_button">Calendars to sync</string>
 
     <!-- Event edit activity -->
     <skip/>
 
     <!-- Default value of What field (as a hint to the user) [CHAR LIMIT=15] -->
-    <string name="hint_what">"Event name"</string>
     <!-- Default value of Where field (as a hint to the user)[CHAR LIMIT=15] -->
     <string name="hint_where">"Location"</string>
     <!-- Default value of Description field (as a hint to the user) [CHAR LIMIT=15]-->
     <string name="hint_description">"Description"</string>
     <!-- Default value of Url field (as a hint to the user) [CHAR LIMIT=15]-->
-    <string name="hint_url">"URL"</string>
     <!-- Default value of Attendees/Guests field (as a hint to the user) [CHAR LIMIT=10] -->
-    <string name="hint_attendees">"Guests"</string>
     <!-- Toast message displayed when a new event is created -->
-    <string name="creating_event">"Event created."</string>
     <!-- Toast message displayed when an existing event is saved after being modified -->
-    <string name="saving_event">"Event saved."</string>
     <!-- Toast message displayed when a new event was not saved because it was empty [CHAR LIMIT=30] -->
-    <string name="empty_event">"Empty event not created."</string>
     <!-- Toast message displayed when a new event with guests is created -->
-    <string name="creating_event_with_guest">"Invitations will be sent."</string>
     <!-- Toast message displayed when an existing event with guests is saved after being modified -->
-    <string name="saving_event_with_guest">"Updates will be sent."</string>
 
     <!-- Toast message displayed responding to an event from an email as accepted
      [CHAR LIMIT=50] -->
@@ -204,7 +173,6 @@
     <!-- Create event dialog -->
     <skip/>
     <!-- Create event dialog save button [CHAR LIMIT=10] -->
-    <string name="create_event_dialog_save">Save</string>
 
     <!-- The alert toast is not actually being displayed for some reason. -->
     <skip/>
@@ -219,51 +187,36 @@
     <!-- Event info/edit screen labels:-->
     <skip/>
     <!-- This is the title of the screen used to view the details of an event -->
-    <string name="event_info_title">View event</string>
     <!-- This is the title of the screen used to view the details of an invitation
          to a meeting or event -->
-    <string name="event_info_title_invite">Meeting invitation</string>
 
     <!-- EditEventActivity specific strings: -->
     <skip/>
     <!-- Check box label that specifies if this is an all-day event -->
     <string name="edit_event_all_day_label">All day</string>
     <!-- Label for choosing one of the calendars -->
-    <string name="edit_event_calendar_label">Calendar</string>
     <!-- Menu item to show all choices [CHAR LIMIT=22]-->
     <!-- Label for the 'Presence' of an event, which can be either 'busy' (the default)
          or 'available'  [CHAR LIMIT=15] -->
-    <string name="presence_label">Show me as</string>
     <!-- Label for the 'Privacy' of an event, which can be either 'private'
          or 'public' [CHAR LIMIT=15] -->
-    <string name="privacy_label">Privacy</string>
     <!-- Label for the list of reminders for an event [CHAR LIMIT=20] -->
-    <string name="reminders_label">Add reminder</string>
     <!-- Title of alert shown if the user tries to create an event and has no calendars -->
-    <string name="no_syncable_calendars">No calendars</string>
     <!-- Body of alert shown if the user tries to create an event and has no calendars. Users can start adding an account here. [CHAR LIMIT=NONE] -->
-    <string name="no_calendars_found">Before you can add an event, you must add at least one calendar to your device</string>
     <!-- Body of dialog prompting the user to create an account.[CHAR LIMIT=NONE] -->
     <!-- Title of a button shown when there is no account available and the system prompt a user to add one. [CHAR LIMIT=none] -->
-    <string name="add_calendar">Add calendar</string>
 
     <!-- View Event -->
     <skip/>
     <!-- Label for which calendar an event is part of -->
-    <string name="view_event_calendar_label">Calendar:</string>
     <!-- Label for the event organizer -->
-    <string name="view_event_organizer_label">Organizer:</string>
     <!-- Label for showing event color picker -->
-    <string name="choose_event_color_label">Choose event color</string>
     <!-- Title for event color picker dialog -->
-    <string name="event_color_picker_dialog_title">Event Color</string>
     <!-- Label for button which sets event color to default calendar color -->
-    <string name="event_color_set_to_default">Set to default calendar color</string>
 
     <!-- Title for calendar color picker dialog -->
     <string name="calendar_color_picker_dialog_title">Calendar Color</string>
     <!-- Description for calendar color squares, which bring up the color picker. -->
-    <string name="calendar_square_color_picker_description">Color picker</string>
 
     <!-- Label for whether the user is attending this event. This is shown when
          a user is invited to a meeting or event.  The possible answers are
@@ -278,13 +231,11 @@
     <!-- Label for emailing attendees -->
     <string name="email_guests_label">Email guests</string>
     <!-- Label for emailing the organizer (when there are no attendees) -->
-    <string name="email_organizer_label">Email organizer</string>
     <!-- This is shown in the popup picker when emailing attendees -->
     <string name="email_picker_label">Email with</string>
     <!-- The is shown in the email subject as the prefix appended to the event title -->
     <string name="email_subject_prefix" translatable="false">Re:\u0020</string>
     <!-- Toast message displayed when the event id was not found LIMIT=30] -->
-    <string name="event_not_found">"Event not found."</string>
 
     <!-- Notification label for getting a map of the location. -->
     <string name="map_label">Map</string>
@@ -318,9 +269,7 @@
     <!-- Event Info strings-->
 
     <!-- Organizer Label [CHAR LIMIT=12]-->
-    <string name="event_info_organizer">Organizer:</string>
     <!-- Reminders label [CHAR LIMIT=15]-->
-    <string name="event_info_reminders_label">Reminders</string>
 
     <!-- Agenda View strings -->
     <skip/>
@@ -333,9 +282,7 @@
     <!-- This is shown while the calendar events are being loading to the screen. -->
     <string name="loading">Loading\u2026</string>
     <!-- This is shown at the top of the agenda view showing the beginning of the searched range. If the user taps on this string and Calendar will find events older than what is visible and display them to the user -->
-    <string name="show_older_events">Touch to view events before <xliff:g id="oldest_search_range">%1$s</xliff:g></string>
     <!-- This is shown at the bottom of the agenda view showing the end of the searched range. If the user taps on this string and Calendar will find events later/newer than what is visible and display them to the user -->
-    <string name="show_newer_events">Touch to view events after <xliff:g id="newest_search_range">%1$s</xliff:g></string>
 
     <!-- Search activity strings -->
     <skip/>
@@ -346,19 +293,13 @@
     <skip/>
     <!-- This is the title of a popup window that is displayed when the user
          edits a repeating event. [CHAR LIMIT=20]-->
-    <string name="edit_event_label">"Details"</string>
     <!-- This is a menu button for switching into edit mode when viewing an event.
         [CHAR LIMIT=10] -->
-    <string name="edit_label">"Edit"</string>
     <!-- The button label for deleting an event -->
-    <string name="delete_label">"Delete"</string>
     <!-- This is a menu button label for duplicating an event -->
-    <string name="duplicate_label">Duplicate</string>
 
     <!-- The button label for saving an event -->
-    <string name="save_label">Done</string>
     <!-- The button label for discarding changes to an event -->
-    <string name="discard_label">Cancel</string>
 
     <!-- Button labels on expanded notification reminders: -->
     <skip/>
@@ -411,7 +352,6 @@
          custom (non-standard) way from the usual repeat rates (such as daily,
          weekly, etc.) and that the user cannot change this on the phone
          (but only on the web). -->
-    <string name="custom" product="default">"Custom (can\'t customize on phone)"</string>
 
     <!-- This is a choice in a list that the user sees when he tries to modify
          a repeating event.  This choice says to change just this one instance
@@ -431,7 +371,6 @@
     <!-- This is a label on the dialog for creating a new event. [CHAR LIMIT=30] -->
     <string name="new_event_dialog_label">"New event"</string>
     <!-- This is the button to create a new event in a dialog window. [CHAR LIMIT=30] -->
-    <string name="new_event_dialog_option">"New event"</string>
     <!-- Confirmation dialog message -->
     <skip/>
     <!-- This is a confirmation message in a popup dialog that appears when the
@@ -444,7 +383,6 @@
     <string name="delete_recurring_event_title">Delete <xliff:g id="eventtitle">%s</xliff:g>?</string>
     <!-- This is the title of a popup dialog that asks for confirmation before
          changing the response to an invitation. -->
-    <string name="change_response_title">Change response</string>
 
     <!-- This is the title of the screen for setting user preferences. -->
     <string name="preferences_title">"Settings"</string>
@@ -453,10 +391,8 @@
     <string name="preferences_general_title">Calendar view setting</string>
     <!-- This is the title of a section in the Settings screen for settings
          related to viewing calendar events in Month view for portrait orientation -->
-    <string name="preferences_month_view_portrait">Month view layout (Portrait)</string>
     <!-- This is the title of a section in the Settings screen for settings
          related to viewing calendar events in Month view for landscape orientation -->
-    <string name="preferences_month_view_landscape">Month view layout (Landscape)</string>
 
     <!-- This is the title of a section in the Settings screen for settings
          related to app theme -->
@@ -466,14 +402,6 @@
     <string name="preferences_dark_theme">Dark</string>
     <string name="preferences_black_theme">Black</string>
 
-    <string name="preferences_color">Primary color</string>
-    <string name="preferences_color_teal" translatable="false">Teal</string>
-    <string name="preferences_color_blue" translatable="false">Blue</string>
-    <string name="preferences_color_orange" translatable="false">Orange</string>
-    <string name="preferences_color_green" translatable="false">Green</string>
-    <string name="preferences_color_red" translatable="false">Red</string>
-    <string name="preferences_color_purple" translatable="false">Purple</string>
-    <string name="preferences_color_pick">Primary color</string>
 
     <string name="preferences_real_event_colors">Use real event colors</string>
 
@@ -485,15 +413,7 @@
     <!-- Settings check box label to hide events that the user has declined to attend -->
     <string name="preferences_hide_declined_title">Hide declined events</string>
     <!-- Label values for the default start page preference. -->
-    <string name="default_start_title">Default view</string>
-    <string name="preferences_view_switch_buttons">View buttons in the toolbar</string>
-    <string name="preferences_view_switch_buttons_summary">Switch between the day, week and month views in one tap (months are abbreviated in the title)</string>
-    <string name="display_options">Display options</string>
-    <string name="display_time">Display time</string>
-    <string name="display_location">Display location</string>
-    <string name="maximum_number_of_lines">Max number of lines in event</string>
 
-    <string name="default_start_last">Previously used view</string>
     <!-- Settings week start label to start week on specific day-->
     <string name="preferences_week_start_day_title">Week starts on</string>
     <!-- Title of popup for week start day setting-->
@@ -502,9 +422,6 @@
     <string name="preferences_week_start_day_default" translatable="false">-1</string>
     <string name="week_start_locale_default">Locale default</string>
 
-    <string name="preferences_days_per_week_title">Days per week</string>
-    <string name="preferences_days_per_week_dialog">Days per week</string>
-    <string name="preferences_days_per_week_default" translatable="false">7</string>
     <!-- Title of the default event duration setting-->
     <string name="preferences_default_event_duration_title">Default event duration</string>
     <!-- Title of the settings item to clear the recent search history [CHAR LIMIT=40] -->
@@ -520,7 +437,6 @@
     <!-- Title of ringtone selector dialog -->
     <string name="preferences_alerts_ringtone_title">Sound</string>
     <!-- Title of check box label to enable or disable pop-up notifications -->
-    <string name="preferences_alerts_popup_title">Pop-up notification</string>
     <!-- List item label for setting the default number of reminder minutes -->
     <string name="preferences_default_reminder_title">Default reminder time</string>
     <!-- Title of dialog for setting the default number of reminder minutes -->
@@ -538,7 +454,6 @@
     <string name="preferences_home_tz_default" translatable="false">America/Los_Angeles</string>
 
     <!-- Title of the settings item to show week number in week view [CHAR LIMIT=40] -->
-    <string name="preferences_show_week_num_title">Show week number</string>
 
     <!-- Check box label for using custom snooze delays -->
     <string name="preferences_alerts_custom_snooze_delay_title">Ask for reminder snooze delay</string>
@@ -554,8 +469,6 @@
     <!-- Default value for the default snooze delay (in minutes) -->
     <string name="preferences_default_snooze_delay_default" translatable="false">5</string>
 
-    <string name="preferences_staggered_display_title">Staggered display</string>
-    <string name="preferences_staggered_display_summary">Display overlapping events in a staggered layout</string>
 
     <!-- About dialog strings -->
     <string name="app_authors" translatable="false">The Etar Project</string>
@@ -579,13 +492,6 @@
 
     <!-- Shown in month view next to event icon when additional events exist for that day, but no
         room remaining -->
-    <plurals name="month_more_events">
-        <!-- additional events message for 1 event, the quotes force a literal interpretation of the
-            string [CHAR LIMIT = 10] -->
-        <item quantity="one">"+1"</item>
-        <!-- additional events message for multiple events [CHAR LIMIT = 10] -->
-        <item quantity="other">+<xliff:g id="number">%d</xliff:g></item>
-    </plurals>
 
     <!-- Caption to show on gadget when there are no upcoming calendar events -->
     <string name="gadget_no_events">No upcoming calendar events</string>
@@ -603,54 +509,36 @@
 
     <!-- Displayed in email address autocomplete list when searching for contacts
          in corporate directories. Example:  "Searching bigcompany.com..." [CHAR LIMIT=64] -->
-    <string name="directory_searching_fmt">Searching <xliff:g id="domain">%s</xliff:g>\u2026</string>
 
     <!-- Accessibility Events -->
     <!-- Strings that describes actions for buttons without text -->
     <!-- Create a new calendar event [CHAR LIMIT = NONE]-->
 
     <!-- Remove a name of an attendee from a calendar event [CHAR LIMIT = NONE]-->
-    <string name="accessibility_remove_attendee">Remove attendee</string>
     <!-- Pick a starting date for a new event [CHAR LIMIT = NONE]-->
-    <string name="accessibility_pick_start_date">Start date</string>
     <!-- Pick a starting time for a new event [CHAR LIMIT = NONE]-->
-    <string name="accessibility_pick_start_time">Start time</string>
     <!-- Pick the ending date for a new event [CHAR LIMIT = NONE]-->
-    <string name="accessibility_pick_end_date">End date</string>
     <!-- Pick the ending time for a new event[CHAR LIMIT = NONE]-->
-    <string name="accessibility_pick_end_time">End time</string>
     <!-- Select a time zone for a new event [CHAR LIMIT = NONE]-->
-    <string name="accessibility_pick_time_zone">Time zone</string>
     <!-- Select a time zone for a new event [CHAR LIMIT = NONE]-->
-    <string name="accessibility_pick_recurrence">Repeat event</string>
     <!-- Add a reminder to an event [CHAR LIMIT = NONE]-->
-    <string name="accessibility_add_reminder">Add reminder</string>
     <!-- Remove a reminder from an event [CHAR LIMIT = NONE]-->
-    <string name="accessibility_remove_reminder">Remove reminder</string>
     <!-- Add a new attendee to an event [CHAR LIMIT = NONE]-->
-    <string name="accessibility_add_attendee">Add attendee</string>
     <!-- Choose if to sync/unsync this calendar with its server [CHAR LIMIT = NONE]-->
     <!-- Mark this event as an "all day event" [CHAR LIMIT = NONE]-->
-    <string name="accessibility_all_day">All day event</string>
     <!-- Refresh the data in the calendar [CHAR LIMIT = NONE]-->
 
     <!-- Choose the type of repetition for the event (daily, weekly, etc.[CHAR LIMIT = NONE]-->
     <!-- Set the time for the reminder[CHAR LIMIT = NONE]-->
-    <string name="accessibility_reminder_time">Reminder time</string>
     <!-- Set the type of the reminder (popup/email/sms)[CHAR LIMIT = NONE]-->
-    <string name="accessibility_reminder_type">Reminder type</string>
     <!-- Select the way you are visible for the event (busy/free) [CHAR LIMIT = NONE]-->
-    <string name="accessibility_reminder_showmeas">Show me as</string>
     <!-- Set the event as private/public/default [CHAR LIMIT = NONE]-->
-    <string name="accessibility_reminder_privacy">Privacy</string>
     <!-- A "new event" hint for the user when selecting a specific hour in the day view [CHAR LIMIT = 30]-->
-    <string name="day_view_new_event_hint">+ New event</string>
 
     <!--
       Source: A value for announcing the current event index (example: "Event 2 of 6").
       Description: This is spoken to the user. [CHAR LIMIT="NONE"]
     -->
-    <string name="template_announce_item_index">Event <xliff:g id="item_index">%1$s</xliff:g> of <xliff:g id="item_count">%2$s</xliff:g>.</string>
 
         <!-- number of events in the notification bar -->
     <plurals name="Nevents">
@@ -669,7 +557,6 @@
     </plurals>
 
     <!-- Description of the selected marker for accessibility support [CHAR LIMIT = NONE]-->
-    <string name="acessibility_selected_marker_description">Selected event</string>
 
     <!-- Tell user not to check a checkbox [CHAR LIMIT=30] -->
 
@@ -677,71 +564,26 @@
     <!-- Dialog title for recurrence picker when one-time event is selected [CHAR LIMIT=20] -->
 
     <!-- Strings to describe how frequently to repeat an event (e.g. every 5 days) -->
-    <plurals name="recurrence_interval_daily">
-        <!-- Singular form [CHAR LIMIT=30] -->
-        <item quantity="one">Every <xliff:g id="count">%d</xliff:g> day</item>
-        <!-- Plural form [CHAR LIMIT=30] -->
-        <item quantity="other">Every <xliff:g id="count">%d</xliff:g> days</item>
-    </plurals>
     <!-- Strings to describe how frequently to repeat an event (e.g. every 5 weeks) -->
-    <plurals name="recurrence_interval_weekly">
-        <!-- Singular form [CHAR LIMIT=30] -->
-        <item quantity="one">Every <xliff:g id="count">%d</xliff:g> week</item>
-        <!-- Plural form [CHAR LIMIT=30] -->
-        <item quantity="other">Every <xliff:g id="count">%d</xliff:g> weeks</item>
-    </plurals>
     <!-- Strings to describe how frequently to repeat an event (e.g. every 5 months) -->
-    <plurals name="recurrence_interval_monthly">
-        <!-- Singular form [CHAR LIMIT=30] -->
-        <item quantity="one">Every <xliff:g id="count">%d</xliff:g> month</item>
-        <!-- Plural form [CHAR LIMIT=30] -->
-        <item quantity="other">Every <xliff:g id="count">%d</xliff:g> months</item>
-    </plurals>
     <!-- Strings to describe how frequently to repeat an event (e.g. every 5 years) -->
-    <plurals name="recurrence_interval_yearly">
-        <!-- Singular form [CHAR LIMIT=30] -->
-        <item quantity="one">Every <xliff:g id="count">%d</xliff:g> year</item>
-        <!-- Plural form [CHAR LIMIT=30] -->
-        <item quantity="other">Every <xliff:g id="count">%d</xliff:g> years</item>
-    </plurals>
 
     <!-- Repeat an monthly event on the same day of every month [CHAR LIMIT=20] -->
-    <string name="recurrence_month_pattern_by_day">on the same day each month</string>
 
     <!-- Specifies that a repeating event to repeat forever (based on the defined frequency) instead of ending at a future date[CHAR LIMIT=20] -->
-    <string name="recurrence_end_continously">Forever</string>
     <!-- Specifies that a repeating event to repeat until a certain date[CHAR LIMIT=25] -->
-    <string name="recurrence_end_date_label">Until a date</string>
     <!-- Specifies that a repeating event to repeat until a certain date[CHAR LIMIT=20] -->
-    <string name="recurrence_end_date">Until <xliff:g id="date">%s</xliff:g></string>
     <!-- Specifies that a repeating event to repeat for a number of times. A repeating event can repeat forever, repeat in a certain frequency until a certain date, or repeat for a number of times. e.g. repeat 10 times and stop. This string is for the last case [CHAR LIMIT=25] -->
-    <string name="recurrence_end_count_label">For a number of events</string>
 
     <!-- Specifies that a repeating event should repeat for a certain number of iterations. [CHAR LIMIT=20]-->
-    <plurals name="recurrence_end_count">
-        <item quantity="one">For <xliff:g id="event_count">%d</xliff:g> event</item>
-        <item quantity="other">For <xliff:g id="event_count">%d</xliff:g> events</item>
-    </plurals>
 
     <!-- Description of the selected marker for accessibility support [CHAR LIMIT = NONE]-->
-    <string name="acessibility_recurrence_choose_end_date_description">change end date</string>
 
     <string name="user_rejected_calendar_write_permission">Etar requires calendar read and write permissions to work properly. Please try again.</string>
-    <string name="calendar_permission_not_granted">Required permissions were denied, enable them from Settings app to edit events</string>
 
     <!-- Strings to describe visibility array -->
-    <string name="visibility_default">Default</string>
-    <string name="visibility_confidential">Confidential</string>
-    <string name="visibility_private">Private</string>
-    <string name="visibility_public">Public</string>
 
     <!-- Strings to describe per week labels array -->
-    <string name="two_days">2 days</string>
-    <string name="three_days">3 days</string>
-    <string name="four_days">4 days</string>
-    <string name="five_days">5 days</string>
-    <string name="six_days">6 days</string>
-    <string name="seven_days">7 days</string>
 
     <!-- Strings to describe default duration array -->
     <string name="zero_minutes">0 minutes</string>
@@ -752,29 +594,17 @@
     <string name="two_hours">2 hours</string>
 
     <!-- Toast message displayed when ics file to share an event can't be generated -->
-    <string name="error_generating_ics">Problems encountered while sharing event</string>
 
     <!-- Sharing calendar event -->
-    <string name="cal_share_intent_title">Send event to:</string>
-    <string name="cal_export_event_title">Export event</string>
     <string name="cal_export_calendar_title">Export calendar</string>
     <string name="cal_export_calendar_summary">Export all events from a calendar to an .ics file</string>
-    <string name="cal_export_select_calendar_title">Select calendar to export</string>
     <string name="cal_export_success">Event exported successfully</string>
     <string name="cal_export_error">Failed to export event</string>
-    <string name="cal_export_succ_msg">Event exported successfully</string>
     <string name="cal_import_menu_title">Import event</string>
     <string name="cal_nothing_to_import">Nothing to import</string>
     <string name="cal_import_error_msg">Importing to calendar failed</string>
-    <string name="cal_import_error_time_zone_msg">Unable to understand given time zone: %s</string>
-    <string name="cal_import_error_date_msg">Unable to understand given date: %s</string>
-    <string name="cal_pick_ics">Pick file to import</string>
 
     <!-- Strings to describe view details array -->
-    <string name="show_time_no">Don\'t show time</string>
-    <string name="show_time_start">Only start time</string>
-    <string name="show_time_start_end">Start and end time</string>
-    <string name="show_time_start_end_below">Start and end time below the event</string>
 
     <!-- Preferences -->
     <string name="preferences_calendar_no_display_name">Unnamed calendar</string>
@@ -789,7 +619,6 @@
     <string name="preferences_calendar_visible">Display events</string>
     <!-- Button to access system notification preference for a given calendar -->
     <string name="preferences_manage_notifications">Manage notifications</string>
-    <string name="preferences_calendar_synchronize">Synchronize this calendar</string>
     <string name="preferences_calendar_color_warning_title">Warning</string>
     <string name="preferences_calendar_color_warning_message">Changing the color may be reverted when the calendar is synchronized again.\n\nIn DAVx⁵ \'Manage calendar colors\' can be disabled to prevent this.</string>
     <string name="preferences_calendar_color_warning_button">I understand</string>
@@ -811,7 +640,6 @@
     <string name="preferences_menu_about">About Etar</string>
 
     <string name="offline_account_name">Offline Calendar</string>
-    <string name="after_start_of_event">after start of event</string>
 
     <string name="pref_theme_default" translatable="false">light</string>
     <string name="preferences_do_not_check_battery_optimization">Don\'t check battery optimization</string>
@@ -820,8 +648,6 @@
     <!-- Name of notification channel group -->
     <string name="calendars">Calendars</string>
 
-    <string name="discard_event_changes">Do you want to discard changes?</string>
-    <string name="discard">Discard</string>
     <string name="cancel">Cancel</string>
 
     <!-- Default title for color picker dialog [CHAR LIMIT=30] -->
@@ -849,33 +675,21 @@
     <string name="palestine_display_name">Palestine</string>
 
     <!-- Text displayed when the recipientedittextview is not focused. Displays the total number of recipients since the field is shrunk to just display a portion -->
-    <string name="more_string">\u002B<xliff:g id="count">%1$d</xliff:g></string>
     <!-- Text displayed when the user long presses on a chip to copy the recipients email address [CHAR LIMIT=200] -->
-    <string name="copy_email">Copy email address</string>
     <!-- Text displayed when the user long presses on a chip to copy the recipient's phone number [CHAR LIMIT=200] -->
-    <string name="copy_number">Copy phone number</string>
     <!-- Text displayed in the enter key slot when the recipientedittextview has focus [CHAR LIMIT=12] -->
-    <string name="action_label">Return</string>
     <!-- Announce the number of possible recipient entries that the user can select from for accessibility purposes [CHAR LIMIT=200] -->
-    <string name="accessbility_suggestion_dropdown_opened">Contact suggestions opened</string>
     <!-- Announce that there are no possible recipient entries that the user can select from for accessibility purposes [CHAR LIMIT=200] -->
-    <string name="accessbility_suggestion_dropdown_closed">No suggestions available</string>
     <!-- Description for the delete button that removes the selected contact from the recipients [CHAR LIMIT=100] -->
-    <string name="dropdown_delete_button_desc">Remove <xliff:g id="contact">%s</xliff:g> from recipients</string>
     <!-- Text displayed as the primary action for a dialog to copy text. [CHAR LIMIT=25] -->
-    <string name="chips_action_copy">Copy</string>
     <!-- Text displayed as the secondary action for a dialog to cancel. [CHAR LIMIT=25] -->
-    <string name="chips_action_cancel">Cancel</string>
     <!-- Text displayed on the drop down item that is shown when app doesn't have Contact permission. This item will open dialog to request permission. [CHAR LIMIT=50] -->
-    <string name="chips_permission_text">Allow contacts suggestions</string>
 
     <!-- Widget labels -->
     <!-- Label for the month view widget in the widget picker -->
-    <string name="month_widget_label">Calendar Month View</string>
     <!-- Description for the month view widget shown in the widget picker on Android 12+ -->
     <string name="month_widget_description">Displays the current month with event indicators</string>
     <!-- Label for the week view widget in the widget picker -->
-    <string name="week_widget_label">Calendar Week View</string>
     <!-- Description for the week view widget shown in the widget picker on Android 12+ -->
     <string name="week_widget_description">Displays the current week with event times and details</string>
     <!-- Fallback title for events with no title -->

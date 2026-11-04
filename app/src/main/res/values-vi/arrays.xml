@@ -16,47 +16,14 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string-array name="reminder_methods_labels">
-    <item msgid="5172236776878811487">"Thông báo"</item>
-    <item msgid="1751151680520784746">"Email"</item>
-    <item msgid="2658001219380695677">"SMS"</item>
-    <item msgid="7926918288165444873">"Báo thức"</item>
-  </string-array>
-  <string-array name="availability">
-    <item msgid="454869065893453189">"Bận"</item>
-    <item msgid="6228387173725732140">"Sẵn có"</item>
-    <item msgid="2064426942462573474">"Thử nghiệm"</item>
-  </string-array>
-  <string-array name="response_labels1">
-    <item msgid="5605392595848194997">"Không có phản hồi"</item>
-    <item msgid="3724434080904437698">"Có"</item>
-    <item msgid="8854145743148992583">"Có thể"</item>
-    <item msgid="6174292185978948873">"Không"</item>
-  </string-array>
   <string-array name="delete_repeating_labels">
     <item msgid="4208432367651646938">"Chỉ sự kiện này"</item>
     <item msgid="1536401639805370405">"Sự kiện này và các sự kiện trong tương lai"</item>
     <item msgid="7833229563617435430">"Tất cả sự kiện"</item>
   </string-array>
-  <string-array name="change_response_labels">
-    <item msgid="3466644709343519437">"Chỉ sự kiện này"</item>
-    <item msgid="140670561403965380">"Tất cả sự kiện trong hàng loạt sự kiện"</item>
-  </string-array>
-  <string-array name="buttons_list">
-    <item msgid="5917946202321434335">"Ngày"</item>
-    <item msgid="6248480754959562740">"Tuần"</item>
-    <item msgid="4298472806133153766">"Tháng"</item>
-    <item msgid="5033084974413793845">"Lịch biểu"</item>
-  </string-array>
   <string-array name="preferences_skip_reminders_labels">
     <item msgid="2285927842308686988">"Chỉ khi bị từ chối"</item>
     <item msgid="6367412240524984286">"Nếu bị từ chối hoặc không phản hổi"</item>
-  </string-array>
-  <string-array name="recurrence_freq">
-    <item msgid="3388478383574917007">"LẶP LẠI HÀNG NGÀY"</item>
-    <item msgid="6300824484048337842">"LẶP LẠI HÀNG TUẦN"</item>
-    <item msgid="189361731610816256">"LẶP LẠI HÀNG THÁNG"</item>
-    <item msgid="8714177874112569158">"LẶP LẠI HÀNG NĂM"</item>
   </string-array>
   <string-array name="repeat_by_nth_sun">
     <item msgid="143841313172233420">"vào mọi Chủ Nhật đầu tiên"</item>

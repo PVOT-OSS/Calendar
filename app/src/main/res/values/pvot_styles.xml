@@ -11,17 +11,4 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
-    <style name="RsvpChip">
-        <item name="android:layout_width">0dip</item>
-        <item name="android:layout_height">40dp</item>
-        <item name="android:layout_weight">1</item>
-        <item name="android:layout_gravity">center_vertical</item>
-        <item name="android:layout_marginStart">4dp</item>
-        <item name="android:layout_marginEnd">4dp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:button">@null</item>
-        <item name="android:background">@drawable/rsvp_chip_background</item>
-        <item name="android:textColor">@color/rsvp_chip_text</item>
-        <item name="android:textAppearance">?attr/textAppearanceLabelLarge</item>
-    </style>
 </resources>
