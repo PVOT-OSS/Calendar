@@ -57,12 +57,11 @@ class EventMover(private val resolver: ContentResolver) {
     private fun moveSingle(eventId: Long, newBegin: Long, newEnd: Long): (() -> Unit)? {
         val uri = ContentUris.withAppendedId(Events.CONTENT_URI, eventId)
         val before = ContentValues()
-        resolver.query(uri, arrayOf(Events.DTSTART, Events.DTEND), null, null, null)?.use {
+        resolver.query(uri, MOVE_COLUMNS, null, null, null)?.use {
             if (!it.moveToFirst()) return null
-            before.put(Events.DTSTART, it.getLong(0))
-            before.put(Events.DTEND, it.getLong(1))
+            putMoveColumns(it, before)
         } ?: return null
-        val after = ContentValues().apply {
+        val after = ContentValues(before).apply {
             put(Events.DTSTART, newBegin)
             put(Events.DTEND, newEnd)
         }
@@ -102,14 +101,13 @@ class EventMover(private val resolver: ContentResolver) {
 
     private fun shiftExceptions(masterId: Long, delta: Long) {
         resolver.query(
-            Events.CONTENT_URI, arrayOf(Events._ID, Events.ORIGINAL_INSTANCE_TIME, Events.DTSTART, Events.DTEND),
+            Events.CONTENT_URI, arrayOf(Events._ID, Events.ORIGINAL_INSTANCE_TIME) + MOVE_COLUMNS,
             "${Events.ORIGINAL_ID}=? AND ${Events.DELETED}=0", arrayOf(masterId.toString()), null
         )?.use {
             while (it.moveToNext()) {
                 resolver.update(ContentUris.withAppendedId(Events.CONTENT_URI, it.getLong(0)), ContentValues().apply {
                     put(Events.ORIGINAL_INSTANCE_TIME, it.getLong(1) + delta)
-                    put(Events.DTSTART, it.getLong(2))
-                    put(Events.DTEND, it.getLong(3))
+                    putMoveColumns(it, this, 2)
                 }, null, null)
             }
         }
@@ -177,6 +175,15 @@ class EventMover(private val resolver: ContentResolver) {
             Events.HAS_ATTENDEE_DATA, Events.STATUS
         )
         private val ACCOUNT_COLUMNS = arrayOf(Events.ACCOUNT_NAME, Events.ACCOUNT_TYPE)
+
+        private val MOVE_COLUMNS = arrayOf(Events.DTSTART, Events.DTEND, Events.ALL_DAY, Events.EVENT_TIMEZONE)
+
+        private fun putMoveColumns(cursor: android.database.Cursor, values: ContentValues, offset: Int = 0) {
+            values.put(Events.DTSTART, cursor.getLong(offset))
+            values.put(Events.DTEND, cursor.getLong(offset + 1))
+            values.put(Events.ALL_DAY, cursor.getInt(offset + 2))
+            values.put(Events.EVENT_TIMEZONE, cursor.getString(offset + 3))
+        }
         private val DAYS = listOf("SU", "MO", "TU", "WE", "TH", "FR", "SA")
 
         fun shiftExdates(exdate: String?, delta: Long): String? {
