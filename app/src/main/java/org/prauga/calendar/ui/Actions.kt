@@ -13,7 +13,6 @@ import android.net.Uri
 import android.provider.CalendarContract
 import android.provider.CalendarContract.Events
 import org.prauga.calendar.AboutActivity
-import org.prauga.calendar.AllInOneActivity
 import org.prauga.calendar.CalendarController
 import org.prauga.calendar.SearchActivity
 import org.prauga.calendar.data.Agenda
@@ -75,6 +74,4 @@ object Actions {
     fun settings(context: Context) = context.startActivity(Intent(context, SettingsActivity::class.java))
 
     fun about(context: Context) = context.startActivity(Intent(context, AboutActivity::class.java))
-
-    fun classic(context: Context) = context.startActivity(Intent(context, AllInOneActivity::class.java))
 }

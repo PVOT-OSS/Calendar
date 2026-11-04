@@ -147,7 +147,6 @@ private fun TopRow(title: String) {
                     importLauncher.launch(arrayOf("text/calendar", "text/x-vcalendar", "application/ics"))
                 }
                 MenuItem(R.string.menu_preferences) { Actions.settings(context) }
-                MenuItem(R.string.ui_classic_view) { Actions.classic(context) }
                 MenuItem(R.string.preferences_menu_about) { Actions.about(context) }
             }
         }

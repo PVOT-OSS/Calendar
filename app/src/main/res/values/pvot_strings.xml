@@ -143,7 +143,6 @@
     <string name="ui_previous">Previous</string>
     <string name="ui_next">Next</string>
     <string name="ui_more">More options</string>
-    <string name="ui_classic_view">Classic view</string>
     <string name="ui_sync">Sync</string>
     <string name="ui_syncing">Syncing your calendars</string>
     <string name="ui_join">Join</string>
