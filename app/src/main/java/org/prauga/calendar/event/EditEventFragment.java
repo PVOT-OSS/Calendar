@@ -840,6 +840,7 @@ public class EditEventFragment extends Fragment implements EventHandler, OnColor
                             }
                             Attendee attendee = new Attendee(name, email);
                             attendee.mStatus = status;
+                            attendee.mType = cursor.getInt(EditEventHelper.ATTENDEES_INDEX_TYPE);
                             mModel.addAttendee(attendee);
                             mOriginalModel.addAttendee(attendee);
                         }

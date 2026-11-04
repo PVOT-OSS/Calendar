@@ -230,6 +230,7 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
     private CompoundButton mGuestsCanInvite;
     private CompoundButton mGuestsCanSee;
     private View mGuestPermissionsRow;
+    private RecipientEditTextView mOptionalAttendeesList;
 
     private void updateGuestPermissionsVisibility() {
         if (mGuestPermissionsRow == null) {
@@ -238,7 +239,9 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
         View attendeesRow = mView.findViewById(R.id.add_attendees_row);
         boolean show = attendeesRow != null && attendeesRow.getVisibility() == View.VISIBLE
                 && mAttendeesList.isEnabled()
-                && !TextUtils.isEmpty(mAttendeesList.getText().toString().trim());
+                && (!TextUtils.isEmpty(mAttendeesList.getText().toString().trim())
+                    || (mOptionalAttendeesList != null
+                        && !TextUtils.isEmpty(mOptionalAttendeesList.getText().toString().trim())));
         mGuestPermissionsRow.setVisibility(show ? View.VISIBLE : View.GONE);
     }
     private boolean mRemindersFromIntent;
@@ -302,6 +305,7 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
         mGuestsCanInvite = view.findViewById(R.id.guests_can_invite);
         mGuestsCanSee = view.findViewById(R.id.guests_can_see);
         mGuestPermissionsRow = view.findViewById(R.id.guest_permissions_row);
+        mOptionalAttendeesList = view.findViewById(R.id.optional_attendees);
         mAttendeesList.addTextChangedListener(new android.text.TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -395,6 +399,9 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
         mEndTime = new Time(mTimezone);
         mEmailValidator = new Rfc822Validator(null);
         initMultiAutoCompleteTextView((RecipientEditTextView) mAttendeesList);
+        if (mOptionalAttendeesList != null) {
+            initMultiAutoCompleteTextView(mOptionalAttendeesList);
+        }
 
         // Display loading screen
         setModel(null);
@@ -732,6 +739,16 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
             mAttendeesList.performValidation();
             mModel.mAttendeesList.clear();
             mModel.addAttendees(mAttendeesList.getText().toString(), mEmailValidator);
+            if (mOptionalAttendeesList != null) {
+                mOptionalAttendeesList.performValidation();
+                java.util.Set<String> required = new java.util.HashSet<>(mModel.mAttendeesList.keySet());
+                mModel.addAttendees(mOptionalAttendeesList.getText().toString(), mEmailValidator);
+                for (Attendee attendee : mModel.mAttendeesList.values()) {
+                    if (!required.contains(attendee.identifierKey())) {
+                        attendee.mType = Attendees.TYPE_OPTIONAL;
+                    }
+                }
+            }
             mEmailValidator.setRemoveInvalid(false);
         }
 
@@ -1439,13 +1456,20 @@ public class EditEventView implements View.OnClickListener, DialogInterface.OnCa
             return;
         }
         mAttendeesList.setText(null);
+        if (mOptionalAttendeesList != null) {
+            mOptionalAttendeesList.setText(null);
+        }
         for (Attendee attendee : attendeesList.values()) {
 
             // TODO: Please remove separator when Calendar uses the chips MR2 project
 
             // Adding a comma separator between email addresses to prevent a chips MR1.1 bug
             // in which email addresses are concatenated together with no separator.
-            mAttendeesList.append(attendee.mEmail + ", ");
+            if (attendee.mType == Attendees.TYPE_OPTIONAL && mOptionalAttendeesList != null) {
+                mOptionalAttendeesList.append(attendee.mEmail + ", ");
+            } else {
+                mAttendeesList.append(attendee.mEmail + ", ");
+            }
         }
     }
 

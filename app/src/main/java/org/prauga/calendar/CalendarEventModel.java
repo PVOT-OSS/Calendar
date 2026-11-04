@@ -823,6 +823,7 @@ public class CalendarEventModel implements Serializable {
         public int mStatus;
         public String mIdentity;
         public String mIdNamespace;
+        public int mType = Attendees.TYPE_REQUIRED;
 
         public Attendee(String name, String email) {
             this(name, email, Attendees.ATTENDEE_STATUS_NONE, null, null);
@@ -864,7 +865,7 @@ public class CalendarEventModel implements Serializable {
             if (!TextUtils.equals(identifierKey(), other.identifierKey())) {
                 return false;
             }
-            return true;
+            return mType == other.mType;
         }
 
         String getDisplayName() {

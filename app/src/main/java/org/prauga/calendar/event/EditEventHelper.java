@@ -267,12 +267,14 @@ public class EditEventHelper {
             Attendees.ATTENDEE_EMAIL, // 2
             Attendees.ATTENDEE_RELATIONSHIP, // 3
             Attendees.ATTENDEE_STATUS, // 4
+            Attendees.ATTENDEE_TYPE,
     };
     static final int ATTENDEES_INDEX_ID = 0;
     static final int ATTENDEES_INDEX_NAME = 1;
     static final int ATTENDEES_INDEX_EMAIL = 2;
     static final int ATTENDEES_INDEX_RELATIONSHIP = 3;
     static final int ATTENDEES_INDEX_STATUS = 4;
+    static final int ATTENDEES_INDEX_TYPE = 5;
     static final String ATTENDEES_WHERE = Attendees.EVENT_ID + "=? AND attendeeEmail IS NOT NULL";
 
     static final String[] EXTENDED_PROJECTION = new String[] {
@@ -602,7 +604,18 @@ public class EditEventHelper {
                     for (String originalEmail : originalAttendees.keySet()) {
                         if (newAttendees.containsKey(originalEmail)) {
                             // existing attendee. remove from new attendees set.
-                            newAttendees.remove(originalEmail);
+                            Attendee changed = newAttendees.remove(originalEmail);
+                            Attendee original = originalAttendees.get(originalEmail);
+                            if (changed != null && original != null && changed.mType != original.mType) {
+                                ContentValues typeValues = new ContentValues();
+                                typeValues.put(Attendees.ATTENDEE_TYPE, changed.mType);
+                                ops.add(ContentProviderOperation.newUpdate(Attendees.CONTENT_URI)
+                                        .withValues(typeValues)
+                                        .withSelection(Attendees.EVENT_ID + "=? AND "
+                                                + Attendees.ATTENDEE_EMAIL + "=?",
+                                                new String[] {Long.toString(eventId), originalEmail})
+                                        .build());
+                            }
                         } else {
                             // no longer in attendees. mark as removed.
                             removedAttendees.add(originalEmail);
@@ -638,7 +651,7 @@ public class EditEventHelper {
                         values.put(Attendees.ATTENDEE_EMAIL, attendee.mEmail);
                         values.put(Attendees.ATTENDEE_RELATIONSHIP,
                                 Attendees.RELATIONSHIP_ATTENDEE);
-                        values.put(Attendees.ATTENDEE_TYPE, Attendees.TYPE_REQUIRED);
+                        values.put(Attendees.ATTENDEE_TYPE, attendee.mType);
                         values.put(Attendees.ATTENDEE_STATUS, Attendees.ATTENDEE_STATUS_NONE);
 
                         if (newEvent) {
