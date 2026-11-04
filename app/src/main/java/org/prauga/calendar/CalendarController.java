@@ -39,12 +39,12 @@ import android.provider.CalendarContract.Events;
 import android.util.Log;
 import android.util.Pair;
 
-import org.prauga.calendar.event.EditEventActivity;
 import org.prauga.calendar.settings.GeneralPreferences;
 import org.prauga.calendar.settings.SettingsActivity;
 import org.prauga.calendar.calendarcommon2.Time;
 
 import org.prauga.calendar.ui.details.DetailsActivity;
+import org.prauga.calendar.ui.edit.EditorActivity;
 import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -567,7 +567,7 @@ public class CalendarController {
     public Intent generateCreateEventIntent(long startMillis, long endMillis,
                                             boolean allDayEvent, String title, long calendarId) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setClass(mContext, EditEventActivity.class);
+        intent.setClass(mContext, EditorActivity.class);
         intent.putExtra(EXTRA_EVENT_BEGIN_TIME, startMillis);
         intent.putExtra(EXTRA_EVENT_END_TIME, endMillis);
         intent.putExtra(EXTRA_EVENT_ALL_DAY, allDayEvent);
@@ -593,7 +593,7 @@ public class CalendarController {
         Intent intent = new Intent(Intent.ACTION_EDIT, uri);
         intent.putExtra(EXTRA_EVENT_BEGIN_TIME, startMillis);
         intent.putExtra(EXTRA_EVENT_END_TIME, endMillis);
-        intent.setClass(mContext, EditEventActivity.class);
+        intent.setClass(mContext, EditorActivity.class);
         intent.putExtra(EVENT_EDIT_ON_LAUNCH, edit);
         mEventId = eventId;
         mContext.startActivity(intent);

@@ -5,9 +5,11 @@
 
 package org.prauga.calendar.ui.edit
 
+import android.content.Intent
 import android.os.Bundle
 import android.provider.CalendarContract
 import android.provider.CalendarContract.Events
+import android.util.Patterns
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
@@ -22,7 +24,12 @@ class EditorActivity : PvotBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val eventId = intent.getLongExtra(EXTRA_EVENT_ID, -1L)
+        val fromUri = if (intent.action == Intent.ACTION_EDIT) {
+            intent.data?.pathSegments?.getOrNull(1)?.toLongOrNull()
+        } else {
+            null
+        }
+        val eventId = fromUri ?: intent.getLongExtra(EXTRA_EVENT_ID, -1L)
         if (eventId >= 0) {
             viewModel.startEdit(
                 eventId,
@@ -35,6 +42,13 @@ class EditorActivity : PvotBaseActivity() {
                 endMillis = intent.getLongExtra(CalendarContract.EXTRA_EVENT_END_TIME, 0L),
                 allDay = intent.getBooleanExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, false),
                 title = intent.getStringExtra(Events.TITLE),
+                prefill = EditorViewModel.Prefill(
+                    description = intent.getStringExtra(Events.DESCRIPTION).orEmpty(),
+                    location = intent.getStringExtra(Events.EVENT_LOCATION).orEmpty(),
+                    rrule = intent.getStringExtra(Events.RRULE)?.takeIf { it.isNotBlank() },
+                    guests = guests(),
+                    calendarId = intent.getLongExtra(Events.CALENDAR_ID, -1L),
+                ),
             )
         }
         setPvotContent {
@@ -53,6 +67,13 @@ class EditorActivity : PvotBaseActivity() {
                 )
             }
         }
+    }
+
+    private fun guests(): List<String> {
+        val raw = intent.getStringArrayExtra(Intent.EXTRA_EMAIL)?.toList()
+            ?: intent.getStringExtra(Intent.EXTRA_EMAIL)?.split(',', ';')
+            ?: return emptyList()
+        return raw.map { it.trim() }.filter { Patterns.EMAIL_ADDRESS.matcher(it).matches() }.distinct()
     }
 
     companion object {

@@ -28,7 +28,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import org.prauga.calendar.event.EditEventActivity
 import org.prauga.calendar.event.ExtendedProperty
 import org.prauga.calendar.ics.IcsCalendar
 import org.prauga.calendar.ics.IcsEvent
@@ -42,6 +41,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.prauga.calendar.R
+import org.prauga.calendar.ui.edit.EditorActivity
 import java.io.File
 import java.util.Formatter
 import java.util.Locale
@@ -211,7 +211,7 @@ class ImportActivity : AppCompatActivity() {
     private fun openInEditor(event: IcsEvent) {
         val intent = Intent(Intent.ACTION_INSERT).apply {
             type = "vnd.android.cursor.item/event"
-            setClass(this@ImportActivity, EditEventActivity::class.java)
+            setClass(this@ImportActivity, EditorActivity::class.java)
             putExtra(CalendarContract.Events.TITLE, event.title)
             putExtra(CalendarContract.Events.EVENT_LOCATION, event.location)
             putExtra(CalendarContract.Events.DESCRIPTION, event.description)

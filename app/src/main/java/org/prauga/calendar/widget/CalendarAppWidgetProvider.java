@@ -36,12 +36,12 @@ import android.widget.RemoteViews;
 
 import org.prauga.calendar.theme.DynamicThemeKt;
 import org.prauga.calendar.Utils;
-import org.prauga.calendar.event.EditEventActivity;
 import org.prauga.calendar.calendarcommon2.Time;
 
 import org.prauga.calendar.R;
 import org.prauga.calendar.ui.MainActivity;
 import org.prauga.calendar.ui.details.DetailsActivity;
+import org.prauga.calendar.ui.edit.EditorActivity;
 
 /**
  * Simple widget to show next upcoming calendar event.
@@ -240,7 +240,7 @@ public class CalendarAppWidgetProvider extends AppWidgetProvider {
 
             // Open Add event option when user clicks on the add button on widget
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setClass(context, EditEventActivity.class);
+            intent.setClass(context, EditorActivity.class);
             intent.putExtra(EXTRA_EVENT_ALL_DAY, false);
             intent.putExtra(CalendarContract.Events.CALENDAR_ID, -1L);
 

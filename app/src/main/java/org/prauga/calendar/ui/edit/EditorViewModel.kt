@@ -15,6 +15,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.prauga.calendar.EventRecurrenceFormatter
+import org.prauga.calendar.calendarcommon2.EventRecurrence
+import org.prauga.calendar.calendarcommon2.Time
 import org.prauga.calendar.event.QuickCreateSheet
 import org.prauga.calendar.event.RepeatPresets
 import org.prauga.calendar.persistence.CalendarTarget
@@ -49,6 +52,15 @@ class EditorViewModel(application: Application) : AndroidViewModel(application) 
     val state: StateFlow<EditorState> = _state.asStateFlow()
 
     private var initialized = false
+    private var keepRule = false
+
+    data class Prefill(
+        val description: String = "",
+        val location: String = "",
+        val rrule: String? = null,
+        val guests: List<String> = emptyList(),
+        val calendarId: Long = -1,
+    )
     private var editingId = -1L
     private var original: EventDraft? = null
     private var occurrenceBegin = 0L
@@ -83,19 +95,29 @@ class EditorViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun start(beginMillis: Long, endMillis: Long, allDay: Boolean, title: String?) {
+    fun start(beginMillis: Long, endMillis: Long, allDay: Boolean, title: String?, prefill: Prefill = Prefill()) {
         if (initialized) return
         initialized = true
         val begin = if (beginMillis > 0) LocalDateTime.ofInstant(Instant.ofEpochMilli(beginMillis), zone)
         else LocalDateTime.now(zone).withMinute(0).withSecond(0).withNano(0).plusHours(1)
         val end = if (endMillis > beginMillis) LocalDateTime.ofInstant(Instant.ofEpochMilli(endMillis), zone)
         else begin.plusHours(1)
-        _state.update { it.copy(draft = it.draft.copy(title = title.orEmpty(), allDay = allDay, start = begin, end = end)) }
+        keepRule = prefill.rrule != null
+        _state.update {
+            it.copy(
+                draft = it.draft.copy(
+                    title = title.orEmpty(), allDay = allDay, start = begin, end = end,
+                    description = prefill.description, location = prefill.location,
+                    rrule = prefill.rrule, guests = prefill.guests,
+                )
+            )
+        }
         viewModelScope.launch {
             val context = getApplication<Application>()
             val calendars = withContext(Dispatchers.IO) { WritableCalendars.list(context.contentResolver) }
             val last = GeneralPreferences.getSharedPreferences(context).getLong(QuickCreateSheet.PREF_LAST_CALENDAR, -1L)
-            val chosen = calendars.firstOrNull { it.id == last } ?: calendars.firstOrNull()
+            val chosen = calendars.firstOrNull { it.id == prefill.calendarId }
+                ?: calendars.firstOrNull { it.id == last } ?: calendars.firstOrNull()
             _state.update { it.copy(calendars = calendars) }
             chosen?.let { setCalendar(it.id) }
             refreshRepeats()
@@ -129,10 +151,20 @@ class EditorViewModel(application: Application) : AndroidViewModel(application) 
     private fun refreshRepeats() {
         val draft = _state.value.draft
         val presets = RepeatPresets.presets(getApplication(), draft.startMillis(zone), zone.id)
-        val keep = presets.any { it.rrule == draft.rrule }
-        _state.update {
-            it.copy(repeats = presets, draft = if (keep) it.draft else it.draft.copy(rrule = null))
+        val known = draft.rrule == null || presets.any { it.rrule == draft.rrule }
+        val keep = known || _state.value.editing || keepRule
+        keepRule = false
+        val list = if (!known && keep) presets + RepeatPresets.Preset(draft.rrule, describe(draft)) else presets
+        _state.update { it.copy(repeats = list, draft = if (keep) it.draft else it.draft.copy(rrule = null)) }
+    }
+
+    private fun describe(draft: EventDraft): String {
+        val context = getApplication<Application>()
+        val recurrence = EventRecurrence().apply {
+            parse(draft.rrule)
+            setStartDate(Time(if (draft.allDay) Time.TIMEZONE_UTC else zone.id).apply { set(draft.startMillis(zone)) })
         }
+        return EventRecurrenceFormatter.getRepeatString(context, context.resources, recurrence, true) ?: draft.rrule.orEmpty()
     }
 
     fun save(scope: EventWriter.Scope?, onDone: (Boolean) -> Unit) {

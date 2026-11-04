@@ -10,9 +10,9 @@ import android.content.Intent
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
-import org.prauga.calendar.event.EditEventActivity
 import org.prauga.calendar.R
 import org.prauga.calendar.ui.MainActivity
+import org.prauga.calendar.ui.edit.EditorActivity
 
 object AppShortcuts {
 
@@ -22,7 +22,7 @@ object AppShortcuts {
                 .setShortLabel(context.getString(R.string.new_event_dialog_label))
                 .setIcon(IconCompat.createWithResource(context, R.drawable.ic_add_event))
                 .setIntent(
-                    Intent(Intent.ACTION_INSERT).setClass(context, EditEventActivity::class.java)
+                    Intent(Intent.ACTION_INSERT).setClass(context, EditorActivity::class.java)
                         .setType("vnd.android.cursor.item/event")
                 )
                 .setRank(0)

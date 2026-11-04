@@ -32,11 +32,11 @@ import android.util.TypedValue;
 import android.widget.RemoteViews;
 
 import org.prauga.calendar.Utils;
-import org.prauga.calendar.event.EditEventActivity;
 import org.prauga.calendar.theme.DynamicThemeKt;
 
 import org.prauga.calendar.R;
 import org.prauga.calendar.ui.MainActivity;
+import org.prauga.calendar.ui.edit.EditorActivity;
 
 abstract class BaseGridWidgetProvider extends AppWidgetProvider {
 
@@ -272,7 +272,7 @@ abstract class BaseGridWidgetProvider extends AppWidgetProvider {
             views.setOnClickPendingIntent(getHeaderViewId(), headerPendingIntent);
 
             Intent addIntent = new Intent(Intent.ACTION_INSERT)
-                    .setClass(context, EditEventActivity.class)
+                    .setClass(context, EditorActivity.class)
                     .setType("vnd.android.cursor.item/event");
             views.setOnClickPendingIntent(R.id.iv_add, PendingIntent.getActivity(
                     context, appWidgetId, addIntent, PendingIntent.FLAG_IMMUTABLE));

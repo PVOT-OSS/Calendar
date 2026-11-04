@@ -138,7 +138,7 @@
 
         <activity-alias android:name="org.prauga.calendar.EditEventActivity"
             android:exported="true"
-            android:targetActivity="org.prauga.calendar.event.EditEventActivity">
+            android:targetActivity="org.prauga.calendar.ui.edit.EditorActivity">
             <intent-filter>
                 <action android:name="android.intent.action.EDIT" />
                 <action android:name="android.intent.action.INSERT" />
