@@ -13,6 +13,7 @@ import android.provider.CalendarContract.Calendars
 import android.provider.CalendarContract.Events
 import android.provider.CalendarContract.Reminders
 import org.prauga.calendar.MeetingLinks
+import org.prauga.calendar.event.EventMover
 import org.prauga.calendar.ics.IcsTime
 import org.prauga.calendar.persistence.CalendarTarget
 
@@ -125,5 +126,27 @@ object EventDetailsLoader {
             "${Attendees.EVENT_ID}=? AND ${Attendees.ATTENDEE_EMAIL}=?",
             arrayOf(details.id.toString(), self.email),
         ) > 0
+    }
+
+    fun respondOnce(resolver: ContentResolver, details: EventDetails, begin: Long, end: Long, status: Int): Boolean {
+        val self = details.self ?: return false
+        val overrides = ContentValues().apply {
+            put(Events.DTSTART, begin)
+            put(Events.DTEND, end)
+            put(Events.HAS_ATTENDEE_DATA, 1)
+        }
+        val created = EventMover(resolver).createException(details.id, begin, details.allDay, overrides) ?: return false
+        details.guests.forEach { guest ->
+            resolver.insert(Attendees.CONTENT_URI, ContentValues().apply {
+                put(Attendees.EVENT_ID, created.id)
+                put(Attendees.ATTENDEE_NAME, guest.name)
+                put(Attendees.ATTENDEE_EMAIL, guest.email)
+                put(Attendees.ATTENDEE_STATUS, if (guest == self) status else guest.status)
+                put(Attendees.ATTENDEE_RELATIONSHIP,
+                    if (guest.organizer) Attendees.RELATIONSHIP_ORGANIZER else Attendees.RELATIONSHIP_ATTENDEE)
+                put(Attendees.ATTENDEE_TYPE, if (guest.optional) Attendees.TYPE_OPTIONAL else Attendees.TYPE_REQUIRED)
+            })
+        }
+        return true
     }
 }

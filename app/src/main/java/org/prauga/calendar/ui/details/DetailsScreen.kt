@@ -30,7 +30,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,6 +46,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.prauga.pvot.designsystem.components.PvotDialog
+import com.prauga.pvot.designsystem.components.PvotDialogAction
+import com.prauga.pvot.designsystem.components.PvotDialogActionStyle
 import com.prauga.pvot.designsystem.components.button.PvotButton
 import com.prauga.pvot.designsystem.components.button.PvotButtonStyle
 import com.prauga.pvot.designsystem.components.button.PvotIconButton
@@ -65,9 +71,10 @@ fun DetailsScreen(
     onDelete: () -> Unit,
     onJoin: (String) -> Unit,
     onMap: (String) -> Unit,
-    onRespond: (Int) -> Unit,
+    onRespond: (Int, Boolean) -> Unit,
 ) {
     val details = state.details
+    var pendingResponse by remember { mutableStateOf<Int?>(null) }
     Column(
         Modifier
             .fillMaxSize()
@@ -157,10 +164,26 @@ fun DetailsScreen(
                     }
                 }
             }
-            if (details.canRespond) Respond(details.self?.status ?: Attendees.ATTENDEE_STATUS_NONE, onRespond)
+            if (details.canRespond) {
+                Respond(details.self?.status ?: Attendees.ATTENDEE_STATUS_NONE) { status ->
+                    if (details.rrule != null) pendingResponse = status else onRespond(status, false)
+                }
+            }
             if (details.description.isNotBlank()) Description(details.description)
             if (details.guests.isNotEmpty()) Guests(details.guests)
             Spacer(Modifier.height(16.dp))
+        }
+    }
+    pendingResponse?.let { status ->
+        PvotDialog(visible = true, onDismissRequest = { pendingResponse = null }, title = stringResource(R.string.move_recurring_title)) {
+            PvotDialogAction(stringResource(R.string.move_this_event), onClick = {
+                pendingResponse = null
+                onRespond(status, true)
+            }, style = PvotDialogActionStyle.Primary)
+            PvotDialogAction(stringResource(R.string.move_all_events), onClick = {
+                pendingResponse = null
+                onRespond(status, false)
+            })
         }
     }
 }

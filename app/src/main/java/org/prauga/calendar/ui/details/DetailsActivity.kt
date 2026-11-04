@@ -63,7 +63,7 @@ class DetailsActivity : PvotBaseActivity() {
                     },
                     onJoin = { Actions.join(this, it) },
                     onMap = ::openMap,
-                    onRespond = viewModel::respond,
+                    onRespond = { status, onlyThis -> viewModel.respond(status, onlyThis) },
                 )
             }
         }

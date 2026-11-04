@@ -62,10 +62,17 @@ class DetailsViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun respond(status: Int) {
-        val details = _state.value.details ?: return
+    fun respond(status: Int, onlyThis: Boolean = false) {
+        val s = _state.value
+        val details = s.details ?: return
         viewModelScope.launch {
-            withContext(Dispatchers.IO) { EventDetailsLoader.respond(resolver, details, status) }
+            withContext(Dispatchers.IO) {
+                if (onlyThis && details.rrule != null) {
+                    EventDetailsLoader.respondOnce(resolver, details, s.begin, s.end, status)
+                } else {
+                    EventDetailsLoader.respond(resolver, details, status)
+                }
+            }
             load()
         }
     }
