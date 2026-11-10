@@ -42,7 +42,6 @@ import com.prauga.pvot.designsystem.components.PvotDialogActionStyle
 import com.prauga.pvot.designsystem.components.PvotSegmentedControl
 import com.prauga.pvot.designsystem.components.PvotSnackbarHost
 import com.prauga.pvot.designsystem.components.button.PvotIconButton
-import com.prauga.pvot.designsystem.components.calendar.PvotDayStrip
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
@@ -121,22 +120,7 @@ fun CalendarScreen(
             Panel {
                 Column {
                     when (state.mode) {
-                        CalendarMode.Week ->
-                            PvotDayStrip(
-                                days = (0L until 7L).map { state.span.first.plusDays(it) },
-                                selected = state.selected,
-                                today = state.today,
-                                onSelect = viewModel::select,
-                                modifier =
-                                    Modifier.padding(
-                                        start = 12.dp,
-                                        end = 12.dp,
-                                        top = 16.dp,
-                                        bottom = 8.dp,
-                                    ),
-                                marked = { date -> state.on(date).isNotEmpty() },
-                                onSwipe = viewModel::step,
-                            )
+                        CalendarMode.Week -> Unit
                         CalendarMode.Day ->
                             Navigator(
                                 label = formats.dayLabel(state.selected, state.today),
@@ -160,8 +144,21 @@ fun CalendarScreen(
                             )
                     }
                     when (state.mode) {
-                        CalendarMode.Day,
                         CalendarMode.Week ->
+                            WeekGrid(
+                                days = (0L until 7L).map { state.span.first.plusDays(it) },
+                                today = state.today,
+                                agendas = state.agendas,
+                                formats = formats,
+                                onOpenDay = viewModel::openDay,
+                                onOpen = { Actions.open(context, it) },
+                                onCreate = { date, time ->
+                                    Actions.create(context, date, time, formats.zone)
+                                },
+                                onSwipe = viewModel::step,
+                                contentPadding = contentPadding,
+                            )
+                        CalendarMode.Day ->
                             Timeline(
                                 date = state.selected,
                                 items = state.on(state.selected),
