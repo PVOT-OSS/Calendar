@@ -7,10 +7,14 @@ package org.prauga.calendar.ui.home
 
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -18,15 +22,19 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -40,6 +48,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.prauga.pvot.designsystem.components.button.PvotButton
 import com.prauga.pvot.designsystem.components.button.PvotButtonStyle
 import com.prauga.pvot.designsystem.components.calendar.PvotEventCard
+import com.prauga.pvot.designsystem.effects.PvotGlassBackdrop
+import com.prauga.pvot.designsystem.effects.PvotGlassStyle
+import com.prauga.pvot.designsystem.effects.pvotGlass
+import com.prauga.pvot.designsystem.effects.pvotGlassBackdrop
+import com.prauga.pvot.designsystem.effects.rememberPvotGlassBackdrop
 import java.time.LocalTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -74,36 +87,82 @@ fun HomeScreen(
     Column(modifier) {
         Greeting(state, Modifier.padding(horizontal = 24.dp, vertical = 16.dp))
         Panel {
+            val backdrop = rememberPvotGlassBackdrop()
+            val pull = rememberPullToRefreshState()
+            val layout = LocalLayoutDirection.current
             PullToRefreshBox(
                 isRefreshing = refreshing,
                 onRefresh = {
                     refreshing = true
                     Actions.sync(context)
                 },
+                state = pull,
+                indicator = {
+                    PullToRefreshDefaults.Indicator(
+                        state = pull,
+                        isRefreshing = refreshing,
+                        modifier = Modifier.align(Alignment.TopCenter).padding(top = HeaderHeight),
+                    )
+                },
             ) {
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = contentPadding,
+                    modifier = Modifier.fillMaxSize().pvotGlassBackdrop(backdrop),
+                    contentPadding =
+                        PaddingValues(
+                            start = contentPadding.calculateStartPadding(layout),
+                            end = contentPadding.calculateEndPadding(layout),
+                            top = contentPadding.calculateTopPadding() + HeaderHeight,
+                            bottom = contentPadding.calculateBottomPadding(),
+                        ),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     upcoming(state, formats, context)
                 }
+                UpcomingHeader(backdrop, Modifier.align(Alignment.TopCenter))
             }
         }
     }
 }
 
-private fun LazyListScope.upcoming(state: HomeState, formats: Formats, context: Context) {
-    item {
+private val HeaderHeight = 52.dp
+
+@Composable
+private fun UpcomingHeader(backdrop: PvotGlassBackdrop, modifier: Modifier = Modifier) {
+    val fill = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.72f)
+    Box(
+        modifier
+            .fillMaxWidth()
+            .height(HeaderHeight)
+            .pvotGlass(
+                backdrop,
+                cornerRadius = 0.dp,
+                style =
+                    PvotGlassStyle(
+                        strength = 0.dp,
+                        aberration = 0.dp,
+                        edgeBlur = 0.dp,
+                        blur = 10.dp,
+                        reflection = 0f,
+                        glow = 0f,
+                        darkGlow = 0f,
+                        vividSpread = 0.dp,
+                        vividMix = 0f,
+                        fillColor = fill,
+                    ),
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
         Text(
             text = stringResource(R.string.ui_upcoming),
-            modifier =
-                Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 4.dp).semantics { heading() },
+            modifier = Modifier.semantics { heading() },
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center,
         )
     }
+}
+
+private fun LazyListScope.upcoming(state: HomeState, formats: Formats, context: Context) {
     if (!state.loading && state.days.isEmpty()) {
         item {
             Text(
