@@ -1,22 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
-     SPDX-FileCopyrightText: 2020 Felix Nüsse
-     SPDX-FileCopyrightText: 2022 Aayush Gupta
-     SPDX-License-Identifier: GPL-3.0-or-later
+     SPDX-FileCopyrightText: 2026 Shivansh Pandey <shivanshp987@gmail.com>
+     SPDX-License-Identifier: Apache-2.0
 -->
+<!-- The Prauga calendar tile: white, with the violet band across the top. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-  <group android:scaleX="0.864"
-      android:scaleY="0.864"
-      android:translateX="10.8"
-      android:translateY="10.8">
-    <path
-        android:pathData="M0,20h100v100h-100z"
-        android:fillColor="#ffffff"/>
-    <path
-        android:pathData="M0,0h100v40h-100z"
-        android:fillColor="#41c3b1"/>
-  </group>
+    <group
+        android:scaleX="0.6666667"
+        android:scaleY="0.6666667"
+        android:translateX="18"
+        android:translateY="18">
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M-27,-27H135V135H-27Z" />
+        <path
+            android:fillColor="#FF6B5CEE"
+            android:pathData="M-27,-27H135V29.2H-27Z" />
+    </group>
 </vector>
