@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     SPDX-FileCopyrightText: 2023 The LineageOS Project
+     SPDX-FileCopyrightText: 2026 Shivansh Pandey <shivanshp987@gmail.com>
      SPDX-License-Identifier: Apache-2.0
 -->
+<!-- Day 7 (Sora Bold) for the dated launcher icon. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <path
-        android:pathData="M52.0156 48.25V50.6719L43.2188 71H38.4688L47.2656 51.7656H35.9375V48.25H52.0156Z"
-        android:fillColor="@android:color/white"/>
+    <group
+        android:scaleX="0.6666667"
+        android:scaleY="0.6666667"
+        android:translateX="18"
+        android:translateY="18">
+        <path
+            android:fillColor="#FF141414"
+            android:pathData="M47.66 79.54 57.41 57.41 56.99 56.84H43.47V51.74H64.53V55.7L54.29 79.54ZM43.47 61.34V51.74H48.53V61.34Z" />
+    </group>
 </vector>

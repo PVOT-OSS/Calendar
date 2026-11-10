@@ -10,7 +10,6 @@
         <layer-list>
             <item android:drawable="@drawable/logo_calendar_midlayer" />
             <item android:drawable="@drawable/logo_calendar_dyn_day_18" />
-            <item android:drawable="@drawable/logo_calendar_finish" />
         </layer-list>
     </foreground>
     <monochrome android:drawable="@drawable/logo_calendar_monochrome_dyn_day_18" />
