@@ -42,9 +42,11 @@ import com.prauga.pvot.designsystem.components.PvotDialogActionStyle
 import com.prauga.pvot.designsystem.components.PvotSegmentedControl
 import com.prauga.pvot.designsystem.components.PvotSnackbarHost
 import com.prauga.pvot.designsystem.components.button.PvotIconButton
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
+import java.time.temporal.WeekFields
 import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -120,7 +122,17 @@ fun CalendarScreen(
             Panel {
                 Column {
                     when (state.mode) {
-                        CalendarMode.Week -> Unit
+                        CalendarMode.Week ->
+                            Navigator(
+                                label =
+                                    stringResource(
+                                        R.string.ui_week_number,
+                                        weekNumber(state.selected, state.firstDayOfWeek),
+                                    ),
+                                onPrevious = { viewModel.step(false) },
+                                onNext = { viewModel.step(true) },
+                                onLabel = viewModel::goToday,
+                            )
                         CalendarMode.Day ->
                             Navigator(
                                 label = formats.dayLabel(state.selected, state.today),
@@ -232,6 +244,11 @@ fun CalendarScreen(
             }
         }
     }
+}
+
+private fun weekNumber(date: LocalDate, firstDayOfWeek: DayOfWeek): Int {
+    val minimalDays = WeekFields.of(Locale.getDefault()).minimalDaysInFirstWeek
+    return date.get(WeekFields.of(firstDayOfWeek, minimalDays).weekOfWeekBasedYear())
 }
 
 private fun monthLabel(month: YearMonth, today: LocalDate): String {
