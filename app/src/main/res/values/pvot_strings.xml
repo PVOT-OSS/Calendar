@@ -125,6 +125,7 @@
     <string name="ui_about">About</string>
     <string name="ui_join">Join</string>
     <string name="ui_today">Today</string>
+    <string name="ui_week_number">Week %1$d</string>
     <string name="ui_tomorrow">Tomorrow</string>
     <string name="ui_yesterday">Yesterday</string>
     <string name="ui_upcoming">Your upcoming events</string>
