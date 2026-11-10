@@ -19,6 +19,7 @@ import com.prauga.pvot.designsystem.platform.PvotBaseActivity
 import com.prauga.pvot.designsystem.theme.PvotAppTheme
 import org.prauga.calendar.DeleteEventHelper
 import org.prauga.calendar.R
+import org.prauga.calendar.theme.CalendarTypography
 import org.prauga.calendar.ui.Actions
 import org.prauga.calendar.ui.edit.EditorActivity
 
@@ -48,7 +49,7 @@ class DetailsActivity : PvotBaseActivity() {
         }
         viewModel.start(eventId, begin, end)
         setPvotContent {
-            PvotAppTheme {
+            PvotAppTheme(typography = CalendarTypography) {
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 DetailsScreen(
                     state = state,

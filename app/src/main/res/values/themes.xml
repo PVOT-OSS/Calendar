@@ -19,6 +19,9 @@
         <item name="colorSecondaryContainer">@color/colorSecondaryContainer</item>
         <item name="android:statusBarColor">?android:colorBackground</item>
         <item name="android:navigationBarColor">?android:colorBackground</item>
+        <!-- Lenia Sans everywhere: a theme-level fontFamily overrides the TextAppearance fonts of every View. -->
+        <item name="android:fontFamily">@font/lenia_sans</item>
+        <item name="fontFamily">@font/lenia_sans</item>
     </style>
 
     <!-- Inherit base theme to allow overriding Light Theme as per API levels -->

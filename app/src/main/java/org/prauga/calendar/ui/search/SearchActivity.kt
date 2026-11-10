@@ -67,6 +67,7 @@ import org.prauga.calendar.Utils
 import org.prauga.calendar.data.Agenda
 import org.prauga.calendar.data.AgendaRepository
 import org.prauga.calendar.data.JulianDay
+import org.prauga.calendar.theme.CalendarTypography
 import org.prauga.calendar.ui.Actions
 import org.prauga.calendar.ui.Formats
 
@@ -98,7 +99,9 @@ class SearchActivity : PvotBaseActivity() {
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) handle(intent)
         setPvotContent {
-            PvotAppTheme { SearchScreen(viewModel, onBack = ::finish, onSubmit = ::saveQuery) }
+            PvotAppTheme(typography = CalendarTypography) {
+                SearchScreen(viewModel, onBack = ::finish, onSubmit = ::saveQuery)
+            }
         }
     }
 

@@ -34,6 +34,7 @@ import com.prauga.pvot.designsystem.theme.PvotAppTheme
 import org.prauga.calendar.OnboardingActivity
 import org.prauga.calendar.R
 import org.prauga.calendar.Utils
+import org.prauga.calendar.theme.CalendarTypography
 
 class MainActivity : PvotBaseActivity() {
 
@@ -48,7 +49,7 @@ class MainActivity : PvotBaseActivity() {
             return
         }
         setPvotContent {
-            PvotAppTheme {
+            PvotAppTheme(typography = CalendarTypography) {
                 var granted by remember {
                     mutableStateOf(Utils.isCalendarPermissionGranted(this, false))
                 }

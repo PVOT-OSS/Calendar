@@ -17,6 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.prauga.pvot.designsystem.platform.PvotBaseActivity
 import com.prauga.pvot.designsystem.theme.PvotAppTheme
 import org.prauga.calendar.R
+import org.prauga.calendar.theme.CalendarTypography
 
 class EditorActivity : PvotBaseActivity() {
 
@@ -54,7 +55,7 @@ class EditorActivity : PvotBaseActivity() {
             )
         }
         setPvotContent {
-            PvotAppTheme {
+            PvotAppTheme(typography = CalendarTypography) {
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 EditorScreen(
                     state = state,
