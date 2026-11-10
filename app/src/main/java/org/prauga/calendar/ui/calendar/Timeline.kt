@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,6 +30,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -46,17 +46,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import java.time.LocalDate
@@ -64,13 +71,14 @@ import java.time.LocalTime
 import kotlin.math.abs
 import kotlin.math.roundToInt
 import kotlinx.coroutines.delay
+import org.prauga.calendar.R
 import org.prauga.calendar.data.Agenda
 import org.prauga.calendar.data.JulianDay
 import org.prauga.calendar.settings.WorkingHours
 import org.prauga.calendar.ui.Formats
 
 private val HourHeight = 72.dp
-private val LabelWidth = 84.dp
+private val LabelWidth = 64.dp
 
 @Composable
 fun Timeline(
@@ -194,14 +202,23 @@ private fun HourGrid(formats: Formats, onCreate: (LocalTime) -> Unit, hourPx: Fl
             }
         }
     ) {
+        val small = MaterialTheme.typography.labelSmall.toSpanStyle()
         repeat(24) { hour ->
+            val (number, suffix) = formats.hourParts(hour)
             Row(Modifier.height(HourHeight).fillMaxWidth()) {
                 Text(
-                    text = formats.hour(hour),
-                    modifier =
-                        Modifier.width(LabelWidth).offset(y = (-8).dp).padding(start = 16.dp),
-                    style = MaterialTheme.typography.labelMedium,
+                    text =
+                        buildAnnotatedString {
+                            append(number)
+                            if (suffix.isNotEmpty()) {
+                                append(" ")
+                                withStyle(small) { append(suffix) }
+                            }
+                        },
+                    modifier = Modifier.width(LabelWidth).offset(y = (-9).dp).padding(end = 8.dp),
+                    style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.End,
                     maxLines = 1,
                 )
                 HorizontalDivider(
@@ -246,6 +263,7 @@ private fun TimelineCard(
     var drag by remember { mutableFloatStateOf(0f) }
     var dragging by remember { mutableStateOf(false) }
     val haptics = LocalHapticFeedback.current
+    val tint = eventTint(agenda.color)
     val snapPx = hourPx / 4
     Surface(
         modifier =
@@ -278,7 +296,7 @@ private fun TimelineCard(
                             )
                         }
                 }
-                .clip(RoundedCornerShape(12.dp))
+                .clip(RoundedCornerShape(8.dp))
                 .clearAndSetSemantics {
                     contentDescription = "${agenda.title}, $time"
                     onClick {
@@ -287,54 +305,105 @@ private fun TimelineCard(
                     }
                 }
                 .clickable(onClick = onClick),
-        color =
-            if (dragging) MaterialTheme.colorScheme.surfaceContainerHighest
-            else MaterialTheme.colorScheme.surfaceContainerHigh,
-        shape = RoundedCornerShape(12.dp),
+        color = tint.container(strong = dragging),
+        shape = RoundedCornerShape(8.dp),
         shadowElevation = if (dragging) 8.dp else 0.dp,
     ) {
-        Row {
-            Box(Modifier.width(4.dp).fillMaxHeight().background(Color(agenda.color)))
-            Column(Modifier.padding(horizontal = 10.dp, vertical = 6.dp)) {
+        Row(Modifier.padding(start = 5.dp, top = 5.dp, bottom = 5.dp)) {
+            Box(Modifier.width(4.dp).fillMaxHeight().background(tint.bar, RoundedCornerShape(2.dp)))
+            Column(
+                Modifier.padding(horizontal = 8.dp, vertical = 1.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+            ) {
                 Text(
                     text = agenda.title,
                     style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Medium,
+                    fontWeight = FontWeight.SemiBold,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     textDecoration =
                         if (agenda.title.startsWith("☑")) TextDecoration.LineThrough else null,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = tint.text,
                 )
-                if (time.isNotEmpty()) {
-                    Spacer(Modifier.height(2.dp))
-                    Text(
-                        text = time,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1,
-                    )
+                if (agenda.location.isNotBlank()) {
+                    CardLine(R.drawable.ic_ui_place, agenda.location, tint.detail)
                 }
+                if (time.isNotEmpty()) CardLine(R.drawable.ic_ui_time, time, tint.detail)
             }
         }
     }
 }
 
 @Composable
-private fun AllDayChip(agenda: Agenda, onClick: () -> Unit) {
+private fun CardLine(icon: Int, text: String, color: Color) {
     Row(
-        Modifier.clip(RoundedCornerShape(50))
-            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        Icon(
+            painter = painterResource(icon),
+            contentDescription = null,
+            modifier = Modifier.size(12.dp),
+            tint = color,
+        )
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelMedium,
+            color = color,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+class EventTint(
+    val bar: Color,
+    val text: Color,
+    val detail: Color,
+    private val base: Color,
+    private val surface: Color,
+    private val alpha: Float,
+) {
+    fun container(strong: Boolean = false): Color =
+        base.copy(alpha = if (strong) alpha * 1.6f else alpha).compositeOver(surface)
+}
+
+@Composable
+fun eventTint(color: Int): EventTint {
+    val scheme = MaterialTheme.colorScheme
+    val dark = scheme.surface.luminance() < 0.5f
+    val base = Color(color)
+    val text = lerp(base, if (dark) Color.White else Color.Black, if (dark) 0.35f else 0.3f)
+    return EventTint(
+        bar = base,
+        text = text,
+        detail = text.copy(alpha = 0.85f),
+        base = base,
+        surface = scheme.surfaceContainerLow,
+        alpha = if (dark) 0.28f else 0.16f,
+    )
+}
+
+@Composable
+private fun AllDayChip(agenda: Agenda, onClick: () -> Unit) {
+    val tint = eventTint(agenda.color)
+    Row(
+        Modifier.clip(RoundedCornerShape(8.dp))
+            .background(tint.container())
             .clickable(onClick = onClick)
-            .padding(horizontal = 12.dp, vertical = 8.dp),
+            .padding(horizontal = 10.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Box(Modifier.size(10.dp).background(Color(agenda.color), CircleShape))
+        Box(
+            Modifier.size(width = 4.dp, height = 16.dp)
+                .background(tint.bar, RoundedCornerShape(2.dp))
+        )
         Text(
             text = agenda.title,
             style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurface,
+            fontWeight = FontWeight.SemiBold,
+            color = tint.text,
             maxLines = 1,
         )
     }
