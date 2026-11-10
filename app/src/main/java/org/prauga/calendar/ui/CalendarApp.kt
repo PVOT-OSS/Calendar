@@ -76,7 +76,8 @@ fun CalendarApp(launch: LaunchTarget? = null, onLaunched: () -> Unit = {}) {
         onLaunched()
     }
     val selected by calendarViewModel.selected.collectAsStateWithLifecycle()
-    val headerDate = if (destination == Destination.Home) formats.today() else selected
+    val headerDate = formats.today()
+    val addDate = if (destination == Destination.Home) headerDate else selected
     val backdrop = rememberPvotGlassBackdrop()
     val contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 120.dp)
 
@@ -119,7 +120,7 @@ fun CalendarApp(launch: LaunchTarget? = null, onLaunched: () -> Unit = {}) {
                         if (destination == Destination.Home) Destination.Calendar
                         else Destination.Home
                 },
-                onAdd = { Actions.create(context, headerDate, formats.zone) },
+                onAdd = { Actions.create(context, addDate, formats.zone) },
                 modifier =
                     Modifier.align(Alignment.BottomCenter)
                         .navigationBarsPadding()
