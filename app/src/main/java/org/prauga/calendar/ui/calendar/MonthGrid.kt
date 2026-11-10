@@ -6,7 +6,6 @@
 package org.prauga.calendar.ui.calendar
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -15,14 +14,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,6 +42,7 @@ import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.coerceAtMost
 import androidx.compose.ui.unit.dp
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -88,6 +91,8 @@ fun MonthGrid(
             map
         }
     val swipePx = with(LocalDensity.current) { 72.dp.toPx() }
+    val colors = MaterialTheme.colorScheme
+    val rule = colors.outlineVariant.copy(alpha = 0.5f)
     Column(
         modifier
             .fillMaxSize()
@@ -100,32 +105,28 @@ fun MonthGrid(
                 )
             }
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 12.dp)
-            .padding(bottom = contentPadding.calculateBottomPadding()),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+            .padding(bottom = contentPadding.calculateBottomPadding())
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        Row(Modifier.padding(horizontal = 8.dp, vertical = 8.dp)) {
             weekdays(firstDayOfWeek).forEach { day ->
                 Text(
-                    text = day.getDisplayName(TextStyle.SHORT, locale),
-                    modifier =
-                        Modifier.weight(1f)
-                            .clip(RoundedCornerShape(50))
-                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                            .padding(vertical = 6.dp),
+                    text = day.getDisplayName(TextStyle.NARROW, locale),
+                    modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colors.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                 )
             }
         }
+        HorizontalDivider(color = rule)
         cells.chunked(7).forEach { week ->
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            Row(Modifier.padding(horizontal = 8.dp)) {
                 week.forEach { date ->
                     if (date == null) {
                         Spacer(Modifier.weight(1f))
                     } else {
-                        DayTile(
+                        DayCell(
                             date = date,
                             items = byDay[JulianDay.of(date)].orEmpty(),
                             isSelected = date == selected,
@@ -137,12 +138,13 @@ fun MonthGrid(
                     }
                 }
             }
+            HorizontalDivider(color = rule)
         }
     }
 }
 
 @Composable
-private fun DayTile(
+private fun DayCell(
     date: LocalDate,
     items: List<Agenda>,
     isSelected: Boolean,
@@ -152,16 +154,16 @@ private fun DayTile(
     modifier: Modifier = Modifier,
 ) {
     val colors = MaterialTheme.colorScheme
-    val container = if (isSelected) colors.primary else colors.surfaceContainerHigh
-    val content = if (isSelected) colors.onPrimary else colors.onSurface
-    val shape = RoundedCornerShape(12.dp)
     val count = pluralStringResource(R.plurals.month_day_events, items.size, items.size)
+    val circle =
+        when {
+            isToday -> colors.primary
+            isSelected -> colors.surfaceContainerHighest
+            else -> Color.Transparent
+        }
     Column(
         modifier
-            .aspectRatio(0.72f)
-            .clip(shape)
-            .background(container)
-            .let { if (isToday && !isSelected) it.border(1.5.dp, colors.primary, shape) else it }
+            .height(64.dp)
             .clearAndSetSemantics {
                 contentDescription = "${formats.fullDate(date)}, $count"
                 selected = isSelected
@@ -171,21 +173,39 @@ private fun DayTile(
                 }
             }
             .clickable(onClick = onClick)
-            .padding(vertical = 6.dp),
+            .padding(top = 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(3.dp)) {
-            items
-                .distinctBy { it.color }
-                .take(3)
-                .forEach { Box(Modifier.size(7.dp).background(Color(it.color), CircleShape)) }
+        Box(
+            Modifier.size(36.dp).background(circle, CircleShape),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = date.dayOfMonth.toString(),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = if (isToday || isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                color =
+                    when {
+                        isToday -> colors.onPrimary
+                        date.dayOfWeek == DayOfWeek.SUNDAY -> colors.onSurfaceVariant
+                        else -> colors.onSurface
+                    },
+            )
         }
-        Spacer(Modifier.weight(1f))
-        Text(
-            text = date.dayOfMonth.toString(),
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = if (isToday || isSelected) FontWeight.Bold else FontWeight.Medium,
-            color = content,
-        )
+        EventBar(items)
+    }
+}
+
+@Composable
+private fun EventBar(items: List<Agenda>) {
+    if (items.isEmpty()) return
+    val shown = items.sortedBy { it.begin }.take(6)
+    Row(
+        Modifier.width((6 + 6 * shown.size).dp.coerceAtMost(40.dp))
+            .height(5.dp)
+            .clip(RoundedCornerShape(50))
+    ) {
+        shown.forEach { Box(Modifier.weight(1f).fillMaxHeight().background(Color(it.color))) }
     }
 }
