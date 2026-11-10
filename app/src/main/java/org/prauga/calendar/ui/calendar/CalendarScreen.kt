@@ -198,7 +198,6 @@ fun CalendarScreen(
                                 focus = state.selected.month,
                                 today = state.today,
                                 firstDayOfWeek = state.firstDayOfWeek,
-                                agendas = state.agendas,
                                 onOpenMonth = viewModel::openMonth,
                                 onSwipe = viewModel::step,
                                 contentPadding = contentPadding,
