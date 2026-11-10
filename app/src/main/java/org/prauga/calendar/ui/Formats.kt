@@ -25,11 +25,10 @@ class Formats(private val context: Context) {
             .getOrDefault(ZoneId.systemDefault())
 
     private val locale = Locale.getDefault()
-    private val clock =
-        DateTimeFormatter.ofPattern(
-            if (DateFormat.is24HourFormat(context)) "HH:mm" else "hh:mm a",
-            locale,
-        )
+    private val is24 = DateFormat.is24HourFormat(context)
+    private val clock = DateTimeFormatter.ofPattern(if (is24) "HH:mm" else "hh:mm a", locale)
+    private val hourOnly = DateTimeFormatter.ofPattern("h", locale)
+    private val amPm = DateTimeFormatter.ofPattern("a", locale)
     private val shortDate = DateTimeFormatter.ofPattern("EEE, d MMM", locale)
     private val fullDate = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale)
 
@@ -37,7 +36,10 @@ class Formats(private val context: Context) {
 
     fun time(millis: Long): String = clock.format(Instant.ofEpochMilli(millis).atZone(zone))
 
-    fun hour(hour: Int): String = clock.format(LocalTime.of(hour, 0))
+    fun hourParts(hour: Int): Pair<String, String> {
+        val time = LocalTime.of(hour, 0)
+        return if (is24) clock.format(time) to "" else hourOnly.format(time) to amPm.format(time)
+    }
 
     fun timeRange(agenda: Agenda): String =
         when {
