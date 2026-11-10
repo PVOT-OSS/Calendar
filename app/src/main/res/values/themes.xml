@@ -10,7 +10,7 @@
      SPDX-FileCopyrightText: 2023 Jonas Häusler
      SPDX-License-Identifier: GPL-3.0-or-later
 -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="BaseTheme" parent="Theme.Material3.DayNight.NoActionBar">
@@ -19,6 +19,8 @@
         <item name="colorSecondaryContainer">@color/colorSecondaryContainer</item>
         <item name="android:statusBarColor">?android:colorBackground</item>
         <item name="android:navigationBarColor">?android:colorBackground</item>
+        <item name="android:windowSplashScreenBackground" tools:targetApi="31">@color/splash_background</item>
+        <item name="android:windowSplashScreenIconBackgroundColor" tools:targetApi="31">@color/splash_icon_background</item>
     </style>
 
     <!-- Inherit base theme to allow overriding Light Theme as per API levels -->
