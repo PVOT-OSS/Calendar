@@ -71,19 +71,6 @@ SPDX-License-Identifier = "MIT"
 
 [[annotations]]
 path = [
-    "app/src/main/ic_launcher-playstore.png",
-    "app/src/main/res/mipmap-hdpi/ic_launcher_round.png",
-    "app/src/main/res/mipmap-mdpi/ic_launcher_round.png",
-    "app/src/main/res/mipmap-xhdpi/ic_launcher_round.png",
-    "app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png",
-    "app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png",
-]
-precedence = "aggregate"
-SPDX-FileCopyrightText = ["2020 Felix Nüsse", "2022 Aayush Gupta"]
-SPDX-License-Identifier = "GPL-3.0-or-later"
-
-[[annotations]]
-path = [
     "app/src/main/res/drawable-hdpi/calendar_widget_preview.webp",
     "app/src/main/res/drawable-hdpi/ic_alarm_holo_dark.webp",
     "app/src/main/res/drawable-hdpi/ic_call.webp",
@@ -131,18 +118,6 @@ path = [
 precedence = "aggregate"
 SPDX-FileCopyrightText = ["2011 The Android Open Source Project"]
 SPDX-License-Identifier = "Apache-2.0"
-
-[[annotations]]
-path = [
-    "app/src/main/res/mipmap-hdpi/ic_launcher.png",
-    "app/src/main/res/mipmap-mdpi/ic_launcher.png",
-    "app/src/main/res/mipmap-xhdpi/ic_launcher.png",
-    "app/src/main/res/mipmap-xxhdpi/ic_launcher.png",
-    "app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
-]
-precedence = "aggregate"
-SPDX-FileCopyrightText = ["2015 Suhail Alkowaileet", "2020 Felix Nüsse", "2022 Aayush Gupta"]
-SPDX-License-Identifier = "GPL-3.0-or-later"
 
 [[annotations]]
 path = [
