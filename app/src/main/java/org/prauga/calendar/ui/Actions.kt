@@ -5,12 +5,15 @@
 
 package org.prauga.calendar.ui
 
+import android.accounts.AccountManager
 import android.content.ActivityNotFoundException
+import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.CalendarContract
+import android.provider.CalendarContract.Calendars
 import android.provider.CalendarContract.Events
 import java.time.LocalDate
 import java.time.LocalTime
@@ -73,6 +76,14 @@ object Actions {
     }
 
     fun sync(context: Context) = CalendarController.getInstance(context).refreshCalendars()
+
+    fun syncing(context: Context): Boolean {
+        val authority = Calendars.CONTENT_URI.authority
+        return AccountManager.get(context).accounts.any {
+            ContentResolver.isSyncActive(it, authority) ||
+                ContentResolver.isSyncPending(it, authority)
+        }
+    }
 
     fun search(context: Context) =
         context.startActivity(Intent(context, SearchActivity::class.java))
