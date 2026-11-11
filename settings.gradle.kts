@@ -27,7 +27,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Etar-Calendar"
+rootProject.name = "Pvot Calendar"
 
 includeBuild("PvotLib") {
     dependencySubstitution {
