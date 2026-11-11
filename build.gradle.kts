@@ -14,3 +14,15 @@ plugins {
     alias(libs.plugins.ec4j.editorconfig) apply false
     alias(libs.plugins.jetbrains.idea.ext) apply true
 }
+
+ext {
+    val versionMajor = 1
+    val versionMinor = 0
+    val versionPatch = 0
+
+    set("versionMajor", versionMajor)
+    set("versionMinor", versionMinor)
+    set("versionPatch", versionPatch)
+    set("computedVersionCode", versionMajor * 10000 + versionMinor * 100 + versionPatch)
+    set("computedVersionName", "$versionMajor.$versionMinor.$versionPatch")
+}

@@ -16,6 +16,12 @@ plugins {
 
 editorconfig { excludes = listOf("metadata/**", "PvotLib/**", "**/*.xml", "**/*.webp") }
 
+val versionMajor = rootProject.extra["versionMajor"] as Int
+val versionMinor = rootProject.extra["versionMinor"] as Int
+val versionPatch = rootProject.extra["versionPatch"] as Int
+val computedVersionCode = rootProject.extra["computedVersionCode"] as Int
+val computedVersionName = rootProject.extra["computedVersionName"] as String
+
 kotlin { jvmToolchain(21) }
 
 android {
@@ -26,8 +32,12 @@ android {
     defaultConfig {
         minSdk = 27
         targetSdk = 37
-        versionCode = 57
-        versionName = "1.0.57"
+        versionCode = computedVersionCode
+        versionName = computedVersionName
+
+        buildConfigField("int", "VERSION_MAJOR", "$versionMajor")
+        buildConfigField("int", "VERSION_MINOR", "$versionMinor")
+        buildConfigField("int", "VERSION_PATCH", "$versionPatch")
         applicationId = "org.prauga.calendar"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
