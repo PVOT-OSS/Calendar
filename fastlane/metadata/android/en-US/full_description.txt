@@ -1,0 +1,35 @@
+Calendar is a clean, private calendar for Android. It shows the calendars already on your phone and never connects to the internet: no account, no ads, no tracking.
+
+<b>Your week at a glance</b>
+Home greets you with a summary of your week, mentions what you have planned for the weekend and lists your upcoming events by day. Meetings with a video link get a Join button, and guests show as small avatars.
+
+<b>Day, Week, Month and Year</b>
+• Day and Week show a timeline with the current time, side-by-side events when they overlap, and all-day events on top
+• Drag an event to move it to another time, with Undo
+• Month shows every day of the month with coloured marks for busy days
+• Year shows the whole year at once; tap a month to open it
+• Shade the hours outside your working hours
+
+<b>Create and edit events</b>
+• Title, colour, all-day, start and end, repeat, reminder, location, notes and guests
+• Change one occurrence of a repeating event, this and all following ones, or the whole series
+• Answer invitations with Yes, Maybe or No
+• Duplicate or delete events
+• Search all your events
+
+<b>More than events</b>
+• Dated tasks from OpenTasks or Tasks.org next to your events
+• Birthdays and anniversaries from your contacts
+• Public holidays for many countries, built into the app
+• A second calendar system, such as Hijri or Hebrew dates, next to the Gregorian date
+• Import and export .ics files
+• Widgets for your home screen and a quick settings tile with your next event
+
+<b>Works with your accounts</b>
+Calendar uses Android's calendar storage, so it works with offline calendars and with any account that syncs to it, such as CalDAV and WebDAV through DAVx⁵, EteSync or your phone's own accounts.
+
+<b>Private by design</b>
+Calendar has no internet permission. Your events, contacts and tasks are read on your phone and stay there.
+
+Calendar is free and open source software (GPL-3.0-or-later), based on Etar.
+Source code: https://github.com/PVOT-OSS/Calendar
